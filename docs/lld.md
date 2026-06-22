@@ -35,6 +35,22 @@ direct edge iff target depends on intervened var **given the target's discovered
 hld §4b. **Build-task-1 (sharp now):** harden this rule into the reference discoverer + a vetted GIES-family lib +
 a **world-diversity sweep** (the one boundary the spike did not cross: other DAGs/sizes/confounding).
 
+**SCOPE CORRECTION — what §0 actually validated (and what it did NOT).** Spikes #1–#2 **hand-authored** the SCM
+(it's written directly in the spike code, not produced by an LLM from prose). They validate the **test harness**:
+given a good anti-cliché SCM, it defeats priors (#1) and a general interventional discoverer recovers it (#2). They
+do **NOT** test the **author step (T0)** — an *LLM* producing a valid, anti-cliché, **gate-passing** SCM **from a
+prose sentence**. That is the project's actual product and its riskiest assumption, and it is **still unproven**.
+The §4c loop's whole reliability hinges on it: if the author can't reliably produce gate-passing worlds, the loop
+spins to budget and discards → no worlds ship.
+
+### 0b. Build-task-0 — the AUTHOR spike (BEFORE build-task-1)
+
+Claude authors **N** worlds from **prose** (varied domains, sizes, structures); each runs through T1–T4; **measure
+the pass rate first-try and within K re-author iterations**, plus the difficulty spread (prior-only gap). This
+validates the *generator* before the pipeline is built around it. Needs a **generic spec→sampler + the generalized
+discoverer** (minimal shared infra with build-task-1, but pointed at the author, not the grader). Only once the
+author clears a useful pass-rate bar do we invest in build-task-1 (hardening the grader).
+
 ## A. The world-spec / answer-key schema  *(HLD §2, §9.1)*
 
 The single IR. To pin down:

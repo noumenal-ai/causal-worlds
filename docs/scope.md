@@ -30,8 +30,10 @@ cannot contradict the key). That is precisely why v0 (§1a) collapses to that pa
 
 This tool could serve four masters (discovery benchmark, control gym, describe-a-world amplifier, internal eval
 harness) with *conflicting* requirements. v0s die trying to serve all of them. **v0 = the causal-discovery
-benchmark, on the pure-SCM path, scoring structure recovery only.** Rationale: it is the only payoff where the
-answer-key is the product, the key is correct-by-construction (§2 / #2), and **magnitudes don't bite** (structure
+benchmark, on the pure-SCM path, scoring structure recovery only.** Precisely: **causal-*structure* (directed-graph)
+recovery** — it does **not** score causal *effect magnitudes* or *counterfactuals* (those need principled magnitudes
+→ later). Name it a **structure-recovery benchmark, not a "full causal" one.** Rationale: it is the only payoff where
+the answer-key is the product, the key is correct-by-construction (§2 / #2), and **magnitudes don't bite** (structure
 scoring sees edges, not effect sizes — so the "magnitude-soft" property is fine here and *only* here).
 
 **Explicitly deferred to later milestones (NOT v0):**
@@ -112,9 +114,11 @@ A generated world is admitted to the benchmark only if it passes **measured** ga
 
 ## 8. Open questions (the frontier — tracked in hld/lld)
 
-- **The core assumption is UNTESTED — spike it first (lld §0).** Everything rests on "an LLM can author a
-  complete, identifiable, *anti-cliché* generative SCM (graph + functional forms + noise + a regime) from a
-  sentence." This has never been demonstrated end-to-end. A 1-day spike kills or confirms it **before** more design.
+- **The AUTHOR step is STILL UNTESTED — it is build-task-0.** lld §0 spikes (#1–#2) validated the *test harness*
+  (given a **hand-authored** SCM: a hard world defeats priors, and a general interventional discoverer recovers it).
+  They did **not** test whether an **LLM can author** a valid, anti-cliché, **gate-passing** SCM **from prose** —
+  the actual product and the riskiest assumption. Measure that (author N worlds → pass-rate through T1–T4, first-try
+  + within K iters) **before** building the pipeline around it. Don't conflate "harness works" with "author works."
 - **Benchmark validity / circularity** — generator and agent-under-test may share LLM priors; defused by (a) scoring
   a *statistical* discoverer, (b) the prior-only meter, (c) required anti-cliché worlds (hld §4a). Still the
   highest-stakes open risk.

@@ -113,6 +113,14 @@ design:
 This converts circularity from an unaddressed hole into a **measured, designed-against property** — the prior-only
 gap (statistical-discoverer score − prior-only score) is itself a reportable benchmark-quality metric.
 
+**[DECISION] Anti-cliché = a difficulty *axis*, not a blanket hard reject.** Because the validity anchor is a
+*statistical* discoverer (no shared priors), a cliché world is still a **valid** test — a stats method recovering
+`demand→load` from data is legitimate, and real operations *are* full of textbook relationships. Rejecting cliché
+worlds would bias the generator toward only-weird worlds and shrink domain coverage. So the prior-only gap is
+reported as a **per-world difficulty label** (easy-cliché → hard-anti-cliché), making the benchmark a useful
+*spectrum*. The **hard reject** applies in exactly one case: when the *discoverer-under-test is LLM-based* (shared
+priors would fake a pass) → there, require gap ≥ δ.
+
 ### 4b. Spike evidence (lld §0, 2026-06-22) — the knobs, now measured not guessed
 
 A numpy-only spike ([`spikes/spike_coffee.py`](../spikes/spike_coffee.py)) ran the validity core on a deliberately
@@ -143,8 +151,14 @@ shape of the harness's reference discoverer):
 **The load-bearing lesson:** *the conditioning set is the whole game* — "intervene + condition on **everything**"
 over-connects (collider bias → SHD 6, a real failure the spike hit); **"ancestors of the target" is the right set.**
 **Remaining boundary (honest):** one world *structure*, n=8000 — robust to seed/noise but **not yet swept over world
-diversity** (other DAGs/sizes/confounding), and it's a hand-rolled simplification of GES/GIES. → **build-task-1:**
-harden this rule into the reference discoverer, swap in a vetted GIES-family lib, and run a world-diversity sweep.
+diversity** (other DAGs/sizes/confounding), and it's a hand-rolled simplification of GES/GIES whose
+reachability→edge stages couple (errors compound). → **build-task-1:** harden into a **pinned, vetted GIES-family**
+reference discoverer + a world-diversity sweep.
+
+**Thresholds are world-size-relative → normalize.** null-SHD ≈ 7.5 is for *this* 6-node/7-edge world and scales
+with size; the non-triviality margin *m* and the anti-cliché gap *δ* must be expressed **relative to each world's
+own null and edge count** (normalized SHD = SHD/|edges|, or "fraction of *that* world's null beaten"), **never** as
+fixed absolutes. The spike numbers are one-size starting points.
 
 ### 4c. The author → gate → admit loop (control flow + stopping rules)
 
@@ -159,8 +173,12 @@ short-circuiting on first failure** (this is the lever that controls per-world c
 | **T1 · static** | acyclic · types/units/bounds · every edge used by a mechanism · ≥1 outcome & ≥1 controllable · no orphan/degenerate nodes | ~free | structured feedback → re-author |
 | **T2 · sample-sanity** | compile + sample obs **+ interventional**; no NaN/inf; every var has variance; declared edges are *detectable*; no unintended near-collinearity | 1 sample | tune **noise** (the dial) / feedback → re-author |
 | **T3 · non-triviality** | reference discoverer (§4b rule → vetted GIES) over N seeds beats the random-null by margin *m* | N discovery runs | too-hard → lower noise / simplify; reject if still unidentifiable |
-| **T4 · anti-cliché** | prior-only gap `(statistical − prior-only) ≥ δ` | 1 discovery + 1 prior-only | **perturb** (flip a sign · add a confounder · hide a var · deepen a chain) → re-sample/re-author |
+| **T4 · anti-cliché** | prior-only gap = a **difficulty label** (§4a) | 1 discovery + 1 prior-only | **label** the world's difficulty; *hard-reject + perturb only* when scoring an LLM-discoverer |
 | **admit** | all green → **freeze spec as the answer-key**; package `{gym, dataset, answer-key, manifest}` | — | — |
+
+**T0 is the unproven step (build-task-0).** The loop assumes the author can *eventually* produce a gate-passing
+world; if it can't, it spins to budget and discards → nothing ships. Validating T0's reliability (lld §0b) comes
+**before** everything else here.
 
 **Identifiability** is *not* a runtime tier — it holds **by construction** (SCM path: the declared graph *is* the
 sampler) and is merely *exercised* by T3 emitting do-data (spike #2: do-data is what reaches SHD 0).
@@ -180,6 +198,12 @@ revise (the DEVS-Gen / G-Sim refinement pattern).
 
 **Determinism:** an admitted world ships its seed → same spec + seed ⇒ same data ⇒ a published benchmark item is
 exactly reproducible.
+
+**Admission is discoverer-relative → pin & version the grader.** A world's "non-trivial / admitted" status is only
+meaningful against a *named, frozen* reference discoverer (spike #2: the verdict flips with it — naive SHD 6,
+principled SHD 0). The **manifest records the reference-discoverer version**; build-task-1's GIES swap can change
+admitted status, so it **forces re-validation** of previously-admitted worlds. For a benchmark, *the grader's
+version is part of the artifact.*
 
 *(Knob values — N, m, δ, K, j, noise defaults — are pinned in lld; the spike gives starting points: null ≈ 7.5,
 prior-only gap ≥ ~2 edges on the example world.)*
@@ -230,5 +254,10 @@ output dependable.
    defaults. Spike gives starting points (null ≈ 7.5; prior-only gap ≥ ~2 edges).
 4. Temporal/regime representation (how lags/regimes are authored and sampled) — *(beyond v0's static SCM)*.
 5. The pluggable agent interface + the exact scoring suite (structure now; interventional/counterfactual later).
-6. **Build-task-1:** harden the §4b discoverer into the reference discoverer (vetted GIES lib) + a **world-diversity
-   sweep** (the one boundary spike #2 didn't cross).
+6. **Build-task-0 (FIRST — the riskiest, still unproven):** the **author spike** — does an LLM reliably author
+   valid, anti-cliché, **gate-passing** SCMs *from prose*? Measure pass-rate (first-try + within K iters through
+   T1–T4) across varied worlds. The spikes so far validated only the *grader* given a hand-authored SCM; the
+   *generator* is untested. **Validate it before building the pipeline.** (lld §0b.)
+7. **Build-task-1 (then):** harden the §4b discoverer into the **pinned, versioned** reference discoverer (vetted
+   GIES lib) + a **world-diversity sweep**. Note the staged spike discoverer couples reachability→edge (errors
+   compound) — a vetted GIES is more robust.
