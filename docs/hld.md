@@ -121,6 +121,14 @@ reported as a **per-world difficulty label** (easy-cliché → hard-anti-cliché
 *spectrum*. The **hard reject** applies in exactly one case: when the *discoverer-under-test is LLM-based* (shared
 priors would fake a pass) → there, require gap ≥ δ.
 
+**[DECISION — forced by build-task-0 evidence, 2026-06-22] The prior-only baseline AND the faithfulness judge use
+a *different LLM family* than the author.** The author spike (lld §0b) measured it: grading my own worlds (Claude
+author **+** Claude prior) understated difficulty (gap ≈ 1); an **independent prior (Gemini `gemini-3.5-flash`)**
+revealed the true spectrum — hospital gap **3**, ride-hailing **2**, textbook worlds **0**. Same-brain grading is
+optimistic, so the prior-only meter and the prose-faithfulness judge must be a *separate* model from whatever
+authored the world. (Structure-SHD stays blind to *sign-flips*, so difficulty is earned **structurally** —
+confounders, non-obvious connectivity — not by regime sign-flips.)
+
 ### 4b. Spike evidence (lld §0, 2026-06-22) — the knobs, now measured not guessed
 
 A numpy-only spike ([`spikes/spike_coffee.py`](../spikes/spike_coffee.py)) ran the validity core on a deliberately
@@ -254,10 +262,11 @@ output dependable.
    defaults. Spike gives starting points (null ≈ 7.5; prior-only gap ≥ ~2 edges).
 4. Temporal/regime representation (how lags/regimes are authored and sampled) — *(beyond v0's static SCM)*.
 5. The pluggable agent interface + the exact scoring suite (structure now; interventional/counterfactual later).
-6. **Build-task-0 (FIRST — the riskiest, still unproven):** the **author spike** — does an LLM reliably author
-   valid, anti-cliché, **gate-passing** SCMs *from prose*? Measure pass-rate (first-try + within K iters through
-   T1–T4) across varied worlds. The spikes so far validated only the *grader* given a hand-authored SCM; the
-   *generator* is untested. **Validate it before building the pipeline.** (lld §0b.)
+6. **Build-task-0 [basic bar MET 2026-06-22]:** author spike — **4/4** worlds authored from one-line prose passed
+   T1–T3 (robust 5/5), and an **independent Gemini prior** confirmed real difficulty (gap up to 3) where my own
+   self-prior had understated it (≈1). The author works at small scale; the prior/judge must be a different model
+   family (§4a). *Remaining:* larger / structurally-harder worlds + the within-K re-author loop against live gates.
+   (lld §0b.)
 7. **Build-task-1 (then):** harden the §4b discoverer into the **pinned, versioned** reference discoverer (vetted
    GIES lib) + a **world-diversity sweep**. Note the staged spike discoverer couples reachability→edge (errors
    compound) — a vetted GIES is more robust.

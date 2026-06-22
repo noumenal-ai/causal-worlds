@@ -51,6 +51,22 @@ validates the *generator* before the pipeline is built around it. Needs a **gene
 discoverer** (minimal shared infra with build-task-1, but pointed at the author, not the grader). Only once the
 author clears a useful pass-rate bar do we invest in build-task-1 (hardening the grader).
 
+**RESULT (2026-06-22): author clears the bar — and an INDEPENDENT judge revised my first read.**
+[`spikes/spike_author.py`](../spikes/spike_author.py): authored 4 worlds from one-line prompts (hospital ED,
+ride-hailing, factory line, e-commerce) → **4/4 pass T1+T2+T3 first-try, robust 5/5 across seeds.** The author can
+produce valid, clean-sampling, recoverable worlds from prose — the §4c loop won't just spin-and-discard.
+*Methodology correction:* I first played the prior-only baseline **myself (Claude)** and got a misleadingly *mild*
+difficulty gap (≈1) — **same-brain optimism** (the exact circularity #1 warns of). Re-run with an **independent
+prior — Google `gemini-3.5-flash`** (latest GA flagship; per Amit) — the anti-cliché worlds show real teeth:
+**hospital gap 3, ride-hailing gap 2**, while textbook worlds sit at **0** (factory, e-commerce). A clean
+difficulty spectrum, *measured independently*. Lessons: **(a)** the prior-only / faithfulness judge **must be a
+different LLM family than the author** — self-grading understated difficulty (1→3); **(b)** structure-SHD is still
+blind to *sign-flips*, so difficulty comes from **structural** traps (confounders, non-obvious connectivity) — which
+these worlds genuinely have; **(c)** Gemini faithfulness scores e-commerce 1.00 / factory 0.80 / ride 0.70 /
+**hospital 0.40** — the low one flags that prose naming a *hidden* mechanism (the flu confounder) makes the
+observed-only structure read as incomplete → a real faithfulness-gate design point; **(d)** prototype grader hit
+SHD 1 on the 2 larger worlds → reinforces build-task-1's vetted GIES.
+
 ## A. The world-spec / answer-key schema  *(HLD §2, §9.1)*
 
 The single IR. To pin down:
