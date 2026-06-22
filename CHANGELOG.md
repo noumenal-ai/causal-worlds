@@ -3,6 +3,21 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] — 2026-06-23
+
+**Use the benchmark.** Grading your own discoverer against a shipped world is now a first-class,
+typed, tested feature — the package's whole purpose.
+
+### Added
+- **`bench`**: `grade_spec(spec, discoverer)` and `grade_bundle(bundle_dir, discoverer)` → a `Report`
+  scoring any `Discoverer` against a world's declared answer-key (defaults to the reference grader).
+- **CLI `score`**: `causal-worlds score <bundle> [--discoverer module:Class]` grades a discoverer
+  (the reference by default, or any importable one) on a persisted world.
+- **Typed distribution**: ship a PEP 561 `py.typed` marker, plus PyPI metadata (classifiers,
+  keywords, project URLs).
+
+[0.6.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.6.0
+
 ## [0.5.0] — 2026-06-23
 
 **Scale resolves the difficulty question.** A 36-world set across an easy→hard complexity spread gives

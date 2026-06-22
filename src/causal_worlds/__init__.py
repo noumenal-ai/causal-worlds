@@ -10,6 +10,7 @@ from causal_worlds.baselines import (
     GiesDiscoverer,
     PcDiscoverer,
 )
+from causal_worlds.bench import grade_bundle, grade_spec
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
 from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
@@ -89,6 +90,8 @@ __all__ = [
     "directed_shd",
     "f1",
     "generate",
+    "grade_bundle",
+    "grade_spec",
     "load_bundle",
     "run_gates",
     "save_bundle",

@@ -6,12 +6,28 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "MIT" }
 authors = [{ name = "Noumenal" }]
+keywords = ["causal-discovery", "benchmark", "causality", "llm", "synthetic-data", "scm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
+
 dependencies = [
     "typer>=0.12",
     "pydantic>=2.9",          # boundary validation (CLI/LLM I/O); core stays on frozen dataclasses
     "pydantic-settings>=2.5", # env/.env config loading at the boundary
     "numpy>=2.1",             # the functional core: SCM sampling + scoring
 ]
+
+[project.urls]
+Homepage = "https://github.com/noumenal-ai/causal-worlds"
+Repository = "https://github.com/noumenal-ai/causal-worlds"
+Changelog = "https://github.com/noumenal-ai/causal-worlds/blob/main/CHANGELOG.md"
+Issues = "https://github.com/noumenal-ai/causal-worlds/issues"
 
 [project.optional-dependencies]
 # The discovery/grader stack (heavy: scipy/sklearn). Installed when the `discover` feature is used.

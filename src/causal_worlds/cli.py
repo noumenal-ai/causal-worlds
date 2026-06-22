@@ -1,5 +1,6 @@
 """The causal-worlds command-line interface (the construction-from-use edge)."""
 
+import importlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -8,12 +9,13 @@ import typer
 
 from causal_worlds import __version__, worlds
 from causal_worlds.artifact import Provenance, save_bundle
+from causal_worlds.bench import grade_bundle
 from causal_worlds.container import Container, build_container
 from causal_worlds.evaluation import score
 from causal_worlds.gates import run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate_many
 from causal_worlds.generate import generate as generate_world
-from causal_worlds.protocols import Author, Judge
+from causal_worlds.protocols import Author, Discoverer, Judge
 from causal_worlds.sample import build_substrate
 from causal_worlds.schema import WorldSpec, answer_key
 from causal_worlds.worlds import UnknownWorldError
@@ -73,6 +75,27 @@ def gate(world: str, seed: int = 0) -> None:
     container = build_container()
     report = run_gates(_resolve(world), discoverer=container.discoverer(), seed=seed)
     typer.echo(f"admitted={report.admitted}  reason={report.reason!r}")
+
+
+def _load_discoverer(path: str) -> Discoverer:
+    """Import a discoverer from a ``module:Class`` path and instantiate it (no args)."""
+    module_name, _, attr = path.partition(":")
+    if not attr:
+        typer.echo("--discoverer must be 'module:Class'", err=True)
+        raise typer.Exit(code=1)
+    discoverer: Discoverer = getattr(importlib.import_module(module_name), attr)()
+    return discoverer
+
+
+@app.command("score")
+def score_world(bundle: Path, discoverer: str = "", seed: int = 0) -> None:
+    """Grade a discoverer on a persisted world BUNDLE (default: the reference interventional-CI)."""
+    grader = _load_discoverer(discoverer) if discoverer else None
+    report = grade_bundle(bundle, grader, seed=seed)
+    typer.echo(
+        f"directed_shd={report.directed_shd}  skeleton_shd={report.skeleton_shd}  "
+        f"f1={report.f1:.2f}  confounded_reported={report.confounded_reported}"
+    )
 
 
 def _live(container: Container) -> tuple[Author, Judge]:

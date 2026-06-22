@@ -37,11 +37,17 @@ causal-worlds benchmark benchmark/prompts.txt ./benchmark/v0.2   # author + admi
 As a library:
 
 ```python
-from causal_worlds import worlds, build_substrate, answer_key, score, InterventionalCiDiscoverer
+from causal_worlds import worlds, grade_spec, InterventionalCiDiscoverer
 
 spec = worlds.get("coffee")
-recovered = InterventionalCiDiscoverer().recover(build_substrate(spec), seed=7)
-print(score(recovered, answer_key(spec)))   # plug in your own discoverer instead to benchmark it
+print(grade_spec(spec, InterventionalCiDiscoverer()))   # plug in YOUR discoverer to benchmark it
+```
+
+Grade your own method on a shipped world from the CLI:
+
+```bash
+causal-worlds score benchmark/v0.5/world_01                       # the reference grader
+causal-worlds score benchmark/v0.5/world_01 --discoverer your_pkg:YourDiscoverer
 ```
 
 ## Why
