@@ -1,8 +1,8 @@
 """Score a discoverer's recovered structure against a world's ground-truth answer-key.
 
 Pure set-math over directed edge sets — no IO, no numpy. ``directed_shd`` and ``f1`` measure
-structure recovery; ``confounded_reported`` flags the failure mode that matters most here: claiming a
-*causal* edge for a pair only **confounded** by a hidden cause (only interventions tell them apart).
+structure recovery; ``confounded_reported`` flags the key failure mode: claiming a *causal* edge for
+a pair only **confounded** by a hidden cause (only interventions can tell them apart).
 
 The module is named ``evaluation`` rather than ``eval`` to avoid shadowing the builtin.
 """
