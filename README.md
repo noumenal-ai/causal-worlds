@@ -5,16 +5,33 @@ simulator, the multivariate time-series it emits, and a **declared ground-truth 
 *answer-key*) — for **benchmarking causal-discovery agents against a known truth** (and, on the roadmap,
 stress-testing control agents under perturbation).
 
-> **Status: early / pre-release — design stage, no library yet.** APIs and schema will change.
+> **Status: v0.1.0 — the benchmark *engine* is here.** Programmatically specify a fictional causal world (with a
+> ground-truth answer-key), sample it, grade a causal-discovery method, and score it — runnable as a library and a
+> CLI, no LLM or API key required. The headline **natural-language authoring** (+ the independent judge and
+> conversational elicitation) is **v0.2** — tracked as issues. See [`CHANGELOG.md`](CHANGELOG.md).
 >
-> The core validity assumption — *can an LLM author an identifiable, **anti-cliché** causal world that a data-driven
-> method recovers, and that defeats a no-data prior?* — has been **spiked and confirmed** (see
-> [`spikes/`](spikes/) and [`docs/lld.md`](docs/lld.md) §0).
->
-> **v0 scope = one honest thing:** a **causal-discovery benchmark** on the SCM path, where the answer-key is correct
-> *by construction* and structure recovery is scored against a *statistical* discoverer (no shared-LLM circularity).
-> The rest of the vision below — control / `do(x)` / counterfactual *scoring*, the describe-a-world experience, and
-> discrete-event worlds — is **roadmap, not yet built** (see [`docs/scope.md`](docs/scope.md) §1a).
+> What's validated: on the built-in `coffee` world (a hidden confounder + a regime sign-flip), standard
+> observational/score-based discovery fails, but the reference **interventional-CI** grader recovers the structure
+> (directed SHD 0) and drops the confounded edge — pinned as a test.
+
+## Quickstart
+
+```bash
+uv add causal-worlds            # or: pip install causal-worlds   (once published)
+causal-worlds worlds            # list built-in worlds: coffee, ecommerce
+causal-worlds gate coffee       # run the validity gates -> admitted=True
+causal-worlds grade coffee      # grade the reference discoverer -> directed_shd=0  f1=1.00  confounded_reported=0
+```
+
+As a library:
+
+```python
+from causal_worlds import worlds, build_substrate, answer_key, score, InterventionalCiDiscoverer
+
+spec = worlds.get("coffee")
+recovered = InterventionalCiDiscoverer().recover(build_substrate(spec), seed=7)
+print(score(recovered, answer_key(spec)))   # plug in your own discoverer instead to benchmark it
+```
 
 ## Why
 

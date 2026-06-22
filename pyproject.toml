@@ -1,6 +1,6 @@
 [project]
 name = "causal-worlds"
-version = "0.0.1"
+version = "0.1.0"
 description = "Generate fictional-but-coherent causal operations worlds (executable sim + ground-truth answer-key) from a natural-language description, for benchmarking causal-discovery agents."
 readme = "README.md"
 requires-python = ">=3.13"
