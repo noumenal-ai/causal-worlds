@@ -40,11 +40,16 @@ Everything routes through a single **world-spec / answer-key schema** (an open, 
 - **Variables** — name, role (`controllable` | `observable` | `disturbance` | `outcome`), bounds, unit, cadence.
 - **Causal edges** — `from → to`, direction, **lag**, effect sign/shape, mechanism note.
 - **Functional forms** — the structural equations / transition logic (how children depend on parents).
-- **Regimes** — named operating regimes and what switches them (regime-conditioned parameters).
+- **Noise** — per-mechanism noise family + scale: a **first-class field**, the learnability dial (§4, lld §A).
+- **Regimes** — named operating regimes, what switches them, and **per-regime parameter / sign overrides** — the
+  *anti-cliché lever* (spike: P→D = −1 promo / +1 scarcity, a sign-flip by regime).
+- **Intervention surface** — every variable is `do()`-able (we own the gym). This is *why* the answer-key is
+  identifiable by construction (§4) — interventional data is always available.
 
 The spec is both the **build input** to the compiler *and*, once frozen, the **answer-key** the harness scores
 against. Keeping one schema is what makes scoring a recovered structure a trivial graph comparison. Export
-adapters can project it to external agents' schemas.
+adapters can project it to external agents' schemas. *Worked example (the spike world): nodes R,P,F,O,D,S + hidden
+L; edges incl. the regime-flipped P→D and the F→O / F→S / D→S structure — full field list in [lld §A](lld.md).*
 
 ## 3. Two substrates, one IR (the key design decision)
 
@@ -141,6 +146,44 @@ over-connects (collider bias → SHD 6, a real failure the spike hit); **"ancest
 diversity** (other DAGs/sizes/confounding), and it's a hand-rolled simplification of GES/GIES. → **build-task-1:**
 harden this rule into the reference discoverer, swap in a vetted GIES-family lib, and run a world-diversity sweep.
 
+### 4c. The author → gate → admit loop (control flow + stopping rules)
+
+§4/§4a define *what* "valid" means; this is *how a world is produced* — a **bounded refinement loop** with one
+invariant: **a world that fails any gate is never shipped** (the #2 "benchmark that lies" failure mode is
+structurally impossible — admission requires every gate green). Gates run **cost-tiered, cheapest first,
+short-circuiting on first failure** (this is the lever that controls per-world compute, §7):
+
+| Tier | Check | Cost | On fail |
+|---|---|---|---|
+| **T0 · author** | LLM proposes a *complete* spec (§2 / lld §A) | 1 LLM call | — |
+| **T1 · static** | acyclic · types/units/bounds · every edge used by a mechanism · ≥1 outcome & ≥1 controllable · no orphan/degenerate nodes | ~free | structured feedback → re-author |
+| **T2 · sample-sanity** | compile + sample obs **+ interventional**; no NaN/inf; every var has variance; declared edges are *detectable*; no unintended near-collinearity | 1 sample | tune **noise** (the dial) / feedback → re-author |
+| **T3 · non-triviality** | reference discoverer (§4b rule → vetted GIES) over N seeds beats the random-null by margin *m* | N discovery runs | too-hard → lower noise / simplify; reject if still unidentifiable |
+| **T4 · anti-cliché** | prior-only gap `(statistical − prior-only) ≥ δ` | 1 discovery + 1 prior-only | **perturb** (flip a sign · add a confounder · hide a var · deepen a chain) → re-sample/re-author |
+| **admit** | all green → **freeze spec as the answer-key**; package `{gym, dataset, answer-key, manifest}` | — | — |
+
+**Identifiability** is *not* a runtime tier — it holds **by construction** (SCM path: the declared graph *is* the
+sampler) and is merely *exercised* by T3 emitting do-data (spike #2: do-data is what reaches SHD 0).
+
+**Feedback is structured, not prose** — each failure emits `{gate, what_failed, localized_hint}` (e.g. *"T4:
+prior-only already recovers 6/7 edges → add a counter-intuitive mechanism (a regime sign-flip or a hidden
+confounder)"*; *"T1: edge F→S declared but no mechanism in S uses F"*). The author LLM consumes it in-context to
+revise (the DEVS-Gen / G-Sim refinement pattern).
+
+**Stopping rules (bounded — never spin):**
+- **Budget:** ≤ K re-author iterations *or* a per-world token/compute cap.
+- **No-progress:** if the failing-gate set hasn't shrunk in *j* consecutive iterations → stop (patience/oscillation,
+  à la G-Sim early-stopping).
+- **On give-up:** **discard the world** (a world that can't pass is never emitted — the whole point), logging the
+  terminal gate + last feedback. In the conversational flow (lld §B2, later) this becomes a *clarifying question to
+  the user* rather than a silent discard.
+
+**Determinism:** an admitted world ships its seed → same spec + seed ⇒ same data ⇒ a published benchmark item is
+exactly reproducible.
+
+*(Knob values — N, m, δ, K, j, noise defaults — are pinned in lld; the spike gives starting points: null ≈ 7.5,
+prior-only gap ≥ ~2 edges on the example world.)*
+
 ## 5. The test-maker / test-taker split
 
 `causal-worlds` is the **test-maker** (worlds + answer-keys). The **causal-discovery / control agent under test is
@@ -180,8 +223,12 @@ output dependable.
 
 ## 9. Open decisions (→ lld.md)
 
-1. The concrete world-spec schema (fields, serialization).
-2. Substrate boundary + the discrete-event topology→answer-key-graph projection.
-3. How strict the §4 honesty checks are, and the re-authoring loop's stopping rule.
-4. Temporal/regime representation (how lags/regimes are authored and sampled).
-5. The pluggable agent interface + the exact scoring suite.
+1. The concrete world-spec schema (fields, serialization) — shape in §2; full fields in lld §A.
+2. *(Deferred, not v0)* discrete-event substrate + the topology→answer-key-graph projection.
+3. ~~How strict the checks are + the loop's stopping rule~~ — **designed in §4c**; only the **numeric knobs**
+   remain for LLD: N (seeds), m (non-triviality margin vs null), δ (prior-only gap), K/j (budget/patience), noise
+   defaults. Spike gives starting points (null ≈ 7.5; prior-only gap ≥ ~2 edges).
+4. Temporal/regime representation (how lags/regimes are authored and sampled) — *(beyond v0's static SCM)*.
+5. The pluggable agent interface + the exact scoring suite (structure now; interventional/counterfactual later).
+6. **Build-task-1:** harden the §4b discoverer into the reference discoverer (vetted GIES lib) + a **world-diversity
+   sweep** (the one boundary spike #2 didn't cross).
