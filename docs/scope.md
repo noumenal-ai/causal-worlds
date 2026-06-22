@@ -17,8 +17,33 @@ environment*; almost none emits the **causal structure that generated it** as a 
 The answer-key is what turns a generator into an **evaluation instrument**.
 
 **Bar:** *plausible + internally consistent*, explicitly **fictional**. There is **no real-world-fidelity
-requirement** — and therefore no need for calibration data. This is the deliberate simplification that makes the
-problem tractable: the authored structure *is* the ground truth.
+requirement** — and therefore no need for calibration data.
+
+**Honest caveat (don't oversell "the easy corner").** Removing fidelity does *not* make this easy — it trades one
+hard problem (calibrate to reality) for another (author a world that is simultaneously coherent, identifiable,
+non-trivial, *anti-cliché*, faithful-to-prose, and whose declared key matches the executable's behavior — with **no
+external signal** to tell us when we failed). The one place fiction is genuinely easier is the **pure-SCM path**,
+where the declared graph *is* the generative process, so the answer-key is **correct by construction** (the data
+cannot contradict the key). That is precisely why v0 (§1a) collapses to that path.
+
+## 1a. v0 focus — pick ONE payoff [DECIDED 2026-06-22, post-review]
+
+This tool could serve four masters (discovery benchmark, control gym, describe-a-world amplifier, internal eval
+harness) with *conflicting* requirements. v0s die trying to serve all of them. **v0 = the causal-discovery
+benchmark, on the pure-SCM path, scoring structure recovery only.** Rationale: it is the only payoff where the
+answer-key is the product, the key is correct-by-construction (§2 / #2), and **magnitudes don't bite** (structure
+scoring sees edges, not effect sizes — so the "magnitude-soft" property is fine here and *only* here).
+
+**Explicitly deferred to later milestones (NOT v0):**
+- **Control gym / `do(x)` / counterfactuals** — needs *principled magnitudes* (the optimal policy and counterfactual
+  outcomes are functions of effect sizes); arbitrary magnitudes ⇒ an arbitrary control benchmark. A fixed fictional
+  gym is *internally* valid (its own ground truth) but not externally meaningful — a later, clearly-scoped thing.
+- **Describe-a-world amplifier** (delight-optimized) and the **conversational elicitation UX** (see lld §B2).
+- **Discrete-event substrate** — its answer-key is *projected* (not by-construction) and unverifiable in fiction
+  (#2) → not a sound benchmark yet.
+
+Everything below describes the eventual full scope; the **v0 slice** is the SCM-path discovery benchmark + the
+validity layer (§7, hld §4/§4a).
 
 ## 2. Who it's for / use cases
 
@@ -35,7 +60,9 @@ test-maker / test-taker split in [hld.md](hld.md).
 ## 3. Positioning (the gap)
 
 The four-way intersection — **(NL authoring) × (temporal/regime causal structure) × (executable simulator) ×
-(ground-truth answer-key)** — is unoccupied. Each neighbor owns a corner: G-Sim calibrates to real data; DEVS-Gen
+(ground-truth answer-key)** — **appears unoccupied as of mid-2026** (a fast-moving field with new 2026 papers
+cited here — treat as "no current match found," not a durable moat; revisit). Each neighbor owns a corner: G-Sim
+calibrates to real data; DEVS-Gen
 validates against constraints (no declared graph); SD-SCM needs a user-supplied DAG and is tabular; TimeGraph is
 parametric, not NL-authored; GIF-MCTS/WorldCoder have no causal answer-key. `causal-worlds` is built **by
 composing** these donors and filling the two genuinely-novel pieces (§7).
@@ -67,21 +94,33 @@ composing** these donors and filling the two genuinely-novel pieces (§7).
 - **Pixels / 3D / embodied worlds.** Operations and time-series, not visual generation.
 - **Closed-loop control of real systems.**
 
-## 7. Success criteria (v0)
+## 7. Success criteria (v0) — measurable gates, not vibes
 
-A generated world is "good" when it is:
-1. **Executable** — runs to a horizon without error, respects its I/O contract.
-2. **Internally consistent** — obeys declared constraints (no impossible states; conservation where claimed;
-   effects follow causes).
-3. **Non-degenerate & learnable** — the causal task is neither trivial nor unidentifiable: a known
-   causal-discovery method recovers the answer-key meaningfully above chance, and interventions move outcomes.
-4. **Faithful to the description** — a reader agrees the world matches the prose.
+A generated world is admitted to the benchmark only if it passes **measured** gates (see hld §4):
+1. **Executable** — runs to a horizon without error; respects its I/O + data schema.
+2. **Internally consistent** — declared constraints hold (no impossible states; conservation where claimed).
+3. **Identifiable by construction** — the world ships **interventional data** alongside observational, so the
+   authored graph is recoverable (interventions break Markov-equivalence). Key is correct-by-construction (SCM path).
+4. **Non-trivial & learnable (measured)** — a pinned reference discoverer (e.g. PCMCI+) over N seeds beats a
+   random-graph null by margin *m*. Too-noisy/unidentifiable or too-trivial worlds are rejected.
+5. **Anti-cliché / non-circular (measured)** — a **prior-only** discoverer (variable names + prose, *no data*) does
+   **not** already solve it; if it does, the world is a cliché and the benchmark is weak → reject or perturb
+   (flip a sign, add a confounder, shift a lag).
+6. **Faithful to the description (measured, not "a reader agrees")** — a rubric-scored check (LLM-judge and/or human
+   rating against a checklist of the prose's claims), with a threshold; below it → re-author. *(Subjective
+   "someone agrees" is explicitly replaced by this.)*
 
 ## 8. Open questions (the frontier — tracked in hld/lld)
 
-- **NL → a *complete* generative SCM** (graph **and** explicit functional forms / noise) from prose alone — the
-  piece no public tool does.
-- **Honesty without calibration** — how strict the consistency / identifiability / non-degeneracy checks should be.
-- **Temporal / regime authoring** — lags, regime-switching, seasonality (absent in LLM-authored prior art).
-- **Substrate boundary** — when SCM-sampling vs. discrete-event synthesis; how the discrete-event topology
-  projects into the answer-key graph (see [hld.md](hld.md)).
+- **The core assumption is UNTESTED — spike it first (lld §0).** Everything rests on "an LLM can author a
+  complete, identifiable, *anti-cliché* generative SCM (graph + functional forms + noise + a regime) from a
+  sentence." This has never been demonstrated end-to-end. A 1-day spike kills or confirms it **before** more design.
+- **Benchmark validity / circularity** — generator and agent-under-test may share LLM priors; defused by (a) scoring
+  a *statistical* discoverer, (b) the prior-only meter, (c) required anti-cliché worlds (hld §4a). Still the
+  highest-stakes open risk.
+- **NL → a *complete* generative SCM** (graph **and** explicit functional forms / **noise**) from prose alone — the
+  piece no public tool does. **Noise is a first-class designed knob** (the learnability dial), not an afterthought.
+- **Cost / scale** — per-world LLM authoring + a re-authoring loop + per-world reference-discovery runs (the
+  learnability gate) is real compute per world; "scale" is bounded by cost. Needs caching/batching/amortization.
+- *(Deferred with their milestones:)* temporal/regime authoring; the discrete-event substrate + topology→graph
+  projection; the control-gym magnitude problem; the conversational elicitation UX.

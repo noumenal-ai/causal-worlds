@@ -48,6 +48,13 @@ adapters can project it to external agents' schemas.
 
 ## 3. Two substrates, one IR (the key design decision)
 
+**[v0 DECISION 2026-06-22, post-review]** v0 ships **only the SCM-sampling substrate** — its answer-key is correct
+**by construction** (the declared graph *is* the sampler, so emitted data cannot contradict the key). The
+discrete-event substrate is **deferred**: its answer-key is *projected* from synthesized-code topology and is
+**unverifiable in fiction** (no external signal catches a projection mismatch → a benchmark that can silently lie),
+and it executes LLM-written code (a sandboxing problem). The table below is the *eventual* design; **only the first
+row is v0.**
+
 The executable substrate is **not one-size**; it splits by world type, unified by the IR:
 
 | World type | Substrate | Answer-key | Honesty signal |
@@ -58,20 +65,48 @@ The executable substrate is **not one-size**; it splits by world type, unified b
 Adopted **regardless of substrate:** DEVS-Gen's *staged decompose-then-synthesize* generation (robust vs.
 monolithic codegen) and *spec-derived trace conformance* (works for fiction — no real data needed).
 
-*Open:* the exact boundary (some worlds are mixed), and the fidelity of the topology→graph projection for the
-discrete-event answer-key.
+*Deferred (not v0):* the discrete-event substrate, its topology→answer-key-graph projection fidelity, and mixed
+worlds (scope §1a). The unverifiable projection (#2) is exactly why it waits.
 
-## 4. The honesty layer (fiction-specific)
+## 4. The honesty / validity layer — the novel core (designed & spiked FIRST)
 
-Because there is no real data to calibrate against, "correct" is replaced by **coherent + non-degenerate**:
-- **Structural:** acyclic (where required), typed/units consistent, declared bounds respected.
-- **Dynamic:** conservation / capacity constraints hold; effects follow causes; no impossible states (the
-  DEVS-Gen operational + micro/macro-causal trace checks).
-- **Learnability:** the answer-key is **identifiable** from the emitted data (not unidentifiable equivalence
-  classes) and **non-trivial** (a baseline discovery method does better than chance, and interventions move
-  outcomes) — otherwise the world is a useless benchmark.
+This is the project's hard core. It is designed and **spiked before the rest is built** (lld §0), not deferred —
+prior drafts named it and moved on; that was the main design error the review caught. Because there is no real data,
+"correct" is replaced by **coherent + identifiable + a *valid* benchmark**, all **measured**:
 
-Check failures generate structured feedback that drives a **bounded re-authoring loop**.
+- **Structural (mechanical):** acyclic; typed/units-consistent; declared bounds respected.
+- **Dynamic (mechanical):** conservation/capacity constraints hold; no impossible states.
+- **Identifiable *by design*, not by check:** the generator **owns the gym**, so it emits **interventional /
+  experimental data** alongside observational. Interventions break Markov-equivalence → the authored graph is
+  recoverable. We do **not** attempt to verify identifiability of an arbitrary SCM (a research problem); we
+  *provide the data that makes the authored graph identifiable*.
+- **Answer-key correct by construction:** SCM path only — the declared graph is the sampler, so the data cannot
+  contradict the key (no projection; that's why discrete-event is out of v0, §3).
+- **Non-trivial & learnable — *measured*:** run a **pinned reference discoverer** (e.g. PCMCI+ at a fixed config)
+  over N seeds; require recovered-SHD to beat a **random-graph null** by margin *m*. Fail (too noisy/unidentifiable,
+  or trivial) → reject & re-author.
+- **Noise is a first-class knob** (lld §E): too little → trivial/unidentifiable; too much → unrecoverable. Tuned so
+  the learnability gate passes. This is the single most important dial and was undesigned before.
+
+Check failures → structured feedback → **bounded re-authoring loop** (stop when all gates pass or the authoring
+budget is exhausted).
+
+## 4a. Benchmark validity — the circularity threat (taken seriously, not waved off)
+
+If the generator (an LLM) and the agent-under-test (an LLM causal reasoner) share priors, a high recovery score can
+reflect a **shared cheat-sheet**, not discovery-from-data. World-*coherence* ≠ benchmark-*validity*. Defended by
+design:
+
+1. **The validity-anchor discoverer is *statistical*** (PCMCI+/PC/NOTEARS) — it sees only data, so there is **no
+   shared brain**. An LLM-reasoning discoverer may be evaluated as a *separate track*, never as the validity anchor.
+2. **A prior-only baseline is a built-in validity meter:** a discoverer given variable names + prose but **no data**.
+   If it already scores high, the world is a cliché ⇒ down-weight / reject (scope §7.5).
+3. **Anti-cliché worlds are a generator *requirement*, not a hope:** sign-flips, hidden confounders, regime-dependent
+   sign changes, surprising lags — worlds where priors actively mislead, so only data + intervention recover the
+   truth. (Worked example in the review log; e.g. a "scarcity regime" where price↓ ⇒ demand↓.)
+
+This converts circularity from an unaddressed hole into a **measured, designed-against property** — the prior-only
+gap (statistical-discoverer score − prior-only score) is itself a reportable benchmark-quality metric.
 
 ## 5. The test-maker / test-taker split
 
@@ -92,8 +127,16 @@ and keeps any particular agent's internals out of this repo.
 ## 7. Non-functional
 
 - **Determinism:** seeded; same spec + seed → same world and data.
+- **Cost / scale (honest):** each world costs LLM authoring + a re-authoring loop + per-world reference-discovery
+  runs (the learnability gate). "Generate at scale" is **bounded by this cost** — not free. Mitigations: cache
+  authored specs, batch the gate runs, and gate-then-sample (sampling many trajectories from one admitted spec is
+  cheap; *authoring + admitting* a spec is the expensive part). Don't claim "infinite environments" without the
+  cost caveat.
 - **Language:** Python-first (the causal/gym ecosystem). An optional orchestration layer in another language is a
   later, separable concern.
+- **Dependency discipline:** mature deps (pgmpy, DoWhy) are real dependencies; **research repos (CausalPlayground,
+  TimeGraph) are treated as *patterns to reimplement*, not pinned dependencies** — fast-moving, uncertain
+  maintenance. "Compose the donors" is not free integration; v0 minimizes the live-dep surface.
 - **Provenance & honesty:** every artifact carries its generating spec, seed, and a fiction label.
 
 ## 8. Boundaries
