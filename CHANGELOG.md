@@ -3,6 +3,31 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] — 2026-06-23
+
+**The decisive experiment.** Proves the benchmark's central claim beyond the single `coffee` world:
+standard discovery collapses on our worlds where the reference interventional-CI grader holds.
+
+### Added
+- **Baseline suite** (`baselines`): PC, GES, FCI (`causal-learn`) and GIES (`gies`) wrapped behind the
+  `Discoverer` Protocol as adapters — lazy-imported (the `discover` extra), so the package imports and
+  CI run without them; graph-parsing logic is pure and unit-tested. `BaselineResult` carries directed
+  edges, bidirected (confounding) marks, and the skeleton for a fair cross-method comparison.
+- **Crossover eval** (`evals/baseline-crossover`): every benchmark world vs every method across seeds →
+  skeleton-SHD, directed F1, and *confounded-pair-kept-as-causal* (the trap). **Result (n=12): GO.**
+  Standard methods keep the hidden-confounded pair as causal in 7.3–10.0 of 12 worlds (PC/FCI/GIES) and
+  post 2–4× the skeleton error; the interventional grader stays at confounded-kept 0.33, SHD 1.31,
+  F1 0.91.
+- **Difficulty-vs-error analysis** — *honest negative*: name-guessability difficulty does not yet
+  predict discovery error (corr ~0.1); the hardness is structural (confounder+regime). Sharpens v0.4.
+- **Publication artifacts**: a technical blog post (`docs/blog-the-decisive-experiment.md`) and a
+  Framing-B paper skeleton (`paper/`).
+
+### Notes
+- `causal-learn`'s GES is numpy-2 incompatible (errors on every world) — reported, not hidden.
+
+[0.3.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.3.0
+
 ## [0.2.0] — 2026-06-23
 
 Closes the generative loop: **natural language in, an admitted causal world out**, plus persistence

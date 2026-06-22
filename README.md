@@ -97,6 +97,11 @@ mean directed SHD **1.25** / F1 **0.92** (the floor your discoverer should beat)
 self-describing bundle (`spec.json` / `data.npz` / `answer_key.json` / `manifest.json`) with full
 provenance. See [`benchmark/README.md`](benchmark/README.md).
 
+**Does it defeat the standard toolbox?** Yes — measured across the set: the standard discoverers (PC,
+FCI, GIES) report the hidden-confounded pair as a *causal* edge in 7–10 of 12 worlds while the reference
+interventional-CI grader almost never does (confounded-kept 0.33, F1 0.91). See the
+[baseline crossover](evals/baseline-crossover/).
+
 ## Built on the public domain
 
 Stands on the shoulders of (and learns from): [pgmpy](https://github.com/pgmpy/pgmpy),

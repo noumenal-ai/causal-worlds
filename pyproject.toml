@@ -90,9 +90,9 @@ files = ["src"]
 exclude = ["spikes/", "experiments/", "evals/"]
 plugins = ["pydantic.mypy"]
 
-# The LLM provider SDKs are an optional extra; keyless CI typechecks src without them installed.
+# Optional extras (LLM providers + the discovery stack); keyless CI typechecks src without them.
 [[tool.mypy.overrides]]
-module = ["instructor.*", "anthropic.*", "google.*"]
+module = ["instructor.*", "anthropic.*", "google.*", "causallearn.*", "gies.*"]
 ignore_missing_imports = true
 
 # ----------------------------------------------------------------------------

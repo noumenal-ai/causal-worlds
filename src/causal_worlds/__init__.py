@@ -2,6 +2,14 @@
 
 from causal_worlds._version import __version__
 from causal_worlds.artifact import LoadedBundle, Provenance, load_bundle, save_bundle
+from causal_worlds.baselines import (
+    BASELINES,
+    BaselineResult,
+    FciDiscoverer,
+    GesDiscoverer,
+    GiesDiscoverer,
+    PcDiscoverer,
+)
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
 from causal_worlds.discover import InterventionalCiDiscoverer
@@ -31,9 +39,11 @@ from causal_worlds.schema import (
 from causal_worlds.serde import WorldSpecModel, spec_from_json, spec_to_json
 
 __all__ = [
+    "BASELINES",
     "AdmittedWorld",
     "AnswerKey",
     "Author",
+    "BaselineResult",
     "BudgetExceededError",
     "CausalWorldsError",
     "Container",
@@ -44,14 +54,18 @@ __all__ = [
     "Edges",
     "FakeAuthor",
     "FakeJudge",
+    "FciDiscoverer",
     "Gate",
     "GateReport",
+    "GesDiscoverer",
+    "GiesDiscoverer",
     "InterventionalCiDiscoverer",
     "Judge",
     "LoadedBundle",
     "Mechanism",
     "NotAdmittedError",
     "NullTracer",
+    "PcDiscoverer",
     "Provenance",
     "Report",
     "Role",
