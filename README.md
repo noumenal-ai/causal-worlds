@@ -2,10 +2,19 @@
 
 **Generate a fictional-but-coherent causal *operation* from a plain-language description** — an executable
 simulator, the multivariate time-series it emits, and a **declared ground-truth causal structure** (the
-*answer-key*) — for building, perturbing, and **benchmarking causal-discovery and control agents against a known
-truth**.
+*answer-key*) — for **benchmarking causal-discovery agents against a known truth** (and, on the roadmap,
+stress-testing control agents under perturbation).
 
-> **Status: early / pre-release.** Design in progress — see [`docs/`](docs/). APIs and schema will change.
+> **Status: early / pre-release — design stage, no library yet.** APIs and schema will change.
+>
+> The core validity assumption — *can an LLM author an identifiable, **anti-cliché** causal world that a data-driven
+> method recovers, and that defeats a no-data prior?* — has been **spiked and confirmed** (see
+> [`spikes/`](spikes/) and [`docs/lld.md`](docs/lld.md) §0).
+>
+> **v0 scope = one honest thing:** a **causal-discovery benchmark** on the SCM path, where the answer-key is correct
+> *by construction* and structure recovery is scored against a *statistical* discoverer (no shared-LLM circularity).
+> The rest of the vision below — control / `do(x)` / counterfactual *scoring*, the describe-a-world experience, and
+> discrete-event worlds — is **roadmap, not yet built** (see [`docs/scope.md`](docs/scope.md) §1a).
 
 ## Why
 
