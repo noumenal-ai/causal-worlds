@@ -52,8 +52,9 @@ packages = ["src/causal_worlds"]
 [tool.ruff]
 line-length = 100
 target-version = "py313"
-# Research spikes are exploratory and NOT held to production lint (see docs/engineering.md §Research).
-extend-exclude = ["spikes", "experiments"]
+# Research spikes + eval harnesses are exploratory, NOT held to production lint (docs/engineering.md
+# §Research). Their *reports* (evals/*/report.json, README.md) are the shipped, reproducible evidence.
+extend-exclude = ["spikes", "experiments", "evals"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -86,7 +87,7 @@ convention = "google"
 python_version = "3.13"
 strict = true
 files = ["src"]
-exclude = ["spikes/", "experiments/"]
+exclude = ["spikes/", "experiments/", "evals/"]
 plugins = ["pydantic.mypy"]
 
 # The LLM provider SDKs are an optional extra; keyless CI typechecks src without them installed.

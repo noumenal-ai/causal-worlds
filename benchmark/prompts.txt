@@ -1,0 +1,19 @@
+# causal-worlds benchmark prompts — one operation per line (blank lines and # comments ignored).
+# Generate the set with:
+#   set -a && . ../.env && set +a
+#   uv run causal-worlds benchmark benchmark/prompts.txt benchmark/v0.2 --seed 7
+# A diverse spread of operations; each is authored into a fictional causal world with a hidden
+# confounder + a regime flip, gated, and graded. Fictional — not a model of any real system.
+
+A regional coffee chain with weekend demand swings, loyalty pricing, and variable supplier lead times.
+A hospital emergency department: triage staffing, patient inflow, bed availability, and wait times.
+A ride-hailing marketplace with surge pricing, driver supply, rider demand, and cancellations.
+A solar microgrid with battery storage, dynamic tariffs, weather swings, and household load.
+A contract manufacturing line: machine maintenance, throughput, defect rate, and on-time delivery.
+A SaaS support desk: ticket inflow, staffing, automation coverage, and customer churn.
+A last-mile delivery network: courier dispatch, traffic, package volume, and delivery SLA.
+A boutique hotel with dynamic room pricing, seasonal events, occupancy, and review scores.
+A grocery cold chain: refrigeration setpoints, energy cost, spoilage, and stockouts.
+A call-center workforce plan: shift scheduling, call volume, average handle time, and abandonment.
+A bike-share network: station rebalancing, dynamic pricing, weather, dock availability, and churn.
+A wastewater treatment plant: aeration control, inflow load, energy use, and effluent quality.
