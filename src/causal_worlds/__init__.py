@@ -12,6 +12,7 @@ from causal_worlds.baselines import (
 )
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
+from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
 from causal_worlds.evaluation import Report, directed_shd, f1, score, skeleton_shd
@@ -74,6 +75,7 @@ __all__ = [
     "ScmSubstrate",
     "Settings",
     "SpecError",
+    "StructuralDifficulty",
     "Substrate",
     "Term",
     "Tracer",
@@ -94,5 +96,6 @@ __all__ = [
     "skeleton_shd",
     "spec_from_json",
     "spec_to_json",
+    "structural_difficulty",
     "validate",
 ]

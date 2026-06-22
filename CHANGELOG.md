@@ -3,6 +3,27 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] — 2026-06-23
+
+**A structural-difficulty axis.** v0.3 showed name-guessability difficulty doesn't predict discovery
+error — the hardness is structural. This adds that axis and tests it honestly.
+
+### Added
+- **Structural difficulty** (`difficulty`): `structural_difficulty(spec)` scores discovery-hardness
+  from the structure — hidden confounders, confounded pairs, regime **sign-flips**, edge density — with
+  a headline trap-count `score`. Pure, deterministic, unit-tested.
+- Structural difficulty is now recorded in every admitted world's `manifest.json`.
+- **Re-analysis** (`evals/structural-difficulty`): reuses the crossover report (no new runs) to test
+  whether structural difficulty predicts the collapse.
+
+### Findings (honest)
+- At n=12 with a narrow difficulty range, **neither** name-guessability nor structural difficulty
+  cleanly predicts the *magnitude* of error (correlations −0.39…+0.14) — a statistical-power problem,
+  not a refutation. The v0.3 crossover (standard methods collapse, grader holds) is unaffected.
+  Resolving difficulty-predicts-error is deferred to the scaled set (v0.5).
+
+[0.4.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.4.0
+
 ## [0.3.0] — 2026-06-23
 
 **The decisive experiment.** Proves the benchmark's central claim beyond the single `coffee` world:

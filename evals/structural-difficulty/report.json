@@ -1,0 +1,149 @@
+{
+  "eval": "structural-difficulty",
+  "benchmark": "v0.2",
+  "source_crossover": "evals/baseline-crossover/report.json",
+  "rows": [
+    {
+      "world": "world_00",
+      "name_difficulty": 0.2222222222222222,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3.3333333333333335,
+      "obs_f1": 0.6298872785829308,
+      "interv_f1": 0.8750000000000001,
+      "interv_advantage": 0.2451127214170693
+    },
+    {
+      "world": "world_01",
+      "name_difficulty": 0.2857142857142857,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 2.888888888888889,
+      "obs_f1": 0.7283475783475784,
+      "interv_f1": 0.9090909090909091,
+      "interv_advantage": 0.1807433307433307
+    },
+    {
+      "world": "world_02",
+      "name_difficulty": 0.33333333333333337,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 6.444444444444445,
+      "obs_f1": 0.5908511852784298,
+      "interv_f1": 0.9473684210526316,
+      "interv_advantage": 0.3565172357742018
+    },
+    {
+      "world": "world_03",
+      "name_difficulty": 0.368421052631579,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3,
+      "obs_f1": 0.7151211361737677,
+      "interv_f1": 0.9411764705882353,
+      "interv_advantage": 0.22605533441446757
+    },
+    {
+      "world": "world_04",
+      "name_difficulty": 0.17647058823529405,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3,
+      "obs_f1": 0.6270739064856712,
+      "interv_f1": 0.9333333333333333,
+      "interv_advantage": 0.30625942684766216
+    },
+    {
+      "world": "world_05",
+      "name_difficulty": 0.4444444444444444,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3.2222222222222223,
+      "obs_f1": 0.8031810294968189,
+      "interv_f1": 0.901098901098901,
+      "interv_advantage": 0.0979178716020821
+    },
+    {
+      "world": "world_06",
+      "name_difficulty": 0.20000000000000007,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3.6666666666666665,
+      "obs_f1": 0.5882352941176471,
+      "interv_f1": 0.923076923076923,
+      "interv_advantage": 0.33484162895927594
+    },
+    {
+      "world": "world_07",
+      "name_difficulty": 0.2592592592592594,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3.2222222222222223,
+      "obs_f1": 0.6907009567111869,
+      "interv_f1": 0.9565217391304348,
+      "interv_advantage": 0.2658207824192479
+    },
+    {
+      "world": "world_08",
+      "name_difficulty": 0.26315789473684226,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 4.444444444444445,
+      "obs_f1": 0.5841919613849439,
+      "interv_f1": 0.9315789473684211,
+      "interv_advantage": 0.34738698598347717
+    },
+    {
+      "world": "world_09",
+      "name_difficulty": 0.33333333333333337,
+      "structural_score": 2.0,
+      "confounded_pairs": 1,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3.111111111111111,
+      "obs_f1": 0.5596255596255596,
+      "interv_f1": 0.9090909090909091,
+      "interv_advantage": 0.34946534946534946
+    },
+    {
+      "world": "world_10",
+      "name_difficulty": 0.2857142857142857,
+      "structural_score": 1.0,
+      "confounded_pairs": 0,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 4.666666666666667,
+      "obs_f1": 0.4144522144522144,
+      "interv_f1": 0.8571428571428571,
+      "interv_advantage": 0.4426906426906427
+    },
+    {
+      "world": "world_11",
+      "name_difficulty": 0.1428571428571429,
+      "structural_score": 1.0,
+      "confounded_pairs": 0,
+      "sign_flips": 1,
+      "obs_skeleton_shd": 3.2222222222222223,
+      "obs_f1": 0.5910972068866805,
+      "interv_f1": 0.875,
+      "interv_advantage": 0.28390279311331945
+    }
+  ],
+  "correlations": {
+    "structural_vs_obs_skeleton_shd": -0.1168087080561995,
+    "structural_vs_interventional_advantage": -0.39226646123065906,
+    "name_vs_obs_skeleton_shd": 0.1373569848704175,
+    "name_vs_interventional_advantage": -0.3801396726314294
+  },
+  "verdict": {
+    "finding": "INCONCLUSIVE at n=12 \u2014 neither name-guessability nor structural difficulty cleanly predicts observational error on the current set (correlations span -0.39..+0.14). The difficulty range is narrow and the sample tiny; the structural axis is shipped as infrastructure, but resolving whether difficulty predicts the collapse needs the scaled set with a deliberate difficulty spread (v0.5: 40+ worlds).",
+    "note": "The crossover itself (v0.3) is robust and unaffected \u2014 standard methods collapse, the interventional grader holds. What's unresolved is only whether a difficulty *scalar* predicts the magnitude of that collapse, which is a statistical-power question."
+  }
+}

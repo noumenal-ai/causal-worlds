@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 
 from causal_worlds._version import __version__
+from causal_worlds.difficulty import structural_difficulty
 from causal_worlds.generate import AdmittedWorld
 from causal_worlds.sample import build_substrate
 from causal_worlds.schema import WorldSpec, answer_key
@@ -84,6 +85,7 @@ def _manifest(
         "grader_version": provenance.grader_version,
         "difficulty": report.difficulty,
         "faithfulness": report.faithfulness,
+        "structural_difficulty": asdict(structural_difficulty(world.spec)),
         "grade": asdict(report.grade) if report.grade is not None else None,
         "variables": list(columns),
     }
