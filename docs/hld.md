@@ -45,6 +45,10 @@ Everything routes through a single **world-spec / answer-key schema** (an open, 
   *anti-cliché lever* (spike: P→D = −1 promo / +1 scarcity, a sign-flip by regime).
 - **Intervention surface** — every variable is `do()`-able (we own the gym). This is *why* the answer-key is
   identifiable by construction (§4) — interventional data is always available.
+- **Latent / confounded relations** *(added from the §4d grader result)* — hidden variables are first-class, and a
+  pair confounded by a hidden common cause is marked as a **confounded (bidirected) relation, NOT a causal edge.**
+  The answer-key must score this distinctly (a grader that calls it a causal edge is *wrong*), and only
+  interventions can tell confounding from causation.
 
 The spec is both the **build input** to the compiler *and*, once frozen, the **answer-key** the harness scores
 against. Keeping one schema is what makes scoring a recovered structure a trivial graph comparison. Export
@@ -216,6 +220,28 @@ version is part of the artifact.*
 *(Knob values — N, m, δ, K, j, noise defaults — are pinned in lld; the spike gives starting points: null ≈ 7.5,
 prior-only gap ≥ ~2 edges on the example world.)*
 
+### 4d. Vetted-grader result (build-task-1 spike, 2026-06-22) — *not* "just swap in GIES"
+
+Ran off-the-shelf discovery on the trap world ([`spikes/spike_grader.py`](../spikes/spike_grader.py); causal-learn
+PC/GES/FCI + `gies`/GIES on a py3.13 venv):
+- **Easy/textbook world (e-commerce):** PC and GIES **nail it (SHD 0)** — good calibration; vetted methods get easy
+  worlds right.
+- **Hard world (hidden confounder + sign-flip): the whole standard toolbox FAILS.** Observational **PC** keeps the
+  spurious confounded edge (SHD 2); **vetted interventional GIES *also* keeps it** (SHD 2 — it assumes **causal
+  sufficiency**, so do-data can't make a score search drop a latent-confounded edge); **GES** crashes on numpy-2 (a
+  *real-build env* note); **FCI** (latent-aware) didn't cleanly flag it either. The only thing that removed it was
+  spike #2's **interventional independence test** (`do(O)→S≈0`).
+
+**Consequences (these revise the build plan):**
+1. The benchmark is **genuinely non-trivial** — it defeats the standard toolbox.
+2. The gym's **interventional data is *necessary*, not just nice** (#5, vindicated harder).
+3. **Build-task-1's grader is NOT a stock GIES call** — it must be an **interventional-CI discoverer**
+   (FCI-family-with-interventions, or a hardened version of the do()-CI test), because the interesting worlds have
+   hidden confounders that violate GES/GIES's sufficiency assumption.
+4. **Schema implication:** a hidden-confounder world is **not** a clean DAG over observed variables — the answer-key
+   must represent **confounding** (a latent / bidirected relation), and grading must use **interventions** to
+   distinguish confounding from causation. (Updates the §2 schema: add a latent/confounded relation type.)
+
 ## 5. The test-maker / test-taker split
 
 `causal-worlds` is the **test-maker** (worlds + answer-keys). The **causal-discovery / control agent under test is
@@ -267,6 +293,8 @@ output dependable.
    self-prior had understated it (≈1). The author works at small scale; the prior/judge must be a different model
    family (§4a). *Remaining:* larger / structurally-harder worlds + the within-K re-author loop against live gates.
    (lld §0b.)
-7. **Build-task-1 (then):** harden the §4b discoverer into the **pinned, versioned** reference discoverer (vetted
-   GIES lib) + a **world-diversity sweep**. Note the staged spike discoverer couples reachability→edge (errors
-   compound) — a vetted GIES is more robust.
+7. **Build-task-1 [partly validated 2026-06-22 — plan REVISED]:** the reference discoverer must be an
+   **interventional-CI** method, **not** a stock GES/GIES — validated (§4d): PC/GES/GIES/FCI all fail the
+   hidden-confounder trap; only the interventional do()-CI test removed the spurious edge. So build-task-1 =
+   *harden the do()-CI / FCI-with-interventions approach* into the **pinned, versioned** grader + a
+   **world-diversity sweep**. (Also: GES is numpy-2-broken — the real build env must pin a working stack.)
