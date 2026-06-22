@@ -1,7 +1,5 @@
 """The causal-worlds command-line interface (the construction-from-use edge)."""
 
-from __future__ import annotations
-
 import typer
 
 from causal_worlds import __version__

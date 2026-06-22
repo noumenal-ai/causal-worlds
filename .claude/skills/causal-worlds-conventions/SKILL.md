@@ -26,6 +26,9 @@ Mix of engineering + research; CLI-first (typer); Gemini is an *independent* jud
   news-up collaborators.
 - **Structure:** `src/causal_worlds/<feature>/`; tests mirror; third-party imports only inside a feature's adapter.
 - **Docstrings:** Google style. **Type everything** (mypy strict).
+- **`from __future__ import annotations` only when needed** (TYPE_CHECKING-only annotation imports / forward refs);
+  **never** in typer CLI or pydantic modules (they read annotations at runtime). 3.13 needs no future import for
+  `X | None` / `tuple[...]`.
 
 ## Before you commit — run the gate (it must be green)
 ```bash

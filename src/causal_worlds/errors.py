@@ -4,8 +4,6 @@ Every error subclasses :class:`CausalWorldsError`. We **fail loud**: a missing c
 malformed input raises — we never fabricate a plausible-looking value.
 """
 
-from __future__ import annotations
-
 
 class CausalWorldsError(Exception):
     """Base class for every error raised by causal-worlds."""

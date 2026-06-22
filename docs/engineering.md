@@ -69,6 +69,10 @@ long/argument-heavy functions, feature envy / Demeter violations, magic numbers,
 - Depend on the `Protocol`, inject the concrete impl (constructor injection). The concrete `causal-learn`/`gies`/
   Gemini code lives in **adapters** that satisfy the Protocol — *that* is the only place third-party types appear.
 - **SRP** at the module level: one capability per feature module (§5).
+- **`from __future__ import annotations` only when it earns it** — i.e. TYPE_CHECKING-only annotation imports or
+  forward references (e.g. `protocols.py`). **Avoid it where annotations are read at runtime** — **typer** CLIs and
+  **pydantic** models both introspect real annotations, and stringized annotations break them. On 3.13, plain
+  `X | None` / `tuple[...]` need no future import.
 
 ## 4. Design patterns (earned, cited)
 Use, and *name in the code/PR*, only these — each maps to a real variation point:

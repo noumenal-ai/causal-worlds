@@ -7,8 +7,6 @@ never stored separately, so the spec and the key can never disagree.
 :func:`validate` is the static T1 gate: it rejects ill-formed specs before any sampling happens.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from enum import StrEnum
 
