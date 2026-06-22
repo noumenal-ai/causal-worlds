@@ -62,3 +62,7 @@ Stands on the shoulders of (and learns from): [pgmpy](https://github.com/pgmpy/p
 ## License
 
 [MIT](LICENSE).
+
+---
+
+An open-source project from [Noumenal](https://github.com/noumenal-ai).
