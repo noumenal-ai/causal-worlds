@@ -30,3 +30,6 @@ env/
 /out/
 /scratch/
 *.log
+
+# coverage data
+.coverage
