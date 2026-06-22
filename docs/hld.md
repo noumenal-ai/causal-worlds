@@ -124,11 +124,22 @@ previously-TBD knobs:
 | **Reference discoverer** | must be a proper **PC-family adjacency search** (a full-conditioning/moral-graph version over-connects — a real bug the spike caught and fixed) **and regime/intervention-aware** (a naive linear discoverer is blind to sign-flips). |
 | **Noise** | σ ≈ 0.3 gave clean separation; it is the learnability dial (too low → trivial, too high → unrecoverable). |
 
-**Honest caveat (what the spike does NOT settle).** Its interventional discoverer is *hand-targeted* at the two
-planted traps — so it proves interventional data **contains the information** to fix what observational + priors
-miss, **not** that a *general* interventional-discovery algorithm recovers the graph automatically. **First
-HLD/LLD task this unblocks:** a principled interventional procedure (GIES / systematic per-variable do-tests), not
-a per-trap patch.
+**Spike #2 (2026-06-22) — caveat CLOSED: a *general* procedure recovers it.**
+[`spikes/spike_coffee_general.py`](../spikes/spike_coffee_general.py) replaced spike #1's hand-targeted step with a
+**uniform interventional discoverer applied identically to every variable** (no per-trap coding) and recovers the
+**directed** graph at **SHD 0**, **robustly: 20/20 across 5 seeds × 4 noise levels (σ 0.2–0.8)**. The rule (the
+shape of the harness's reference discoverer):
+1. **Reachability:** `do(v)` data → `w` is an effect of `v` iff `do(v)` moves `w` (marginal, regime-aware → no
+   collider bias).
+2. **Direct edge `v→w`** iff, in the `do(v)` data, `w` still depends on `v` given **`w`'s (discovered) ancestors** —
+   ancestors block indirect paths *in* and are never `w`'s descendants, so **no collider is opened**.
+3. Every test **regime-stratified** → the P→D sign-flip is caught (pooled it cancels to ~0).
+
+**The load-bearing lesson:** *the conditioning set is the whole game* — "intervene + condition on **everything**"
+over-connects (collider bias → SHD 6, a real failure the spike hit); **"ancestors of the target" is the right set.**
+**Remaining boundary (honest):** one world *structure*, n=8000 — robust to seed/noise but **not yet swept over world
+diversity** (other DAGs/sizes/confounding), and it's a hand-rolled simplification of GES/GIES. → **build-task-1:**
+harden this rule into the reference discoverer, swap in a vetted GIES-family lib, and run a world-diversity sweep.
 
 ## 5. The test-maker / test-taker split
 

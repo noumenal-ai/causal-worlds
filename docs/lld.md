@@ -27,6 +27,14 @@ aware discoverer; σ noise dial) are folded into **hld §4b**. **Caveat:** the s
 hand-targeted at the planted traps — it proves do-data is *sufficient*, not that a *general* algorithm auto-recovers
 → **the first build task is a principled interventional procedure** (GIES / systematic do-tests), see §F.
 
+**RESULT #2 (2026-06-22): general procedure CONFIRMED.** [`spikes/spike_coffee_general.py`](../spikes/spike_coffee_general.py)
+replaced the hand-targeted step with a **uniform** rule over every variable — reachability via `do(v)` effects →
+direct edge iff target depends on intervened var **given the target's discovered ancestors** (never its descendants
+→ no collider) → regime-stratified. **Directed SHD 0, robust 20/20 across 5 seeds × 4 noise levels.** Key lesson:
+*the conditioning set is the whole game* ("condition on everything" → collider over-connection, SHD 6). Folded into
+hld §4b. **Build-task-1 (sharp now):** harden this rule into the reference discoverer + a vetted GIES-family lib +
+a **world-diversity sweep** (the one boundary the spike did not cross: other DAGs/sizes/confounding).
+
 ## A. The world-spec / answer-key schema  *(HLD §2, §9.1)*
 
 The single IR. To pin down:
