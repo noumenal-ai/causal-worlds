@@ -1,0 +1,110 @@
+{
+  "variables": [
+    {
+      "name": "service_frequency",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "fare_promo",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "traffic_demand",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "ridership",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "bunching",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rush_hour",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "on_time_performance",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "ridership",
+      "terms": [
+        {
+          "parent": "service_frequency",
+          "coeff": 1.3
+        },
+        {
+          "parent": "fare_promo",
+          "coeff": 1.0
+        },
+        {
+          "parent": "traffic_demand",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "bunching",
+      "terms": [
+        {
+          "parent": "service_frequency",
+          "coeff": 0.9
+        },
+        {
+          "parent": "traffic_demand",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "on_time_performance",
+      "terms": [
+        {
+          "parent": "service_frequency",
+          "coeff": 0.8
+        },
+        {
+          "parent": "bunching",
+          "coeff": -1.0
+        },
+        {
+          "parent": "ridership",
+          "coeff": -0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "rush_hour",
+      "regime_terms": [
+        {
+          "parent": "service_frequency",
+          "coeff": -0.9
+        },
+        {
+          "parent": "bunching",
+          "coeff": -1.0
+        },
+        {
+          "parent": "ridership",
+          "coeff": -0.6
+        }
+      ]
+    }
+  ]
+}

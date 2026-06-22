@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "demand",
+      "complaints"
+    ],
+    [
+      "demand",
+      "flow_setpoint"
+    ],
+    [
+      "flow_setpoint",
+      "pump_energy"
+    ],
+    [
+      "season_load",
+      "demand"
+    ],
+    [
+      "season_load",
+      "supply_temp"
+    ],
+    [
+      "supply_temp",
+      "complaints"
+    ],
+    [
+      "supply_temp",
+      "pump_energy"
+    ],
+    [
+      "tariff_regime",
+      "complaints"
+    ],
+    [
+      "tariff_regime",
+      "pump_energy"
+    ]
+  ],
+  "confounded": [
+    [
+      "flow_setpoint",
+      "supply_temp"
+    ]
+  ]
+}

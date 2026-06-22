@@ -1,0 +1,29 @@
+{
+  "edges": [
+    [
+      "agents_scheduled",
+      "occupancy"
+    ],
+    [
+      "avg_handle_time",
+      "occupancy"
+    ],
+    [
+      "avg_wait_time",
+      "abandonment_rate"
+    ],
+    [
+      "call_volume",
+      "avg_handle_time"
+    ],
+    [
+      "call_volume",
+      "occupancy"
+    ],
+    [
+      "occupancy",
+      "avg_wait_time"
+    ]
+  ],
+  "confounded": []
+}

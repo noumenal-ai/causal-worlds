@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "fan_speed",
+      "energy_cost"
+    ],
+    [
+      "fan_speed",
+      "spoilage"
+    ],
+    [
+      "fan_speed",
+      "stockouts"
+    ],
+    [
+      "peak_tariff",
+      "energy_cost"
+    ],
+    [
+      "peak_tariff",
+      "stockouts"
+    ],
+    [
+      "setpoint",
+      "energy_cost"
+    ],
+    [
+      "setpoint",
+      "spoilage"
+    ],
+    [
+      "supplier_grade",
+      "spoilage"
+    ],
+    [
+      "supplier_grade",
+      "stockouts"
+    ]
+  ],
+  "confounded": [
+    [
+      "energy_cost",
+      "spoilage"
+    ]
+  ]
+}

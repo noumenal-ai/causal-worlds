@@ -1,0 +1,41 @@
+{
+  "edges": [
+    [
+      "bunching",
+      "on_time_performance"
+    ],
+    [
+      "fare_promo",
+      "ridership"
+    ],
+    [
+      "ridership",
+      "on_time_performance"
+    ],
+    [
+      "rush_hour",
+      "on_time_performance"
+    ],
+    [
+      "service_frequency",
+      "bunching"
+    ],
+    [
+      "service_frequency",
+      "on_time_performance"
+    ],
+    [
+      "service_frequency",
+      "ridership"
+    ],
+    [
+      "traffic_demand",
+      "bunching"
+    ],
+    [
+      "traffic_demand",
+      "ridership"
+    ]
+  ],
+  "confounded": []
+}

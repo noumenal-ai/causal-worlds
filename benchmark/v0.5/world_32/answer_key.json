@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "burner_temp",
+      "plate_waste"
+    ],
+    [
+      "prep_staff",
+      "service_time"
+    ],
+    [
+      "rush_mode",
+      "service_time"
+    ],
+    [
+      "rush_mode",
+      "ticket_rate"
+    ],
+    [
+      "service_time",
+      "plate_waste"
+    ],
+    [
+      "supplier_grade",
+      "plate_waste"
+    ],
+    [
+      "ticket_rate",
+      "service_time"
+    ]
+  ],
+  "confounded": [
+    [
+      "prep_staff",
+      "ticket_rate"
+    ]
+  ]
+}

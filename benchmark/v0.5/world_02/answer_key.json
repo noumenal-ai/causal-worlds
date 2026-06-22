@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "cancel_rate",
+      "city_mood"
+    ],
+    [
+      "demand",
+      "cancel_rate"
+    ],
+    [
+      "driver_supply",
+      "cancel_rate"
+    ],
+    [
+      "incentive",
+      "driver_supply"
+    ],
+    [
+      "peak_window",
+      "driver_supply"
+    ],
+    [
+      "surge_mult",
+      "city_mood"
+    ],
+    [
+      "surge_mult",
+      "driver_supply"
+    ],
+    [
+      "weather_shock",
+      "city_mood"
+    ],
+    [
+      "weather_shock",
+      "demand"
+    ]
+  ],
+  "confounded": [
+    [
+      "cancel_rate",
+      "incentive"
+    ],
+    [
+      "demand",
+      "surge_mult"
+    ]
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "edges": [
+    [
+      "curtailment",
+      "power_output"
+    ],
+    [
+      "downtime",
+      "turbine_avail"
+    ],
+    [
+      "grid_demand",
+      "curtailment"
+    ],
+    [
+      "maint_freq",
+      "downtime"
+    ],
+    [
+      "turbine_avail",
+      "power_output"
+    ],
+    [
+      "wind_speed",
+      "power_output"
+    ]
+  ],
+  "confounded": []
+}

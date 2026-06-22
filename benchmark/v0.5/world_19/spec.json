@@ -1,0 +1,160 @@
+{
+  "variables": [
+    {
+      "name": "cooling_setpoint",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "pump_speed",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "it_load",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "ambient_temp",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "heat_wave",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "grid_strain",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "thermal_alarms",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "pue",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "cooling_setpoint",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ambient_temp",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "heat_wave",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "it_load",
+      "terms": [
+        {
+          "parent": "grid_strain",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "pump_speed",
+      "terms": [
+        {
+          "parent": "cooling_setpoint",
+          "coeff": -1.1
+        },
+        {
+          "parent": "ambient_temp",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "thermal_alarms",
+      "terms": [
+        {
+          "parent": "cooling_setpoint",
+          "coeff": 1.3
+        },
+        {
+          "parent": "it_load",
+          "coeff": 1.0
+        },
+        {
+          "parent": "ambient_temp",
+          "coeff": 0.7
+        },
+        {
+          "parent": "pump_speed",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "pue",
+      "terms": [
+        {
+          "parent": "pump_speed",
+          "coeff": 1.0
+        },
+        {
+          "parent": "it_load",
+          "coeff": -0.6
+        },
+        {
+          "parent": "grid_strain",
+          "coeff": 0.9
+        },
+        {
+          "parent": "cooling_setpoint",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "heat_wave",
+      "regime_terms": [
+        {
+          "parent": "pump_speed",
+          "coeff": 1.0
+        },
+        {
+          "parent": "it_load",
+          "coeff": -0.6
+        },
+        {
+          "parent": "grid_strain",
+          "coeff": 0.9
+        },
+        {
+          "parent": "cooling_setpoint",
+          "coeff": 1.1
+        }
+      ]
+    }
+  ]
+}

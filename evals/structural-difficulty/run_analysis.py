@@ -10,6 +10,7 @@ Run from the repo root (keyless): uv run python evals/structural-difficulty/run_
 """
 
 import json
+import sys
 from pathlib import Path
 from statistics import correlation, mean
 
@@ -17,9 +18,13 @@ from causal_worlds.artifact import load_bundle
 from causal_worlds.difficulty import structural_difficulty
 
 ROOT = Path(__file__).resolve().parents[2]
-BENCH = ROOT / "benchmark" / "v0.2"
-CROSSOVER = ROOT / "evals" / "baseline-crossover" / "report.json"
-OUT = Path(__file__).parent
+BENCH = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "benchmark" / "v0.2"
+_XOVER_DIR = ROOT / "evals" / "baseline-crossover"
+# v0.2's crossover report lives at the top level; later sets are nested by name.
+CROSSOVER = next(
+    p for p in (_XOVER_DIR / BENCH.name / "report.json", _XOVER_DIR / "report.json") if p.exists()
+)
+OUT = Path(__file__).parent / BENCH.name
 OBSERVATIONAL = ["pc", "fci", "gies"]  # ges errored in the crossover (numpy-2)
 
 

@@ -1,0 +1,92 @@
+{
+  "variables": [
+    {
+      "name": "scheduled_jobs",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "node_utilization",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "scene_complexity",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "render_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rerun_count",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "node_utilization",
+      "terms": [
+        {
+          "parent": "scheduled_jobs",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "render_time",
+      "terms": [
+        {
+          "parent": "node_utilization",
+          "coeff": 0.9
+        },
+        {
+          "parent": "scene_complexity",
+          "coeff": 1.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rerun_count",
+      "terms": [
+        {
+          "parent": "render_time",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "render_time",
+          "coeff": -1.2
+        },
+        {
+          "parent": "rerun_count",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

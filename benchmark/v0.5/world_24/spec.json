@@ -1,0 +1,92 @@
+{
+  "variables": [
+    {
+      "name": "reviewers",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "inflow",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "backlog",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "avg_handle_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "error_rate",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "reviewers",
+          "coeff": 1.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "backlog",
+      "terms": [
+        {
+          "parent": "inflow",
+          "coeff": 1.2
+        },
+        {
+          "parent": "throughput",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "avg_handle_time",
+      "terms": [
+        {
+          "parent": "backlog",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "error_rate",
+      "terms": [
+        {
+          "parent": "backlog",
+          "coeff": 0.8
+        },
+        {
+          "parent": "avg_handle_time",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

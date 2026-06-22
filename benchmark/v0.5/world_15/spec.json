@@ -1,0 +1,109 @@
+{
+  "variables": [
+    {
+      "name": "price_per_kwh",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ambient_temp",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "local_event_load",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "session_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "queue_length",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "grid_draw",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "peak_penalty",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "session_demand",
+      "terms": [
+        {
+          "parent": "price_per_kwh",
+          "coeff": -1.4
+        },
+        {
+          "parent": "ambient_temp",
+          "coeff": 0.6
+        },
+        {
+          "parent": "local_event_load",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "queue_length",
+      "terms": [
+        {
+          "parent": "session_demand",
+          "coeff": 1.1
+        },
+        {
+          "parent": "local_event_load",
+          "coeff": 1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "grid_draw",
+      "terms": [
+        {
+          "parent": "session_demand",
+          "coeff": 1.2
+        },
+        {
+          "parent": "ambient_temp",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "peak_penalty",
+      "terms": [
+        {
+          "parent": "grid_draw",
+          "coeff": 1.5
+        },
+        {
+          "parent": "queue_length",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "variables": [
+    {
+      "name": "slotting_quality",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "labor_hours",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "order_volume",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "automation_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "worker_fatigue",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "pick_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "mispick_rate",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "pick_rate",
+      "terms": [
+        {
+          "parent": "slotting_quality",
+          "coeff": 1.3
+        },
+        {
+          "parent": "labor_hours",
+          "coeff": 0.9
+        },
+        {
+          "parent": "worker_fatigue",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "pick_rate",
+          "coeff": 1.5
+        },
+        {
+          "parent": "order_volume",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "mispick_rate",
+      "terms": [
+        {
+          "parent": "labor_hours",
+          "coeff": 0.8
+        },
+        {
+          "parent": "slotting_quality",
+          "coeff": -0.9
+        },
+        {
+          "parent": "worker_fatigue",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "automation_regime",
+      "regime_terms": [
+        {
+          "parent": "labor_hours",
+          "coeff": -0.8
+        },
+        {
+          "parent": "slotting_quality",
+          "coeff": -0.9
+        },
+        {
+          "parent": "worker_fatigue",
+          "coeff": 1.2
+        }
+      ]
+    }
+  ]
+}

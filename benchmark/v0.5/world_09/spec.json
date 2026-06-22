@@ -1,0 +1,92 @@
+{
+  "variables": [
+    {
+      "name": "agents_scheduled",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "call_volume",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "avg_handle_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "occupancy",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "avg_wait_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "abandonment_rate",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "occupancy",
+      "terms": [
+        {
+          "parent": "call_volume",
+          "coeff": 1.2
+        },
+        {
+          "parent": "agents_scheduled",
+          "coeff": -1.4
+        },
+        {
+          "parent": "avg_handle_time",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "avg_handle_time",
+      "terms": [
+        {
+          "parent": "call_volume",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "avg_wait_time",
+      "terms": [
+        {
+          "parent": "occupancy",
+          "coeff": 1.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "abandonment_rate",
+      "terms": [
+        {
+          "parent": "avg_wait_time",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

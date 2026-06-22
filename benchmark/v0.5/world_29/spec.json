@@ -1,0 +1,178 @@
+{
+  "variables": [
+    {
+      "name": "crane_alloc",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "gate_policy",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "yard_zone_mix",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "truck_flow",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "dwell_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "congestion",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "demurrage_cost",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "tide_window",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "labor_climate",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "supply_pressure",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "crane_alloc",
+      "terms": [
+        {
+          "parent": "labor_climate",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "gate_policy",
+      "terms": [
+        {
+          "parent": "supply_pressure",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "yard_zone_mix",
+      "terms": [
+        {
+          "parent": "supply_pressure",
+          "coeff": 1.3
+        },
+        {
+          "parent": "gate_policy",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "truck_flow",
+      "terms": [
+        {
+          "parent": "gate_policy",
+          "coeff": 1.2
+        },
+        {
+          "parent": "labor_climate",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "congestion",
+      "terms": [
+        {
+          "parent": "truck_flow",
+          "coeff": 1.0
+        },
+        {
+          "parent": "yard_zone_mix",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "tide_window",
+      "regime_terms": [
+        {
+          "parent": "truck_flow",
+          "coeff": -0.9
+        },
+        {
+          "parent": "yard_zone_mix",
+          "coeff": 0.7
+        }
+      ]
+    },
+    {
+      "target": "dwell_time",
+      "terms": [
+        {
+          "parent": "crane_alloc",
+          "coeff": -1.4
+        },
+        {
+          "parent": "congestion",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "tide_window",
+      "regime_terms": [
+        {
+          "parent": "crane_alloc",
+          "coeff": 1.0
+        },
+        {
+          "parent": "congestion",
+          "coeff": 1.1
+        }
+      ]
+    },
+    {
+      "target": "demurrage_cost",
+      "terms": [
+        {
+          "parent": "dwell_time",
+          "coeff": 1.5
+        },
+        {
+          "parent": "congestion",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

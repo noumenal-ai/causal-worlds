@@ -1,0 +1,169 @@
+{
+  "variables": [
+    {
+      "name": "route_density",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "sort_speed",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "bin_audits",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "contamination",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "season_shift",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "unit_cost",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "labor_pool",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "feedstock_grade",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "route_density",
+      "terms": [
+        {
+          "parent": "labor_pool",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "sort_speed",
+      "terms": [
+        {
+          "parent": "labor_pool",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "bin_audits",
+      "terms": [
+        {
+          "parent": "feedstock_grade",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "contamination",
+      "terms": [
+        {
+          "parent": "bin_audits",
+          "coeff": -1.2
+        },
+        {
+          "parent": "route_density",
+          "coeff": 0.6
+        },
+        {
+          "parent": "feedstock_grade",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "season_shift",
+      "regime_terms": [
+        {
+          "parent": "bin_audits",
+          "coeff": 1.0
+        },
+        {
+          "parent": "route_density",
+          "coeff": 0.6
+        },
+        {
+          "parent": "feedstock_grade",
+          "coeff": -1.0
+        }
+      ]
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "sort_speed",
+          "coeff": 1.3
+        },
+        {
+          "parent": "contamination",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "unit_cost",
+      "terms": [
+        {
+          "parent": "route_density",
+          "coeff": 1.1
+        },
+        {
+          "parent": "throughput",
+          "coeff": -1.0
+        },
+        {
+          "parent": "contamination",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "season_shift",
+      "regime_terms": [
+        {
+          "parent": "route_density",
+          "coeff": -0.8
+        },
+        {
+          "parent": "throughput",
+          "coeff": -1.0
+        },
+        {
+          "parent": "contamination",
+          "coeff": 0.7
+        }
+      ]
+    }
+  ]
+}

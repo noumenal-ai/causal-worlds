@@ -1,0 +1,33 @@
+{
+  "edges": [
+    [
+      "ambient_temp",
+      "grid_draw"
+    ],
+    [
+      "ambient_temp",
+      "session_demand"
+    ],
+    [
+      "grid_draw",
+      "peak_penalty"
+    ],
+    [
+      "price_per_kwh",
+      "session_demand"
+    ],
+    [
+      "queue_length",
+      "peak_penalty"
+    ],
+    [
+      "session_demand",
+      "grid_draw"
+    ],
+    [
+      "session_demand",
+      "queue_length"
+    ]
+  ],
+  "confounded": []
+}

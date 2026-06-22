@@ -1,0 +1,123 @@
+{
+  "variables": [
+    {
+      "name": "queue_batch_size",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "nozzle_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "printer_uptime",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "ambient_humidity",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "reject_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "material_quality",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "filament_supply_health",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "printer_uptime",
+      "terms": [
+        {
+          "parent": "filament_supply_health",
+          "coeff": 1.3
+        },
+        {
+          "parent": "ambient_humidity",
+          "coeff": -0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "queue_batch_size",
+          "coeff": 1.1
+        },
+        {
+          "parent": "printer_uptime",
+          "coeff": 1.4
+        },
+        {
+          "parent": "nozzle_temp",
+          "coeff": 0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "reject_rate",
+      "terms": [
+        {
+          "parent": "nozzle_temp",
+          "coeff": -0.9
+        },
+        {
+          "parent": "queue_batch_size",
+          "coeff": 0.6
+        },
+        {
+          "parent": "material_quality",
+          "coeff": -1.2
+        },
+        {
+          "parent": "filament_supply_health",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "ambient_humidity",
+      "regime_terms": [
+        {
+          "parent": "nozzle_temp",
+          "coeff": 0.9
+        },
+        {
+          "parent": "queue_batch_size",
+          "coeff": 0.6
+        },
+        {
+          "parent": "material_quality",
+          "coeff": -1.2
+        },
+        {
+          "parent": "filament_supply_health",
+          "coeff": -1.0
+        }
+      ]
+    }
+  ]
+}

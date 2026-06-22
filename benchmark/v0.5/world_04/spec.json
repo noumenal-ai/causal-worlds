@@ -1,0 +1,130 @@
+{
+  "variables": [
+    {
+      "name": "maintenance",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "line_speed",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "defect_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "supply_quality",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "rush_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "on_time_delivery",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "machine_health",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "machine_health",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "line_speed",
+          "coeff": 1.4
+        },
+        {
+          "parent": "machine_health",
+          "coeff": 1.1
+        },
+        {
+          "parent": "supply_quality",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "defect_rate",
+      "terms": [
+        {
+          "parent": "machine_health",
+          "coeff": -1.2
+        },
+        {
+          "parent": "line_speed",
+          "coeff": 0.9
+        },
+        {
+          "parent": "supply_quality",
+          "coeff": -0.8
+        },
+        {
+          "parent": "maintenance",
+          "coeff": -0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "on_time_delivery",
+      "terms": [
+        {
+          "parent": "throughput",
+          "coeff": 1.3
+        },
+        {
+          "parent": "defect_rate",
+          "coeff": -1.0
+        },
+        {
+          "parent": "maintenance",
+          "coeff": 0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "rush_regime",
+      "regime_terms": [
+        {
+          "parent": "throughput",
+          "coeff": -0.8
+        },
+        {
+          "parent": "defect_rate",
+          "coeff": -1.0
+        },
+        {
+          "parent": "maintenance",
+          "coeff": 0.5
+        }
+      ]
+    }
+  ]
+}

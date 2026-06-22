@@ -1,0 +1,37 @@
+{
+  "edges": [
+    [
+      "batch_size",
+      "dwell_time"
+    ],
+    [
+      "batch_size",
+      "rework"
+    ],
+    [
+      "color_defects",
+      "rework"
+    ],
+    [
+      "dwell_time",
+      "color_defects"
+    ],
+    [
+      "shift_pattern",
+      "color_defects"
+    ],
+    [
+      "shift_pattern",
+      "rework"
+    ],
+    [
+      "supply_quality",
+      "rework"
+    ],
+    [
+      "water_temp",
+      "color_defects"
+    ]
+  ],
+  "confounded": []
+}

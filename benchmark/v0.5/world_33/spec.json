@@ -1,0 +1,80 @@
+{
+  "variables": [
+    {
+      "name": "staff_count",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "outreach_spend",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "appt_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "no_show_rate",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "vaccinations_done",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "appt_demand",
+      "terms": [
+        {
+          "parent": "outreach_spend",
+          "coeff": 1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "staff_count",
+          "coeff": 1.2
+        },
+        {
+          "parent": "appt_demand",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "vaccinations_done",
+      "terms": [
+        {
+          "parent": "throughput",
+          "coeff": 1.5
+        },
+        {
+          "parent": "no_show_rate",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

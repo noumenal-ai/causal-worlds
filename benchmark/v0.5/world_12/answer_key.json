@@ -1,0 +1,33 @@
+{
+  "edges": [
+    [
+      "booked_appts",
+      "no_shows"
+    ],
+    [
+      "booked_appts",
+      "seen_patients"
+    ],
+    [
+      "no_shows",
+      "seen_patients"
+    ],
+    [
+      "patient_complexity",
+      "overtime_hours"
+    ],
+    [
+      "reminder_calls",
+      "no_shows"
+    ],
+    [
+      "room_utilization",
+      "overtime_hours"
+    ],
+    [
+      "seen_patients",
+      "room_utilization"
+    ]
+  ],
+  "confounded": []
+}

@@ -1,0 +1,37 @@
+{
+  "edges": [
+    [
+      "cow_nutrition",
+      "health_incidents"
+    ],
+    [
+      "cow_nutrition",
+      "milk_yield"
+    ],
+    [
+      "feed_quality",
+      "cow_nutrition"
+    ],
+    [
+      "health_incidents",
+      "milk_yield"
+    ],
+    [
+      "milking_freq",
+      "milk_yield"
+    ],
+    [
+      "milking_freq",
+      "udder_stress"
+    ],
+    [
+      "udder_stress",
+      "health_incidents"
+    ],
+    [
+      "weather_shock",
+      "cow_nutrition"
+    ]
+  ],
+  "confounded": []
+}

@@ -1,0 +1,111 @@
+{
+  "variables": [
+    {
+      "name": "discount_depth",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "promo_traffic",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "store_traffic",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "sell_through",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "season_demand",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "weather_shock",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "clearance_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "margin",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "store_traffic",
+      "terms": [
+        {
+          "parent": "promo_traffic",
+          "coeff": 1.2
+        },
+        {
+          "parent": "weather_shock",
+          "coeff": 0.8
+        },
+        {
+          "parent": "season_demand",
+          "coeff": 1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "sell_through",
+      "terms": [
+        {
+          "parent": "discount_depth",
+          "coeff": 1.4
+        },
+        {
+          "parent": "store_traffic",
+          "coeff": 0.9
+        },
+        {
+          "parent": "season_demand",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "margin",
+      "terms": [
+        {
+          "parent": "discount_depth",
+          "coeff": -1.5
+        },
+        {
+          "parent": "sell_through",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "clearance_regime",
+      "regime_terms": [
+        {
+          "parent": "discount_depth",
+          "coeff": 1.2
+        },
+        {
+          "parent": "sell_through",
+          "coeff": 0.7
+        }
+      ]
+    }
+  ]
+}

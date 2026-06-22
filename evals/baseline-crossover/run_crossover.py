@@ -12,6 +12,7 @@ Needs the `discover` extra (causal-learn + gies); no API key. Run from the repo 
 """
 
 import json
+import sys
 from pathlib import Path
 from statistics import correlation, mean, pstdev
 
@@ -23,8 +24,9 @@ from causal_worlds.sample import build_substrate
 from causal_worlds.schema import answer_key
 
 ROOT = Path(__file__).resolve().parents[2]
-BENCH = ROOT / "benchmark" / "v0.2"
-OUT = Path(__file__).parent
+# Benchmark dir from argv[1] (default v0.2); outputs go to OUT/<benchmark name>.
+BENCH = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "benchmark" / "v0.2"
+OUT = Path(__file__).parent / BENCH.name
 N = 4000
 SEEDS = [7, 11, 23]
 BASELINES = {

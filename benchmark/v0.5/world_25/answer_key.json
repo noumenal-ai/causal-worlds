@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "alert_threshold",
+      "alert_volume"
+    ],
+    [
+      "alert_threshold",
+      "false_positives"
+    ],
+    [
+      "alert_threshold",
+      "fraud_losses"
+    ],
+    [
+      "alert_volume",
+      "analyst_load"
+    ],
+    [
+      "analyst_load",
+      "false_positives"
+    ],
+    [
+      "analyst_load",
+      "review_quality"
+    ],
+    [
+      "automation_regime",
+      "fraud_losses"
+    ],
+    [
+      "review_quality",
+      "fraud_losses"
+    ],
+    [
+      "staffing_level",
+      "analyst_load"
+    ],
+    [
+      "staffing_level",
+      "review_quality"
+    ]
+  ],
+  "confounded": [
+    [
+      "alert_volume",
+      "fraud_losses"
+    ]
+  ]
+}

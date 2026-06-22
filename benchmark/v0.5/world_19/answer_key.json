@@ -1,0 +1,45 @@
+{
+  "edges": [
+    [
+      "ambient_temp",
+      "pump_speed"
+    ],
+    [
+      "ambient_temp",
+      "thermal_alarms"
+    ],
+    [
+      "cooling_setpoint",
+      "pue"
+    ],
+    [
+      "cooling_setpoint",
+      "pump_speed"
+    ],
+    [
+      "cooling_setpoint",
+      "thermal_alarms"
+    ],
+    [
+      "heat_wave",
+      "pue"
+    ],
+    [
+      "it_load",
+      "pue"
+    ],
+    [
+      "it_load",
+      "thermal_alarms"
+    ],
+    [
+      "pump_speed",
+      "pue"
+    ],
+    [
+      "pump_speed",
+      "thermal_alarms"
+    ]
+  ],
+  "confounded": []
+}

@@ -1,0 +1,180 @@
+{
+  "variables": [
+    {
+      "name": "surge_mult",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "incentive",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "driver_supply",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "cancel_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "weather_shock",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "peak_window",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "city_mood",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "market_heat",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "ops_pressure",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "market_heat",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ops_pressure",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "surge_mult",
+      "terms": [
+        {
+          "parent": "market_heat",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "incentive",
+      "terms": [
+        {
+          "parent": "ops_pressure",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "demand",
+      "terms": [
+        {
+          "parent": "market_heat",
+          "coeff": 1.4
+        },
+        {
+          "parent": "weather_shock",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "driver_supply",
+      "terms": [
+        {
+          "parent": "incentive",
+          "coeff": 1.2
+        },
+        {
+          "parent": "surge_mult",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_window",
+      "regime_terms": [
+        {
+          "parent": "incentive",
+          "coeff": 1.2
+        },
+        {
+          "parent": "surge_mult",
+          "coeff": -0.9
+        }
+      ]
+    },
+    {
+      "target": "cancel_rate",
+      "terms": [
+        {
+          "parent": "demand",
+          "coeff": 0.7
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": -1.0
+        },
+        {
+          "parent": "ops_pressure",
+          "coeff": 1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "city_mood",
+      "terms": [
+        {
+          "parent": "surge_mult",
+          "coeff": 0.9
+        },
+        {
+          "parent": "cancel_rate",
+          "coeff": -1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "weather_shock",
+      "regime_terms": [
+        {
+          "parent": "surge_mult",
+          "coeff": -1.1
+        },
+        {
+          "parent": "cancel_rate",
+          "coeff": -1.2
+        }
+      ]
+    }
+  ]
+}

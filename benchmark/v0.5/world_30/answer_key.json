@@ -1,0 +1,29 @@
+{
+  "edges": [
+    [
+      "node_utilization",
+      "render_time"
+    ],
+    [
+      "render_time",
+      "rerun_count"
+    ],
+    [
+      "render_time",
+      "throughput"
+    ],
+    [
+      "rerun_count",
+      "throughput"
+    ],
+    [
+      "scene_complexity",
+      "render_time"
+    ],
+    [
+      "scheduled_jobs",
+      "node_utilization"
+    ]
+  ],
+  "confounded": []
+}

@@ -1,0 +1,45 @@
+{
+  "edges": [
+    [
+      "ambient_state",
+      "cycle_time"
+    ],
+    [
+      "ambient_state",
+      "particle_count"
+    ],
+    [
+      "ambient_state",
+      "yield_pct"
+    ],
+    [
+      "chamber_drift",
+      "cycle_time"
+    ],
+    [
+      "chamber_drift",
+      "particle_count"
+    ],
+    [
+      "maint_intensity",
+      "chamber_drift"
+    ],
+    [
+      "maint_intensity",
+      "yield_pct"
+    ],
+    [
+      "particle_count",
+      "yield_pct"
+    ],
+    [
+      "queue_load",
+      "cycle_time"
+    ],
+    [
+      "wafer_starts",
+      "queue_load"
+    ]
+  ],
+  "confounded": []
+}

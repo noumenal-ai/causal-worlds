@@ -1,0 +1,29 @@
+{
+  "edges": [
+    [
+      "avg_handle_time",
+      "error_rate"
+    ],
+    [
+      "backlog",
+      "avg_handle_time"
+    ],
+    [
+      "backlog",
+      "error_rate"
+    ],
+    [
+      "inflow",
+      "backlog"
+    ],
+    [
+      "reviewers",
+      "throughput"
+    ],
+    [
+      "throughput",
+      "backlog"
+    ]
+  ],
+  "confounded": []
+}

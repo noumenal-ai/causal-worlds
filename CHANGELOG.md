@@ -3,6 +3,30 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] — 2026-06-23
+
+**Scale resolves the difficulty question.** A 36-world set across an easy→hard complexity spread gives
+the analyses real range — and structural difficulty turns out to predict the observational collapse.
+
+### Added
+- **Author complexity knob** (`author`): `ClaudeAuthor(..., complexity="easy"|"standard"|"hard")`
+  varies how many hidden confounders / regime sign-flips to inject, spreading structural difficulty.
+  Recorded per world in the manifest (`Provenance.complexity`).
+- **Scaled benchmark** (`benchmark/v0.5`): 35/36 admitted across complexity levels — mean structural
+  difficulty by level 0.0 / 1.4 / 3.0; reference-grader SHD 0.36 / 1.75 / 2.33.
+- **Parameterized evals**: the crossover and structural-difficulty harnesses take a benchmark dir;
+  results nest under `evals/*/v0.5/`.
+
+### Findings (powered, n=35)
+- **Crossover strengthens**: the interventional-CI grader keeps **confounded-kept = 0** (never reports
+  a hidden-confounded pair as causal) at SHD 1.47 / F1 0.91, while PC/FCI/GIES keep 8–17 and post SHD
+  2.7–6.7.
+- **Structural difficulty predicts observational error (corr +0.62)** where name-guessability does not
+  (+0.14) — the hardness is structural (confounders + sign-flips), resolving v0.4's open question and
+  turning difficulty into a usable instrument.
+
+[0.5.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.5.0
+
 ## [0.4.0] — 2026-06-23
 
 **A structural-difficulty axis.** v0.3 showed name-guessability difficulty doesn't predict discovery

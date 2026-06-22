@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "bag_throughput",
+      "turnaround_time"
+    ],
+    [
+      "crew_staffing",
+      "bag_throughput"
+    ],
+    [
+      "gate_buffer",
+      "turnaround_time"
+    ],
+    [
+      "ramp_congestion",
+      "turnaround_time"
+    ],
+    [
+      "regime_peak",
+      "bag_throughput"
+    ],
+    [
+      "regime_peak",
+      "turnaround_time"
+    ],
+    [
+      "weather_shock",
+      "ramp_congestion"
+    ]
+  ],
+  "confounded": [
+    [
+      "bag_throughput",
+      "ramp_congestion"
+    ]
+  ]
+}

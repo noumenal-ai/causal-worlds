@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "congestion",
+      "demurrage_cost"
+    ],
+    [
+      "congestion",
+      "dwell_time"
+    ],
+    [
+      "crane_alloc",
+      "dwell_time"
+    ],
+    [
+      "dwell_time",
+      "demurrage_cost"
+    ],
+    [
+      "gate_policy",
+      "truck_flow"
+    ],
+    [
+      "gate_policy",
+      "yard_zone_mix"
+    ],
+    [
+      "tide_window",
+      "congestion"
+    ],
+    [
+      "tide_window",
+      "dwell_time"
+    ],
+    [
+      "truck_flow",
+      "congestion"
+    ],
+    [
+      "yard_zone_mix",
+      "congestion"
+    ]
+  ],
+  "confounded": [
+    [
+      "crane_alloc",
+      "truck_flow"
+    ]
+  ]
+}

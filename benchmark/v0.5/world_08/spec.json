@@ -1,0 +1,153 @@
+{
+  "variables": [
+    {
+      "name": "setpoint",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "fan_speed",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "energy_cost",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "spoilage",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "stockouts",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "peak_tariff",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "supplier_grade",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "ambient_load",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "logistics_state",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "energy_cost",
+      "terms": [
+        {
+          "parent": "setpoint",
+          "coeff": -1.3
+        },
+        {
+          "parent": "fan_speed",
+          "coeff": 0.9
+        },
+        {
+          "parent": "ambient_load",
+          "coeff": 1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_tariff",
+      "regime_terms": [
+        {
+          "parent": "setpoint",
+          "coeff": -1.3
+        },
+        {
+          "parent": "fan_speed",
+          "coeff": -0.8
+        },
+        {
+          "parent": "ambient_load",
+          "coeff": 1.4
+        }
+      ]
+    },
+    {
+      "target": "spoilage",
+      "terms": [
+        {
+          "parent": "setpoint",
+          "coeff": 1.1
+        },
+        {
+          "parent": "fan_speed",
+          "coeff": -0.6
+        },
+        {
+          "parent": "ambient_load",
+          "coeff": 1.2
+        },
+        {
+          "parent": "supplier_grade",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "stockouts",
+      "terms": [
+        {
+          "parent": "fan_speed",
+          "coeff": 0.7
+        },
+        {
+          "parent": "logistics_state",
+          "coeff": 1.5
+        },
+        {
+          "parent": "supplier_grade",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_tariff",
+      "regime_terms": [
+        {
+          "parent": "fan_speed",
+          "coeff": -0.9
+        },
+        {
+          "parent": "logistics_state",
+          "coeff": 1.5
+        },
+        {
+          "parent": "supplier_grade",
+          "coeff": -0.8
+        }
+      ]
+    },
+    {
+      "target": "supplier_grade",
+      "terms": [
+        {
+          "parent": "logistics_state",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

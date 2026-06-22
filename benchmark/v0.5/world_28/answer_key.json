@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "automation_regime",
+      "mispick_rate"
+    ],
+    [
+      "labor_hours",
+      "mispick_rate"
+    ],
+    [
+      "labor_hours",
+      "pick_rate"
+    ],
+    [
+      "order_volume",
+      "throughput"
+    ],
+    [
+      "pick_rate",
+      "throughput"
+    ],
+    [
+      "slotting_quality",
+      "mispick_rate"
+    ],
+    [
+      "slotting_quality",
+      "pick_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "mispick_rate",
+      "pick_rate"
+    ]
+  ]
+}

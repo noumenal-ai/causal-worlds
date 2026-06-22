@@ -1,0 +1,97 @@
+{
+  "variables": [
+    {
+      "name": "maint_freq",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "wind_speed",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "grid_demand",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "downtime",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "turbine_avail",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "curtailment",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "power_output",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "downtime",
+      "terms": [
+        {
+          "parent": "maint_freq",
+          "coeff": -1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "turbine_avail",
+      "terms": [
+        {
+          "parent": "downtime",
+          "coeff": -1.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "curtailment",
+      "terms": [
+        {
+          "parent": "grid_demand",
+          "coeff": -1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "power_output",
+      "terms": [
+        {
+          "parent": "turbine_avail",
+          "coeff": 1.3
+        },
+        {
+          "parent": "wind_speed",
+          "coeff": 1.1
+        },
+        {
+          "parent": "curtailment",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

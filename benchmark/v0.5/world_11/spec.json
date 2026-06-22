@@ -1,0 +1,168 @@
+{
+  "variables": [
+    {
+      "name": "blower_setpoint",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "recycle_rate",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "inflow_load",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "basin_temp",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "energy_use",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "effluent_quality",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "shift_mode",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "feed_chemistry",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "membrane_health",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "inflow_load",
+      "terms": [
+        {
+          "parent": "feed_chemistry",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "membrane_health",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "energy_use",
+      "terms": [
+        {
+          "parent": "blower_setpoint",
+          "coeff": 1.5
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": 0.8
+        },
+        {
+          "parent": "membrane_health",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "effluent_quality",
+      "terms": [
+        {
+          "parent": "blower_setpoint",
+          "coeff": 1.3
+        },
+        {
+          "parent": "recycle_rate",
+          "coeff": 0.9
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": -0.7
+        },
+        {
+          "parent": "membrane_health",
+          "coeff": 1.0
+        },
+        {
+          "parent": "feed_chemistry",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_mode",
+      "regime_terms": [
+        {
+          "parent": "blower_setpoint",
+          "coeff": -1.3
+        },
+        {
+          "parent": "recycle_rate",
+          "coeff": 0.9
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": -0.7
+        },
+        {
+          "parent": "membrane_health",
+          "coeff": 1.0
+        },
+        {
+          "parent": "feed_chemistry",
+          "coeff": 0.6
+        }
+      ]
+    },
+    {
+      "target": "recycle_rate",
+      "terms": [
+        {
+          "parent": "basin_temp",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_mode",
+      "regime_terms": [
+        {
+          "parent": "basin_temp",
+          "coeff": -0.8
+        }
+      ]
+    },
+    {
+      "target": "blower_setpoint",
+      "terms": [
+        {
+          "parent": "basin_temp",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

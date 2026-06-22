@@ -1,0 +1,29 @@
+{
+  "edges": [
+    [
+      "ambient_temp",
+      "spoilage_rate"
+    ],
+    [
+      "batch_size",
+      "ferment_time"
+    ],
+    [
+      "batch_size",
+      "throughput"
+    ],
+    [
+      "ferment_temp",
+      "ferment_time"
+    ],
+    [
+      "ferment_temp",
+      "spoilage_rate"
+    ],
+    [
+      "ferment_time",
+      "throughput"
+    ]
+  ],
+  "confounded": []
+}

@@ -1,0 +1,41 @@
+{
+  "edges": [
+    [
+      "demand",
+      "expiry_writeoffs"
+    ],
+    [
+      "demand",
+      "on_hand_stock"
+    ],
+    [
+      "flu_season",
+      "demand"
+    ],
+    [
+      "flu_season",
+      "stockouts"
+    ],
+    [
+      "on_hand_stock",
+      "expiry_writeoffs"
+    ],
+    [
+      "on_hand_stock",
+      "stockouts"
+    ],
+    [
+      "order_qty",
+      "expiry_writeoffs"
+    ],
+    [
+      "order_qty",
+      "on_hand_stock"
+    ],
+    [
+      "reorder_point",
+      "on_hand_stock"
+    ]
+  ],
+  "confounded": []
+}

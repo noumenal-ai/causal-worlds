@@ -43,11 +43,11 @@ for a causal edge while an interventional-CI grader does not. [Headline numbers 
 
 ## 4. Experiments
 - **The crossover** (core result): standard methods vs the interventional grader across the set —
-  skeleton-SHD, directed F1, and *confounded-pair-kept-as-causal* (the trap). *v0.3 (n=12): grader
-  confounded-kept 0.33 vs PC 8.3 / FCI 7.3 / GIES 10.0; SHD 1.31 vs 3.2–4.5.* [Scale to 50–100+.]
-- **Difficulty-vs-error**: does difficulty predict observational collapse? *v0.3 honest negative for the
-  name-guessability metric (corr ~0.1); discovery hardness is structural.* → add a structural-difficulty
-  axis; report both.
+  skeleton-SHD, directed F1, and *confounded-pair-kept-as-causal* (the trap). *v0.5 (n=35): grader
+  confounded-kept **0** vs PC 13 / FCI 8.3 / GIES 17; SHD 1.47 vs 2.7–6.7.* [Scale to 100+.]
+- **Difficulty-vs-error**: does difficulty predict observational collapse? *v0.5 (n=35): **structural**
+  difficulty predicts observational skeleton-SHD (corr **+0.62**); name-guessability does not (+0.14).*
+  The hardness is structural — confounders + regime sign-flips — not name-recitable.
 - **Robustness**: multiple author models (bake-off), multiple judge families, seed variance.
 - **Temporal**: genuine temporal/regime worlds + time-series baselines (PCMCI+, VARLiNGAM, Granger).
 

@@ -89,18 +89,20 @@ See [`docs/scope.md`](docs/scope.md), [`docs/hld.md`](docs/hld.md), [`docs/lld.m
 
 ## The benchmark set
 
-A versioned set ships in [`benchmark/v0.2`](benchmark/) — **12 fictional operations** (coffee chain,
-ED, ride-hailing, microgrid, manufacturing, support desk, last-mile, hotel, cold chain, call-center,
-bike-share, wastewater), each authored by Claude, admitted through the gates, judged by Gemini, and
-graded. Mean anti-cliché difficulty **0.28**, mean faithfulness **1.00**; the reference grader sits at
-mean directed SHD **1.25** / F1 **0.92** (the floor your discoverer should beat). Every world is a
-self-describing bundle (`spec.json` / `data.npz` / `answer_key.json` / `manifest.json`) with full
-provenance. See [`benchmark/README.md`](benchmark/README.md).
+The headline set ships in [`benchmark/v0.5`](benchmark/v0.5/) — **35 fictional operations** authored by
+Claude across an **easy→hard complexity spread**, admitted through the gates, judged by Gemini, and
+graded. Each is a self-describing bundle (`spec.json` / `data.npz` / `answer_key.json` / `manifest.json`)
+with full provenance (models, grader version, seed, difficulty, structural difficulty, complexity). The
+original 12-world [`benchmark/v0.2`](benchmark/v0.2/) is kept for continuity.
 
-**Does it defeat the standard toolbox?** Yes — measured across the set: the standard discoverers (PC,
-FCI, GIES) report the hidden-confounded pair as a *causal* edge in 7–10 of 12 worlds while the reference
-interventional-CI grader almost never does (confounded-kept 0.33, F1 0.91). See the
-[baseline crossover](evals/baseline-crossover/).
+**Does it defeat the standard toolbox?** Yes — measured across 35 worlds: the reference interventional-CI
+grader **never** reports a hidden-confounded pair as causal (confounded-kept 0, SHD 1.47, F1 0.91) while
+PC/FCI/GIES report 8–17 such spurious edges and post 2–4× the structural error. See the
+[baseline crossover](evals/baseline-crossover/v0.5/).
+
+**Is difficulty a real instrument?** Yes, when measured on *structure*: **structural** difficulty
+(hidden confounders + regime sign-flips) predicts observational error (corr **+0.62**), whereas
+name-guessability difficulty does not (**+0.14**). See [structural difficulty](evals/structural-difficulty/v0.5/).
 
 ## Built on the public domain
 

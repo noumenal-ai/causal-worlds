@@ -1,0 +1,138 @@
+{
+  "variables": [
+    {
+      "name": "season_demand",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "event_flag",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "room_price",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "marketing_spend",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "occupancy",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "review_score",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "revenue",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "room_price",
+      "terms": [
+        {
+          "parent": "season_demand",
+          "coeff": 1.2
+        },
+        {
+          "parent": "event_flag",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "marketing_spend",
+      "terms": [
+        {
+          "parent": "event_flag",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "occupancy",
+      "terms": [
+        {
+          "parent": "room_price",
+          "coeff": -1.1
+        },
+        {
+          "parent": "marketing_spend",
+          "coeff": 0.7
+        },
+        {
+          "parent": "season_demand",
+          "coeff": 1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "event_flag",
+      "regime_terms": [
+        {
+          "parent": "room_price",
+          "coeff": 0.9
+        },
+        {
+          "parent": "marketing_spend",
+          "coeff": 0.7
+        },
+        {
+          "parent": "season_demand",
+          "coeff": 1.0
+        }
+      ]
+    },
+    {
+      "target": "review_score",
+      "terms": [
+        {
+          "parent": "occupancy",
+          "coeff": -0.6
+        },
+        {
+          "parent": "marketing_spend",
+          "coeff": 0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "revenue",
+      "terms": [
+        {
+          "parent": "occupancy",
+          "coeff": 1.4
+        },
+        {
+          "parent": "room_price",
+          "coeff": 1.0
+        },
+        {
+          "parent": "review_score",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

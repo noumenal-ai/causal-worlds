@@ -44,6 +44,7 @@ class Provenance:
     n_rows: int
     judge_model: str | None = None
     created_at: str | None = None
+    complexity: str | None = None  # the author's requested structural-complexity level, if any
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,6 +82,7 @@ def _manifest(
         "attempts": world.attempts,
         "author_model": provenance.author_model,
         "judge_model": provenance.judge_model,
+        "complexity": provenance.complexity,
         "grader": provenance.grader,
         "grader_version": provenance.grader_version,
         "difficulty": report.difficulty,

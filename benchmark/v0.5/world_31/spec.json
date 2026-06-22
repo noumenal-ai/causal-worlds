@@ -1,0 +1,110 @@
+{
+  "variables": [
+    {
+      "name": "provisioned_capacity",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "routing_policy",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "peak_event",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "demand_pressure",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "offered_traffic",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "congestion",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "dropped_calls",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "provisioned_capacity",
+      "terms": [
+        {
+          "parent": "demand_pressure",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "offered_traffic",
+      "terms": [
+        {
+          "parent": "demand_pressure",
+          "coeff": 1.4
+        },
+        {
+          "parent": "peak_event",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "congestion",
+      "terms": [
+        {
+          "parent": "offered_traffic",
+          "coeff": 1.3
+        },
+        {
+          "parent": "provisioned_capacity",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "dropped_calls",
+      "terms": [
+        {
+          "parent": "congestion",
+          "coeff": 1.5
+        },
+        {
+          "parent": "routing_policy",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_event",
+      "regime_terms": [
+        {
+          "parent": "congestion",
+          "coeff": 1.5
+        },
+        {
+          "parent": "routing_policy",
+          "coeff": 0.9
+        }
+      ]
+    }
+  ]
+}

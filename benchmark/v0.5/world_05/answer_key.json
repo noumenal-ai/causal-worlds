@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "agent_shift_load",
+      "renewal_rate"
+    ],
+    [
+      "agent_shift_load",
+      "resolution_speed"
+    ],
+    [
+      "bot_coverage",
+      "resolution_speed"
+    ],
+    [
+      "inbound_volume",
+      "resolution_speed"
+    ],
+    [
+      "release_cycle",
+      "renewal_rate"
+    ],
+    [
+      "release_cycle",
+      "resolution_speed"
+    ],
+    [
+      "resolution_speed",
+      "satisfaction_index"
+    ],
+    [
+      "satisfaction_index",
+      "renewal_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "bot_coverage",
+      "satisfaction_index"
+    ],
+    [
+      "inbound_volume",
+      "renewal_rate"
+    ]
+  ]
+}

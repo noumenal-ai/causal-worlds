@@ -25,7 +25,7 @@ DEFAULT_AUTHOR_MODEL = "claude-opus-4-8"
 _MAX_TOKENS = 4096
 _MAX_RETRIES = 2  # instructor's bounded re-ask on a schema-invalid response
 
-_SYSTEM = """\
+_SYSTEM_BASE = """\
 You design small, fictional-but-internally-consistent CAUSAL OPERATIONS for a causal-discovery
 benchmark. Output a world as a structural causal model: variables with roles, and a linear-plus-
 Gaussian-noise mechanism per non-root variable.
@@ -36,18 +36,33 @@ Hard requirements:
 - Effects must be recoverable: coefficients roughly 0.5-2.0 in magnitude, noise_scale around
   0.3, so signal dominates noise.
 
-What makes a GOOD (hard, non-cliché) world — include BOTH:
-- A HIDDEN confounder: a latent variable (hidden=true) that directly causes TWO OR MORE observed
-  variables that have NO direct edge between them. This makes those two observed variables
-  correlate without one causing the other — the trap a naive method falls into.
-- A REGIME flip: pick a binary disturbance variable as 'regime' on one mechanism; give
-  'regime_terms' the SAME parents as 'terms' but with a key coefficient's SIGN FLIPPED (or
-  rescaled). A lever's effect should reverse between regimes, so it can't be guessed from names.
+Definitions you will be asked to use:
+- A HIDDEN confounder = a latent variable (hidden=true) that directly causes TWO OR MORE observed
+  variables having NO direct edge between them (they correlate without causation — the trap).
+- A REGIME flip = a binary disturbance named as 'regime' on a mechanism, with a key coefficient's
+  SIGN FLIPPED in 'regime_terms' vs 'terms' (a lever's effect reverses between regimes)."""
 
-The world should be plausible for the described operation, but its causal STRUCTURE must NOT be
-obvious from the names — surprise is the point. These worlds are fictional; do not model any real
-system. Return ONLY the structured world.\
-"""
+# How much structural difficulty to inject — the complexity knob that spreads the benchmark.
+_COMPLEXITY = {
+    "easy": "Structure target: keep it transparent — a mostly-direct causal chain or two, with NO "
+    "hidden confounder and NO regime flip. The world should be relatively easy to recover.",
+    "standard": "Structure target: include exactly ONE hidden confounder and ONE regime flip.",
+    "hard": "Structure target: make it genuinely deceptive — TWO OR MORE hidden confounders (each "
+    "a common cause of 2+ observed variables) AND TWO regime flips. The structure must not be "
+    "guessable from the variable names.",
+}
+_CLOSING = (
+    "The world should be plausible for the described operation. These worlds are fictional; do not "
+    "model any real system. Return ONLY the structured world."
+)
+
+
+def _system(complexity: str) -> str:
+    """Assemble the system brief for a complexity level."""
+    if complexity not in _COMPLEXITY:
+        msg = f"unknown complexity {complexity!r}; choose from {sorted(_COMPLEXITY)}"
+        raise ValueError(msg)
+    return f"{_SYSTEM_BASE}\n\n{_COMPLEXITY[complexity]}\n\n{_CLOSING}"
 
 
 class ClaudeAuthor:
@@ -58,12 +73,14 @@ class ClaudeAuthor:
         client: instructor.Instructor,
         model: str = DEFAULT_AUTHOR_MODEL,
         *,
+        complexity: str = "standard",
         max_tokens: int = _MAX_TOKENS,
         max_retries: int = _MAX_RETRIES,
     ) -> None:
-        """Store the client and generation settings (the client is constructed at the edge)."""
+        """Store the client, model, and the system brief for the chosen complexity level."""
         self._client = client
         self._model = model
+        self._system = _system(complexity)
         self._max_tokens = max_tokens
         self._max_retries = max_retries
 
@@ -81,21 +98,20 @@ class ClaudeAuthor:
         )
         return spec_model.to_spec()
 
-    @staticmethod
-    def _messages(prompt: str, feedback: str | None) -> list[dict[str, str]]:
+    def _messages(self, prompt: str, feedback: str | None) -> list[dict[str, str]]:
         """Build the chat messages: the standing system brief, the prompt, and any gate feedback."""
         user = f"Operation to model:\n{prompt}"
         if feedback is not None:
             user = f"{user}\n\nRevise your previous world. {feedback}"
-        return [{"role": "system", "content": _SYSTEM}, {"role": "user", "content": user}]
+        return [{"role": "system", "content": self._system}, {"role": "user", "content": user}]
 
 
 def build_claude_author(
-    model: str = DEFAULT_AUTHOR_MODEL, *, api_key: str | None = None
+    model: str = DEFAULT_AUTHOR_MODEL, *, complexity: str = "standard", api_key: str | None = None
 ) -> ClaudeAuthor:  # pragma: no cover - real provider wiring, exercised only in live runs
     """Construct a live Claude author; needs the ``llm`` extra and an Anthropic API key in env."""
     import instructor  # noqa: PLC0415 - lazy: the provider SDK is an optional `llm` extra
     from anthropic import Anthropic  # noqa: PLC0415
 
     client = instructor.from_anthropic(Anthropic(api_key=api_key))
-    return ClaudeAuthor(client, model)
+    return ClaudeAuthor(client, model, complexity=complexity)

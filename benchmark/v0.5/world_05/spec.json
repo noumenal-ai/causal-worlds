@@ -1,0 +1,171 @@
+{
+  "variables": [
+    {
+      "name": "agent_shift_load",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "bot_coverage",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "inbound_volume",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "resolution_speed",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "satisfaction_index",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "renewal_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "release_cycle",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "platform_maturity",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "market_sentiment",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "platform_maturity",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "market_sentiment",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "inbound_volume",
+      "terms": [
+        {
+          "parent": "market_sentiment",
+          "coeff": -1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "bot_coverage",
+      "terms": [
+        {
+          "parent": "platform_maturity",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "resolution_speed",
+      "terms": [
+        {
+          "parent": "agent_shift_load",
+          "coeff": 1.3
+        },
+        {
+          "parent": "bot_coverage",
+          "coeff": 0.9
+        },
+        {
+          "parent": "inbound_volume",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "release_cycle",
+      "regime_terms": [
+        {
+          "parent": "agent_shift_load",
+          "coeff": 1.3
+        },
+        {
+          "parent": "bot_coverage",
+          "coeff": -1.0
+        },
+        {
+          "parent": "inbound_volume",
+          "coeff": -0.8
+        }
+      ]
+    },
+    {
+      "target": "satisfaction_index",
+      "terms": [
+        {
+          "parent": "resolution_speed",
+          "coeff": 1.0
+        },
+        {
+          "parent": "platform_maturity",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "renewal_rate",
+      "terms": [
+        {
+          "parent": "satisfaction_index",
+          "coeff": 1.4
+        },
+        {
+          "parent": "agent_shift_load",
+          "coeff": 0.7
+        },
+        {
+          "parent": "market_sentiment",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "release_cycle",
+      "regime_terms": [
+        {
+          "parent": "satisfaction_index",
+          "coeff": 1.4
+        },
+        {
+          "parent": "agent_shift_load",
+          "coeff": -0.8
+        },
+        {
+          "parent": "market_sentiment",
+          "coeff": 0.9
+        }
+      ]
+    }
+  ]
+}

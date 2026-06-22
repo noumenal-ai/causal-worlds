@@ -1,0 +1,25 @@
+{
+  "edges": [
+    [
+      "appt_demand",
+      "throughput"
+    ],
+    [
+      "no_show_rate",
+      "vaccinations_done"
+    ],
+    [
+      "outreach_spend",
+      "appt_demand"
+    ],
+    [
+      "staff_count",
+      "throughput"
+    ],
+    [
+      "throughput",
+      "vaccinations_done"
+    ]
+  ],
+  "confounded": []
+}

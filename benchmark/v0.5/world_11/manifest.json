@@ -1,0 +1,42 @@
+{
+  "schema_version": "1",
+  "package_version": "0.4.0",
+  "prompt": "A wastewater treatment plant: aeration control, inflow load, energy use, and effluent quality.",
+  "created_at": "2026-06-22T21:38:56.461176+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 1,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "complexity": "hard",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.4285714285714286,
+  "faithfulness": 1.0,
+  "structural_difficulty": {
+    "score": 3.0,
+    "hidden_confounders": 1,
+    "confounded_pairs": 1,
+    "sign_flips": 2,
+    "density": 0.19642857142857142
+  },
+  "grade": {
+    "directed_shd": 2,
+    "skeleton_shd": 2,
+    "f1": 0.9,
+    "n_truth": 11,
+    "n_recovered": 9,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "blower_setpoint",
+    "recycle_rate",
+    "inflow_load",
+    "basin_temp",
+    "energy_use",
+    "effluent_quality",
+    "shift_mode",
+    "feed_chemistry"
+  ]
+}

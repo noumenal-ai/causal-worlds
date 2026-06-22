@@ -1,0 +1,37 @@
+{
+  "edges": [
+    [
+      "dock_availability",
+      "trip_volume"
+    ],
+    [
+      "is_holiday",
+      "trip_volume"
+    ],
+    [
+      "price_level",
+      "rider_churn"
+    ],
+    [
+      "price_level",
+      "trip_volume"
+    ],
+    [
+      "rebalancing_trucks",
+      "dock_availability"
+    ],
+    [
+      "trip_volume",
+      "rider_churn"
+    ],
+    [
+      "weather_severity",
+      "dock_availability"
+    ],
+    [
+      "weather_severity",
+      "rider_churn"
+    ]
+  ],
+  "confounded": []
+}

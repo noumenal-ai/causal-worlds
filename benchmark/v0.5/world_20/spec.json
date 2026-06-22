@@ -1,0 +1,199 @@
+{
+  "variables": [
+    {
+      "name": "maint_intensity",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "wafer_starts",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "chamber_drift",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "queue_load",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "particle_count",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "yield_pct",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "cycle_time",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "ambient_state",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "supply_pressure",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "calib_offset",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "ambient_state",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "supply_pressure",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "calib_offset",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "maint_intensity",
+      "terms": [
+        {
+          "parent": "calib_offset",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "wafer_starts",
+      "terms": [
+        {
+          "parent": "supply_pressure",
+          "coeff": 1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "chamber_drift",
+      "terms": [
+        {
+          "parent": "maint_intensity",
+          "coeff": -1.1
+        },
+        {
+          "parent": "calib_offset",
+          "coeff": 1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "queue_load",
+      "terms": [
+        {
+          "parent": "wafer_starts",
+          "coeff": 1.3
+        },
+        {
+          "parent": "supply_pressure",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "particle_count",
+      "terms": [
+        {
+          "parent": "chamber_drift",
+          "coeff": 1.0
+        },
+        {
+          "parent": "ambient_state",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "yield_pct",
+      "terms": [
+        {
+          "parent": "particle_count",
+          "coeff": -1.2
+        },
+        {
+          "parent": "maint_intensity",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "ambient_state",
+      "regime_terms": [
+        {
+          "parent": "particle_count",
+          "coeff": -1.2
+        },
+        {
+          "parent": "maint_intensity",
+          "coeff": -0.8
+        }
+      ]
+    },
+    {
+      "target": "cycle_time",
+      "terms": [
+        {
+          "parent": "queue_load",
+          "coeff": 1.1
+        },
+        {
+          "parent": "chamber_drift",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "ambient_state",
+      "regime_terms": [
+        {
+          "parent": "queue_load",
+          "coeff": 1.1
+        },
+        {
+          "parent": "chamber_drift",
+          "coeff": -0.9
+        }
+      ]
+    }
+  ]
+}

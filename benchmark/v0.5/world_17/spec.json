@@ -1,0 +1,157 @@
+{
+  "variables": [
+    {
+      "name": "supply_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "flow_setpoint",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "pump_energy",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "complaints",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "season_load",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "tariff_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "grid_strain",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "envelope_quality",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "demand",
+      "terms": [
+        {
+          "parent": "season_load",
+          "coeff": 1.3
+        },
+        {
+          "parent": "envelope_quality",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "supply_temp",
+      "terms": [
+        {
+          "parent": "grid_strain",
+          "coeff": 0.9
+        },
+        {
+          "parent": "season_load",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "flow_setpoint",
+      "terms": [
+        {
+          "parent": "demand",
+          "coeff": 1.2
+        },
+        {
+          "parent": "grid_strain",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "pump_energy",
+      "terms": [
+        {
+          "parent": "flow_setpoint",
+          "coeff": 1.4
+        },
+        {
+          "parent": "supply_temp",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "tariff_regime",
+      "regime_terms": [
+        {
+          "parent": "flow_setpoint",
+          "coeff": -0.7
+        },
+        {
+          "parent": "supply_temp",
+          "coeff": 0.6
+        }
+      ]
+    },
+    {
+      "target": "complaints",
+      "terms": [
+        {
+          "parent": "supply_temp",
+          "coeff": -1.3
+        },
+        {
+          "parent": "demand",
+          "coeff": 1.1
+        },
+        {
+          "parent": "envelope_quality",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "tariff_regime",
+      "regime_terms": [
+        {
+          "parent": "supply_temp",
+          "coeff": 1.0
+        },
+        {
+          "parent": "demand",
+          "coeff": 1.1
+        },
+        {
+          "parent": "envelope_quality",
+          "coeff": -0.9
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "bin_audits",
+      "contamination"
+    ],
+    [
+      "contamination",
+      "throughput"
+    ],
+    [
+      "contamination",
+      "unit_cost"
+    ],
+    [
+      "route_density",
+      "contamination"
+    ],
+    [
+      "route_density",
+      "unit_cost"
+    ],
+    [
+      "season_shift",
+      "contamination"
+    ],
+    [
+      "season_shift",
+      "unit_cost"
+    ],
+    [
+      "sort_speed",
+      "throughput"
+    ],
+    [
+      "throughput",
+      "unit_cost"
+    ]
+  ],
+  "confounded": [
+    [
+      "route_density",
+      "sort_speed"
+    ]
+  ]
+}

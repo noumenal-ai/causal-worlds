@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "congestion",
+      "dropped_calls"
+    ],
+    [
+      "offered_traffic",
+      "congestion"
+    ],
+    [
+      "peak_event",
+      "dropped_calls"
+    ],
+    [
+      "peak_event",
+      "offered_traffic"
+    ],
+    [
+      "provisioned_capacity",
+      "congestion"
+    ],
+    [
+      "routing_policy",
+      "dropped_calls"
+    ]
+  ],
+  "confounded": [
+    [
+      "offered_traffic",
+      "provisioned_capacity"
+    ]
+  ]
+}

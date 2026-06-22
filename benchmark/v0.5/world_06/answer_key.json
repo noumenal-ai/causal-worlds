@@ -1,0 +1,25 @@
+{
+  "edges": [
+    [
+      "couriers_dispatched",
+      "delivery_time"
+    ],
+    [
+      "delivery_time",
+      "sla_compliance"
+    ],
+    [
+      "package_volume",
+      "delivery_time"
+    ],
+    [
+      "package_volume",
+      "traffic_index"
+    ],
+    [
+      "traffic_index",
+      "delivery_time"
+    ]
+  ],
+  "confounded": []
+}

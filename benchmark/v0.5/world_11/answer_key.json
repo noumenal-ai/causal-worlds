@@ -1,0 +1,54 @@
+{
+  "edges": [
+    [
+      "basin_temp",
+      "blower_setpoint"
+    ],
+    [
+      "basin_temp",
+      "recycle_rate"
+    ],
+    [
+      "blower_setpoint",
+      "effluent_quality"
+    ],
+    [
+      "blower_setpoint",
+      "energy_use"
+    ],
+    [
+      "feed_chemistry",
+      "effluent_quality"
+    ],
+    [
+      "feed_chemistry",
+      "inflow_load"
+    ],
+    [
+      "inflow_load",
+      "effluent_quality"
+    ],
+    [
+      "inflow_load",
+      "energy_use"
+    ],
+    [
+      "recycle_rate",
+      "effluent_quality"
+    ],
+    [
+      "shift_mode",
+      "effluent_quality"
+    ],
+    [
+      "shift_mode",
+      "recycle_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "effluent_quality",
+      "energy_use"
+    ]
+  ]
+}

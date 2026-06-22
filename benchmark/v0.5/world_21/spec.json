@@ -1,0 +1,84 @@
+{
+  "variables": [
+    {
+      "name": "batch_size",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ferment_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ferment_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "ambient_temp",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "spoilage_rate",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "ferment_time",
+      "terms": [
+        {
+          "parent": "batch_size",
+          "coeff": 0.9
+        },
+        {
+          "parent": "ferment_temp",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "batch_size",
+          "coeff": 1.2
+        },
+        {
+          "parent": "ferment_time",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "spoilage_rate",
+      "terms": [
+        {
+          "parent": "ferment_temp",
+          "coeff": 1.3
+        },
+        {
+          "parent": "ambient_temp",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

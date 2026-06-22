@@ -1,0 +1,37 @@
+{
+  "edges": [
+    [
+      "acuity_surge",
+      "wait_time"
+    ],
+    [
+      "arrivals",
+      "occupancy"
+    ],
+    [
+      "arrivals",
+      "triage_time"
+    ],
+    [
+      "occupancy",
+      "wait_time"
+    ],
+    [
+      "open_beds",
+      "occupancy"
+    ],
+    [
+      "triage_staff",
+      "triage_time"
+    ],
+    [
+      "triage_staff",
+      "wait_time"
+    ],
+    [
+      "triage_time",
+      "wait_time"
+    ]
+  ],
+  "confounded": []
+}

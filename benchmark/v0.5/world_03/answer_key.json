@@ -1,0 +1,37 @@
+{
+  "edges": [
+    [
+      "battery_charge",
+      "grid_import"
+    ],
+    [
+      "grid_import",
+      "energy_cost"
+    ],
+    [
+      "household_load",
+      "grid_import"
+    ],
+    [
+      "irradiance",
+      "solar_gen"
+    ],
+    [
+      "solar_gen",
+      "battery_charge"
+    ],
+    [
+      "solar_gen",
+      "grid_import"
+    ],
+    [
+      "tariff",
+      "battery_charge"
+    ],
+    [
+      "tariff",
+      "energy_cost"
+    ]
+  ],
+  "confounded": []
+}

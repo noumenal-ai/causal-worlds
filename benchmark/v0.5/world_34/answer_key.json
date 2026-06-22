@@ -1,0 +1,33 @@
+{
+  "edges": [
+    [
+      "clearance_regime",
+      "margin"
+    ],
+    [
+      "discount_depth",
+      "margin"
+    ],
+    [
+      "discount_depth",
+      "sell_through"
+    ],
+    [
+      "promo_traffic",
+      "store_traffic"
+    ],
+    [
+      "sell_through",
+      "margin"
+    ],
+    [
+      "store_traffic",
+      "sell_through"
+    ],
+    [
+      "weather_shock",
+      "store_traffic"
+    ]
+  ],
+  "confounded": []
+}

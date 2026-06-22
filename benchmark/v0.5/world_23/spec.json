@@ -1,0 +1,157 @@
+{
+  "variables": [
+    {
+      "name": "batch_size",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "water_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "dwell_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "shift_pattern",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "color_defects",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rework",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "supply_quality",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "ambient_load",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "vat_aging",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "batch_size",
+      "terms": [
+        {
+          "parent": "ambient_load",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "water_temp",
+      "terms": [
+        {
+          "parent": "vat_aging",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "dwell_time",
+      "terms": [
+        {
+          "parent": "ambient_load",
+          "coeff": 0.9
+        },
+        {
+          "parent": "batch_size",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "color_defects",
+      "terms": [
+        {
+          "parent": "water_temp",
+          "coeff": 1.2
+        },
+        {
+          "parent": "dwell_time",
+          "coeff": 0.7
+        },
+        {
+          "parent": "vat_aging",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_pattern",
+      "regime_terms": [
+        {
+          "parent": "water_temp",
+          "coeff": -1.2
+        },
+        {
+          "parent": "dwell_time",
+          "coeff": 0.7
+        },
+        {
+          "parent": "vat_aging",
+          "coeff": 0.8
+        }
+      ]
+    },
+    {
+      "target": "rework",
+      "terms": [
+        {
+          "parent": "color_defects",
+          "coeff": 1.4
+        },
+        {
+          "parent": "batch_size",
+          "coeff": 0.8
+        },
+        {
+          "parent": "supply_quality",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_pattern",
+      "regime_terms": [
+        {
+          "parent": "color_defects",
+          "coeff": 1.4
+        },
+        {
+          "parent": "batch_size",
+          "coeff": -0.8
+        },
+        {
+          "parent": "supply_quality",
+          "coeff": 0.6
+        }
+      ]
+    }
+  ]
+}

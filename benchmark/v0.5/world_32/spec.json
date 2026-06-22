@@ -1,0 +1,177 @@
+{
+  "variables": [
+    {
+      "name": "prep_staff",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "burner_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ticket_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "service_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "plate_waste",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "rush_mode",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "supplier_grade",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "shift_pressure",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "ingredient_freshness",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "shift_pressure",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ingredient_freshness",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rush_mode",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "supplier_grade",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "prep_staff",
+      "terms": [
+        {
+          "parent": "shift_pressure",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "burner_temp",
+      "terms": [
+        {
+          "parent": "ingredient_freshness",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ticket_rate",
+      "terms": [
+        {
+          "parent": "shift_pressure",
+          "coeff": 1.4
+        },
+        {
+          "parent": "rush_mode",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "service_time",
+      "terms": [
+        {
+          "parent": "prep_staff",
+          "coeff": -1.2
+        },
+        {
+          "parent": "ticket_rate",
+          "coeff": 1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "rush_mode",
+      "regime_terms": [
+        {
+          "parent": "prep_staff",
+          "coeff": 1.1
+        },
+        {
+          "parent": "ticket_rate",
+          "coeff": 1.0
+        }
+      ]
+    },
+    {
+      "target": "plate_waste",
+      "terms": [
+        {
+          "parent": "service_time",
+          "coeff": 0.8
+        },
+        {
+          "parent": "burner_temp",
+          "coeff": 1.2
+        },
+        {
+          "parent": "ingredient_freshness",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "supplier_grade",
+      "regime_terms": [
+        {
+          "parent": "service_time",
+          "coeff": 0.8
+        },
+        {
+          "parent": "burner_temp",
+          "coeff": -1.1
+        },
+        {
+          "parent": "ingredient_freshness",
+          "coeff": -1.0
+        }
+      ]
+    }
+  ]
+}

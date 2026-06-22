@@ -1,0 +1,127 @@
+{
+  "variables": [
+    {
+      "name": "reorder_point",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "order_qty",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "flu_season",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "on_hand_stock",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "stockouts",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "expiry_writeoffs",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "supplier_reliability",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "demand",
+      "terms": [
+        {
+          "parent": "flu_season",
+          "coeff": 1.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "on_hand_stock",
+      "terms": [
+        {
+          "parent": "reorder_point",
+          "coeff": 1.2
+        },
+        {
+          "parent": "order_qty",
+          "coeff": 1.0
+        },
+        {
+          "parent": "demand",
+          "coeff": -0.9
+        },
+        {
+          "parent": "supplier_reliability",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "stockouts",
+      "terms": [
+        {
+          "parent": "on_hand_stock",
+          "coeff": -1.0
+        },
+        {
+          "parent": "supplier_reliability",
+          "coeff": -0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "flu_season",
+      "regime_terms": [
+        {
+          "parent": "on_hand_stock",
+          "coeff": 0.9
+        },
+        {
+          "parent": "supplier_reliability",
+          "coeff": -0.7
+        }
+      ]
+    },
+    {
+      "target": "expiry_writeoffs",
+      "terms": [
+        {
+          "parent": "order_qty",
+          "coeff": 1.1
+        },
+        {
+          "parent": "on_hand_stock",
+          "coeff": 0.8
+        },
+        {
+          "parent": "demand",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

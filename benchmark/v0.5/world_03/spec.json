@@ -1,0 +1,105 @@
+{
+  "variables": [
+    {
+      "name": "tariff",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "irradiance",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "household_load",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "solar_gen",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "battery_charge",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "grid_import",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "energy_cost",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "solar_gen",
+      "terms": [
+        {
+          "parent": "irradiance",
+          "coeff": 1.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "battery_charge",
+      "terms": [
+        {
+          "parent": "solar_gen",
+          "coeff": 1.1
+        },
+        {
+          "parent": "tariff",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "grid_import",
+      "terms": [
+        {
+          "parent": "household_load",
+          "coeff": 1.3
+        },
+        {
+          "parent": "battery_charge",
+          "coeff": -0.9
+        },
+        {
+          "parent": "solar_gen",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "energy_cost",
+      "terms": [
+        {
+          "parent": "grid_import",
+          "coeff": 1.4
+        },
+        {
+          "parent": "tariff",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

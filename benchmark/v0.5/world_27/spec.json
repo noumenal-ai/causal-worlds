@@ -1,0 +1,105 @@
+{
+  "variables": [
+    {
+      "name": "feed_quality",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "milking_freq",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "cow_nutrition",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "udder_stress",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "health_incidents",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "weather_shock",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "milk_yield",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "cow_nutrition",
+      "terms": [
+        {
+          "parent": "feed_quality",
+          "coeff": 1.4
+        },
+        {
+          "parent": "weather_shock",
+          "coeff": -0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "udder_stress",
+      "terms": [
+        {
+          "parent": "milking_freq",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "health_incidents",
+      "terms": [
+        {
+          "parent": "udder_stress",
+          "coeff": 1.1
+        },
+        {
+          "parent": "cow_nutrition",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "milk_yield",
+      "terms": [
+        {
+          "parent": "cow_nutrition",
+          "coeff": 1.3
+        },
+        {
+          "parent": "milking_freq",
+          "coeff": 0.9
+        },
+        {
+          "parent": "health_incidents",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

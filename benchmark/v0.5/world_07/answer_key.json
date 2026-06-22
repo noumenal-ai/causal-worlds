@@ -1,0 +1,45 @@
+{
+  "edges": [
+    [
+      "event_flag",
+      "marketing_spend"
+    ],
+    [
+      "event_flag",
+      "occupancy"
+    ],
+    [
+      "event_flag",
+      "room_price"
+    ],
+    [
+      "marketing_spend",
+      "occupancy"
+    ],
+    [
+      "marketing_spend",
+      "review_score"
+    ],
+    [
+      "occupancy",
+      "revenue"
+    ],
+    [
+      "occupancy",
+      "review_score"
+    ],
+    [
+      "review_score",
+      "revenue"
+    ],
+    [
+      "room_price",
+      "occupancy"
+    ],
+    [
+      "room_price",
+      "revenue"
+    ]
+  ],
+  "confounded": []
+}

@@ -1,0 +1,101 @@
+{
+  "variables": [
+    {
+      "name": "booked_appts",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "reminder_calls",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "patient_complexity",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "no_shows",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "seen_patients",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "room_utilization",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "overtime_hours",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "no_shows",
+      "terms": [
+        {
+          "parent": "booked_appts",
+          "coeff": 0.6
+        },
+        {
+          "parent": "reminder_calls",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "seen_patients",
+      "terms": [
+        {
+          "parent": "booked_appts",
+          "coeff": 1.1
+        },
+        {
+          "parent": "no_shows",
+          "coeff": -1.0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "room_utilization",
+      "terms": [
+        {
+          "parent": "seen_patients",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "overtime_hours",
+      "terms": [
+        {
+          "parent": "room_utilization",
+          "coeff": 0.9
+        },
+        {
+          "parent": "patient_complexity",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

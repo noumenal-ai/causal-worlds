@@ -1,0 +1,41 @@
+{
+  "schema_version": "1",
+  "package_version": "0.4.0",
+  "prompt": "A district heating system: supply temperature, demand, pump energy, and complaints.",
+  "created_at": "2026-06-22T21:41:48.083635+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 2,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "complexity": "hard",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.4444444444444444,
+  "faithfulness": 1.0,
+  "structural_difficulty": {
+    "score": 3.0,
+    "hidden_confounders": 2,
+    "confounded_pairs": 1,
+    "sign_flips": 2,
+    "density": 0.21428571428571427
+  },
+  "grade": {
+    "directed_shd": 3,
+    "skeleton_shd": 3,
+    "f1": 0.823529411764706,
+    "n_truth": 9,
+    "n_recovered": 8,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "supply_temp",
+    "flow_setpoint",
+    "demand",
+    "pump_energy",
+    "complaints",
+    "season_load",
+    "tariff_regime"
+  ]
+}
