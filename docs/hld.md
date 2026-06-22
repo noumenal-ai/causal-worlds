@@ -281,6 +281,11 @@ output dependable.
 
 ## 9. Open decisions (→ lld.md)
 
+> **Validation status (2026-06-22): COMPLETE — see [validation.md](validation.md).** All four premises de-risked
+> via spikes: harness (#1/#5), author-from-prose (build-task-0, 5/5 + independent Gemini judge), grader
+> (interventional-CI, *not* GIES — §4d), scale (10-node/2-confounder → SHD 1), loop-gate discrimination. The
+> production library (code quality + system design) is the next phase.
+
 1. The concrete world-spec schema (fields, serialization) — shape in §2; full fields in lld §A.
 2. *(Deferred, not v0)* discrete-event substrate + the topology→answer-key-graph projection.
 3. ~~How strict the checks are + the loop's stopping rule~~ — **designed in §4c**; only the **numeric knobs**
