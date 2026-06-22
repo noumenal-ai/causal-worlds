@@ -28,5 +28,7 @@ approach are **validated** (see [docs/validation.md](docs/validation.md)); this 
 ## Map
 - [docs/scope.md](docs/scope.md) · [docs/hld.md](docs/hld.md) · [docs/lld.md](docs/lld.md) ·
   [docs/validation.md](docs/validation.md) — product/design + the validation evidence.
+- [docs/architecture.md](docs/architecture.md) — the finalized system design (pipeline, seams, data contract, DI,
+  config, artifact, elicitation).
 - [docs/engineering.md](docs/engineering.md) — the binding code-quality + research guidelines.
 - `spikes/` — the validation spikes (research; the proof, not the implementation).
