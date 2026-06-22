@@ -1,9 +1,12 @@
 """causal-worlds: fictional causal operations worlds with a ground-truth answer-key."""
 
+from causal_worlds.config import Settings
+from causal_worlds.container import Container, build_container
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
 from causal_worlds.evaluation import Report, directed_shd, f1, score, skeleton_shd
 from causal_worlds.gates import GateReport, run_gates
+from causal_worlds.obs import NullTracer, Tracer
 from causal_worlds.protocols import Discoverer, Edges, Gate, Judge, Substrate
 from causal_worlds.sample import Sample, ScmSubstrate, build_substrate
 from causal_worlds.schema import (
@@ -28,6 +31,7 @@ __all__ = [
     "AnswerKey",
     "BudgetExceededError",
     "CausalWorldsError",
+    "Container",
     "CyclicGraphError",
     "DanglingReferenceError",
     "Discoverer",
@@ -38,18 +42,22 @@ __all__ = [
     "InterventionalCiDiscoverer",
     "Judge",
     "Mechanism",
+    "NullTracer",
     "Report",
     "Role",
     "RoleError",
     "Sample",
     "ScmSubstrate",
+    "Settings",
     "SpecError",
     "Substrate",
     "Term",
+    "Tracer",
     "Variable",
     "WorldSpec",
     "__version__",
     "answer_key",
+    "build_container",
     "build_substrate",
     "directed_shd",
     "f1",

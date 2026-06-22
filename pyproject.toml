@@ -8,8 +8,9 @@ license = { text = "MIT" }
 authors = [{ name = "Noumenal" }]
 dependencies = [
     "typer>=0.12",
-    "pydantic>=2.9", # boundary validation (CLI/config/LLM I/O); core stays on frozen dataclasses
-    "numpy>=2.1",    # the functional core: SCM sampling + scoring
+    "pydantic>=2.9",          # boundary validation (CLI/LLM I/O); core stays on frozen dataclasses
+    "pydantic-settings>=2.5", # env/.env config loading at the boundary
+    "numpy>=2.1",             # the functional core: SCM sampling + scoring
 ]
 
 [project.optional-dependencies]
@@ -81,6 +82,7 @@ python_version = "3.13"
 strict = true
 files = ["src"]
 exclude = ["spikes/", "experiments/"]
+plugins = ["pydantic.mypy"]
 
 # ----------------------------------------------------------------------------
 # pytest + coverage — CI fails below the floor.
