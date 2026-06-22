@@ -6,7 +6,7 @@ from causal_worlds import worlds
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.fakes import FakeAuthor, FakeJudge
 from causal_worlds.gates import GateReport
-from causal_worlds.generate import NotAdmittedError, _feedback, generate
+from causal_worlds.generate import NotAdmittedError, _feedback, generate, generate_many
 from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
 
 _FAST = InterventionalCiDiscoverer(n=4000)
@@ -67,3 +67,17 @@ def test_t4_runs_when_a_judge_is_supplied():
     world = generate("a coffee chain", author=author, discoverer=_FAST, judge=FakeJudge(), seed=7)
     assert world.report.admitted
     assert world.report.difficulty == 1.0  # judge guessed nothing -> maximally anti-cliché
+
+
+def test_generate_many_returns_one_outcome_per_prompt():
+    author = FakeAuthor([worlds.get("ecommerce")])
+    outcomes = generate_many(["a", "b"], author=author, discoverer=_FAST, judge=FakeJudge(), seed=7)
+    assert [o.prompt for o in outcomes] == ["a", "b"]
+    assert all(o.world is not None for o in outcomes)
+
+
+def test_generate_many_records_failures_without_raising():
+    author = FakeAuthor([_bad_spec()])  # never admittable
+    outcomes = generate_many(["x"], author=author, discoverer=_FAST, seed=7, max_attempts=1)
+    assert outcomes[0].world is None
+    assert "not admitted" in outcomes[0].reason

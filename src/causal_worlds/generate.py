@@ -6,6 +6,7 @@ A world that never passes raises :class:`NotAdmittedError` — we never silently
 world. This is the imperative shell; the gates and the substrate it calls are the functional core.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from causal_worlds.errors import CausalWorldsError
@@ -24,6 +25,15 @@ class AdmittedWorld:
     spec: WorldSpec
     report: GateReport
     attempts: int
+
+
+@dataclass(frozen=True, slots=True)
+class Outcome:
+    """The result of trying to generate one world — admitted, or the gate reason it never was."""
+
+    prompt: str
+    world: AdmittedWorld | None
+    reason: str
 
 
 class NotAdmittedError(CausalWorldsError):
@@ -92,3 +102,33 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
         last = report
         feedback = _feedback(report)
     raise NotAdmittedError(prompt, max_attempts, last)
+
+
+def generate_many(  # noqa: PLR0913 — a public entrypoint; the extra params are all keyword-only knobs
+    prompts: Iterable[str],
+    *,
+    author: Author,
+    discoverer: Discoverer | None = None,
+    judge: Judge | None = None,
+    seed: int = 0,
+    max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
+) -> list[Outcome]:
+    """Generate a world for each prompt; never raises — a failure becomes a non-admitted outcome.
+
+    This is the benchmark-set workhorse: one prompt that can't be admitted does not abort the run.
+    """
+    outcomes: list[Outcome] = []
+    for prompt in prompts:
+        try:
+            world = generate(
+                prompt,
+                author=author,
+                discoverer=discoverer,
+                judge=judge,
+                seed=seed,
+                max_attempts=max_attempts,
+            )
+            outcomes.append(Outcome(prompt=prompt, world=world, reason="admitted"))
+        except NotAdmittedError as exc:
+            outcomes.append(Outcome(prompt=prompt, world=None, reason=str(exc)))
+    return outcomes
