@@ -108,6 +108,28 @@ design:
 This converts circularity from an unaddressed hole into a **measured, designed-against property** — the prior-only
 gap (statistical-discoverer score − prior-only score) is itself a reportable benchmark-quality metric.
 
+### 4b. Spike evidence (lld §0, 2026-06-22) — the knobs, now measured not guessed
+
+A numpy-only spike ([`spikes/spike_coffee.py`](../spikes/spike_coffee.py)) ran the validity core on a deliberately
+hard **anti-cliché** world (regime sign-flip on price→demand: −1 promo / +1 scarcity; a **hidden confounder** `L`
+making overtime↔sales spuriously correlated). **Result: benchmark-validity core CONFIRMED** — and it pins the
+previously-TBD knobs:
+
+| Knob (was TBD) | Measured / resolved |
+|---|---|
+| **Random-null reference** | SHD ≈ **7.5** (random 7-edge graph over 6 nodes) — the chance floor the non-triviality gate must beat. |
+| **Anti-cliché meter** | prior-only SHD = **2** *and* it gets the scarcity sign backwards ⇒ the world genuinely defeats priors. Gate: reject if prior-only ≈ the data discoverer. |
+| **Observational insufficiency (by design)** | observational PC **drops** the sign-flipped P–D (the −1/+1 regimes cancel marginally) **and keeps** the confounded O–S (no observed subset d-separates them). SHD 2. |
+| **Identifiability *by construction*** | emitting **do-data** takes SHD **2 → 0**: do(P) restores P–D with correct per-regime signs (−1.00 / +1.00); do(O)→S ≈ 0 removes the spurious edge. **The load-bearing #5 decision, now proven on a hard case.** |
+| **Reference discoverer** | must be a proper **PC-family adjacency search** (a full-conditioning/moral-graph version over-connects — a real bug the spike caught and fixed) **and regime/intervention-aware** (a naive linear discoverer is blind to sign-flips). |
+| **Noise** | σ ≈ 0.3 gave clean separation; it is the learnability dial (too low → trivial, too high → unrecoverable). |
+
+**Honest caveat (what the spike does NOT settle).** Its interventional discoverer is *hand-targeted* at the two
+planted traps — so it proves interventional data **contains the information** to fix what observational + priors
+miss, **not** that a *general* interventional-discovery algorithm recovers the graph automatically. **First
+HLD/LLD task this unblocks:** a principled interventional procedure (GIES / systematic per-variable do-tests), not
+a per-trap patch.
+
 ## 5. The test-maker / test-taker split
 
 `causal-worlds` is the **test-maker** (worlds + answer-keys). The **causal-discovery / control agent under test is

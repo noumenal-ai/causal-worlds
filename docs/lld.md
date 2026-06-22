@@ -19,6 +19,14 @@ hand, no framework:
 
 This spike *is* the first work item. No schema/substrate/harness is built around the assumption until it holds.
 
+**RESULT (2026-06-22): CONFIRMED.** [`spikes/spike_coffee.py`](../spikes/spike_coffee.py) ran the anti-cliché
+coffee world (regime sign-flip + hidden confounder). Prior-only fails (SHD 2, scarcity sign backwards);
+observational PC is insufficient (drops sign-flipped P–D, keeps confounded O–S, SHD 2); **interventional do-data
+takes SHD → 0** with correct per-regime signs (−1.00 / +1.00). Measured knobs (null ≈ 7.5; PC-family + intervention-
+aware discoverer; σ noise dial) are folded into **hld §4b**. **Caveat:** the spike's interventional discoverer is
+hand-targeted at the planted traps — it proves do-data is *sufficient*, not that a *general* algorithm auto-recovers
+→ **the first build task is a principled interventional procedure** (GIES / systematic do-tests), see §F.
+
 ## A. The world-spec / answer-key schema  *(HLD §2, §9.1)*
 
 The single IR. To pin down:
