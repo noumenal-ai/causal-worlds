@@ -1,6 +1,7 @@
 """causal-worlds: fictional causal operations worlds with a ground-truth answer-key."""
 
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
+from causal_worlds.evaluation import Report, directed_shd, f1, score, skeleton_shd
 from causal_worlds.protocols import Discoverer, Edges, Gate, Judge, Substrate
 from causal_worlds.sample import Sample, ScmSubstrate, build_substrate
 from causal_worlds.schema import (
@@ -33,6 +34,7 @@ __all__ = [
     "Gate",
     "Judge",
     "Mechanism",
+    "Report",
     "Role",
     "RoleError",
     "Sample",
@@ -45,5 +47,9 @@ __all__ = [
     "__version__",
     "answer_key",
     "build_substrate",
+    "directed_shd",
+    "f1",
+    "score",
+    "skeleton_shd",
     "validate",
 ]
