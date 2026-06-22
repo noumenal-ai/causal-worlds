@@ -8,11 +8,16 @@ license = { text = "MIT" }
 authors = [{ name = "Noumenal" }]
 dependencies = [
     "typer>=0.12",
+    "pydantic>=2.9", # boundary validation (CLI/config/LLM I/O); core stays on frozen dataclasses
 ]
 
 [project.optional-dependencies]
 # The discovery/grader stack (heavy: scipy/sklearn). Installed when the `discover` feature is used.
 discover = ["numpy>=2.1", "causal-learn>=0.1.4", "gies>=0.0.1"]
+# LLM structured output (author + judge) with validation + bounded retry, provider-agnostic.
+llm = ["instructor>=1.0", "google-genai>=1.0"]
+# Observability/eval: Langfuse v3+ is OpenTelemetry-based.
+observability = ["langfuse>=3.0"]
 
 [project.scripts]
 causal-worlds = "causal_worlds.cli:app"

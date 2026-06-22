@@ -46,5 +46,17 @@ polish. **Measured, not asserted:** every claim has a runnable script that print
 judge** for LLM-output quality (don't grade a model with itself). A proven spike **graduates** into `src/` rebuilt
 to the standards above — the spike is the proof, not the implementation.
 
+## Boundaries, LLM I/O & observability
+- **Data models per use-case:** frozen `@dataclass` in the pure core (valid-by-construction; parse-don't-validate);
+  **pydantic v2** only at boundaries (LLM output, CLI, config) — convert the pydantic boundary model into the
+  dataclass core IR at the edge.
+- **LLM structured output:** use **instructor** (pydantic models, **bounded** re-ask on validation failure, then
+  raise — never fabricate) behind the `Judge`/author adapter; Gemini is the independent judge.
+- **Observability from day 1:** **Langfuse (OTEL-based)** spans around LLM calls + each pipeline stage, behind a
+  thin tracing seam (optional at runtime). Three channels, never conflated: logs (shell), traces (Langfuse/OTel),
+  exceptions (control flow). The pure core stays silent.
+- **Errors & logging:** root `CausalWorldsError` + domain subclasses; **fail loud**; library logs to
+  `getLogger("causal_worlds")` + `NullHandler` (the app/CLI owns handlers); **never log secrets.**
+
 ## Adding a dependency
 Justify it; pin via `uv`; wrap it behind a Protocol+adapter; prefer the standard library and reuse over new deps.

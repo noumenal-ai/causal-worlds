@@ -136,3 +136,43 @@ determinism) — research code has many invariants and few fixed outputs. TDD wh
 ## 10. Docstrings
 Google style (`Args:` / `Returns:` / `Raises:`), enforced by ruff `D` rules. Public API documented; private helpers
 documented when non-obvious. Don't restate the signature — state intent, contracts, and surprises.
+
+## 11. Boundaries: data models, LLM I/O, observability, errors & logging
+
+### Data models — pydantic at the boundary, frozen dataclasses in the core *(decision: per use-case)*
+- **Frozen `@dataclass(slots=True)` for the pure core** — the world-spec IR and all internal value objects:
+  immutable, fast, dependency-free, **valid-by-construction** (validated once at the boundary, never re-checked
+  downstream — *parse, don't validate*). The hot math core pays no validation tax.
+- **Pydantic v2 at boundaries** — LLM structured outputs, CLI args, config, anything parsed from external/untrusted
+  text: validation + coercion + caller-legible errors. **Convert the boundary pydantic model into the frozen-
+  dataclass core IR at the edge** (pydantic = the wire/parse type; dataclass = the domain type).
+- *Rule:* pydantic where data crosses a trust boundary; dataclass for trusted, already-validated internal values.
+
+### LLM structured output — instructor + pydantic, bounded retry
+- Use **[instructor](https://python.useinstructor.com/)** (built on pydantic) for every LLM call that returns
+  structure (the author's world-spec; the `Judge`'s prior-edges + faithfulness). It validates the response against a
+  pydantic model and **re-asks on validation failure** (feeds the error back) — provider-agnostic (Gemini + others;
+  maps to the provider's native structured-output / tool-calling / JSON mode).
+- Retries are **bounded** → then **raise** (fail loud; never fabricate). Same propose→validate→re-ask discipline as
+  the author→gate loop, at the single-call level. The instructor call lives **behind our `Judge`/author adapter**
+  (the only place a provider client appears). Native provider structured output (e.g. Gemini `response_schema`) is
+  the documented fallback.
+
+### Observability — Langfuse (OTEL-based) + OpenTelemetry, from day 1
+- Instrument LLM calls + each pipeline stage (author→gate→admit→grade→eval) with **[Langfuse](https://langfuse.com/)
+  Python SDK v3+** (OTEL-based) — captures prompt/response/**token+cost+latency**/errors and supports eval; composes
+  with any standard OTel setup.
+- **Optional at runtime** (no key → degrade to local logging; the package still runs), but instrumentation points
+  are first-class and sit behind a thin **tracing seam** (`@observe`/`Tracer` boundary) so Langfuse is swappable.
+  This makes the "eval + observability from day 1" non-negotiable concrete.
+
+### Errors & logging — designed, not ad hoc
+- **Exception hierarchy:** a package-root `CausalWorldsError`; domain errors subclass it (`SpecError` today;
+  `AuthorError`, `GraderError`, `JudgeError`, `BudgetExceededError` as components land). Caller-oriented types,
+  context in the message, **fail loud — never fabricate a value.**
+- **Logging (library discipline):** log to `logging.getLogger("causal_worlds")` with a **`NullHandler`** — *the
+  library never configures root logging or handlers*; the **application/CLI** owns output (and may enable JSON/
+  structured logs). **Secrets never logged** (the Gemini key lives in env only).
+- **Three channels, never conflated:** *logs* = operational events (shell only) · *traces* = LLM/pipeline spans
+  (Langfuse/OTel) · *exceptions* = control flow. The **pure core stays silent** (raises typed errors, no IO/logging);
+  the **imperative shell** logs and traces.
