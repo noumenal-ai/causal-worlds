@@ -1,0 +1,37 @@
+{
+  "edges": [
+    [
+      "aeration",
+      "dissolved_oxygen"
+    ],
+    [
+      "aeration",
+      "energy_use"
+    ],
+    [
+      "dissolved_oxygen",
+      "effluent_quality"
+    ],
+    [
+      "inflow_load",
+      "aeration"
+    ],
+    [
+      "inflow_load",
+      "dissolved_oxygen"
+    ],
+    [
+      "inflow_load",
+      "effluent_quality"
+    ],
+    [
+      "storm_event",
+      "effluent_quality"
+    ],
+    [
+      "storm_event",
+      "inflow_load"
+    ]
+  ],
+  "confounded": []
+}

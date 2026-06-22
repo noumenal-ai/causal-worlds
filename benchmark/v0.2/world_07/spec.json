@@ -1,0 +1,155 @@
+{
+  "variables": [
+    {
+      "name": "guest_affluence",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "peak_season",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "room_price",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "marketing_spend",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "event_calendar",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "occupancy",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "review_score",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "revenue",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "room_price",
+      "terms": [
+        {
+          "parent": "guest_affluence",
+          "coeff": 1.3
+        },
+        {
+          "parent": "peak_season",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "event_calendar",
+      "terms": [
+        {
+          "parent": "peak_season",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "marketing_spend",
+      "terms": [
+        {
+          "parent": "event_calendar",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "occupancy",
+      "terms": [
+        {
+          "parent": "room_price",
+          "coeff": -0.8
+        },
+        {
+          "parent": "marketing_spend",
+          "coeff": 0.9
+        },
+        {
+          "parent": "event_calendar",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_season",
+      "regime_terms": [
+        {
+          "parent": "room_price",
+          "coeff": 0.7
+        },
+        {
+          "parent": "marketing_spend",
+          "coeff": 0.9
+        },
+        {
+          "parent": "event_calendar",
+          "coeff": 0.6
+        }
+      ]
+    },
+    {
+      "target": "review_score",
+      "terms": [
+        {
+          "parent": "guest_affluence",
+          "coeff": 1.1
+        },
+        {
+          "parent": "occupancy",
+          "coeff": -0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "revenue",
+      "terms": [
+        {
+          "parent": "occupancy",
+          "coeff": 1.2
+        },
+        {
+          "parent": "room_price",
+          "coeff": 1.0
+        },
+        {
+          "parent": "review_score",
+          "coeff": 0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

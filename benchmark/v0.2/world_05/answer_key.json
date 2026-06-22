@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "agent_headcount",
+      "resolution_time"
+    ],
+    [
+      "automation_coverage",
+      "monthly_churn"
+    ],
+    [
+      "automation_coverage",
+      "resolution_time"
+    ],
+    [
+      "csat_score",
+      "monthly_churn"
+    ],
+    [
+      "resolution_time",
+      "csat_score"
+    ],
+    [
+      "ticket_inflow",
+      "resolution_time"
+    ],
+    [
+      "viral_incident",
+      "monthly_churn"
+    ]
+  ],
+  "confounded": [
+    [
+      "automation_coverage",
+      "csat_score"
+    ]
+  ]
+}

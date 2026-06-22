@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "agents_scheduled",
+      "abandonment"
+    ],
+    [
+      "agents_scheduled",
+      "occupancy"
+    ],
+    [
+      "avg_handle_time",
+      "occupancy"
+    ],
+    [
+      "call_volume",
+      "occupancy"
+    ],
+    [
+      "occupancy",
+      "abandonment"
+    ],
+    [
+      "outage_regime",
+      "abandonment"
+    ]
+  ],
+  "confounded": [
+    [
+      "avg_handle_time",
+      "call_volume"
+    ]
+  ]
+}

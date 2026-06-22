@@ -1,0 +1,126 @@
+{
+  "variables": [
+    {
+      "name": "aeration",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "inflow_load",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "energy_use",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "effluent_quality",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "storm_event",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "dissolved_oxygen",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "grid_pressure",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "inflow_load",
+      "terms": [
+        {
+          "parent": "storm_event",
+          "coeff": 1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "aeration",
+      "terms": [
+        {
+          "parent": "grid_pressure",
+          "coeff": -1.1
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "dissolved_oxygen",
+      "terms": [
+        {
+          "parent": "aeration",
+          "coeff": 1.3
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": -0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "effluent_quality",
+      "terms": [
+        {
+          "parent": "dissolved_oxygen",
+          "coeff": 1.2
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": -0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "storm_event",
+      "regime_terms": [
+        {
+          "parent": "dissolved_oxygen",
+          "coeff": -0.9
+        },
+        {
+          "parent": "inflow_load",
+          "coeff": -0.5
+        }
+      ]
+    },
+    {
+      "target": "energy_use",
+      "terms": [
+        {
+          "parent": "aeration",
+          "coeff": 1.5
+        },
+        {
+          "parent": "grid_pressure",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

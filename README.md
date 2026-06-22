@@ -5,14 +5,17 @@ simulator, the multivariate time-series it emits, and a **declared ground-truth 
 *answer-key*) — for **benchmarking causal-discovery agents against a known truth** (and, on the roadmap,
 stress-testing control agents under perturbation).
 
-> **Status: v0.1.0 — the benchmark *engine* is here.** Programmatically specify a fictional causal world (with a
-> ground-truth answer-key), sample it, grade a causal-discovery method, and score it — runnable as a library and a
-> CLI, no LLM or API key required. The headline **natural-language authoring** (+ the independent judge and
-> conversational elicitation) is **v0.2** — tracked as issues. See [`CHANGELOG.md`](CHANGELOG.md).
+> **Status: v0.2.0 — the loop is closed.** Describe an operation in plain language and get back an *admitted*
+> causal world: an executable simulator, the time-series it emits, a declared ground-truth answer-key, and a
+> manifest. A Claude **author** proposes the world; an independent Gemini **judge** (a different model family)
+> plus statistical gates admit only worlds that are valid, recoverable, and *not* guessable from priors;
+> admitted worlds are persisted as self-describing bundles. The deterministic v0.1 **engine** (specify → sample →
+> grade → score) is still fully usable with **no API key**. See [`CHANGELOG.md`](CHANGELOG.md).
 >
 > What's validated: on the built-in `coffee` world (a hidden confounder + a regime sign-flip), standard
 > observational/score-based discovery fails, but the reference **interventional-CI** grader recovers the structure
-> (directed SHD 0) and drops the confounded edge — pinned as a test.
+> (directed SHD 0) and drops the confounded edge — pinned as a test. The author model is chosen by a reproducible,
+> judged [bake-off](evals/author-model-bakeoff/), not by assertion.
 
 ## Quickstart
 
@@ -21,6 +24,14 @@ uv add causal-worlds            # or: pip install causal-worlds   (once publishe
 causal-worlds worlds            # list built-in worlds: coffee, ecommerce
 causal-worlds gate coffee       # run the validity gates -> admitted=True
 causal-worlds grade coffee      # grade the reference discoverer -> directed_shd=0  f1=1.00  confounded_reported=0
+```
+
+Author a world from a description (needs the `llm` extra + an Anthropic and a Gemini key in the env):
+
+```bash
+uv add 'causal-worlds[llm]'
+causal-worlds generate "a coffee chain with weekend swings and variable lead times" ./my-world
+causal-worlds benchmark benchmark/prompts.txt ./benchmark/v0.2   # author + admit a whole set
 ```
 
 As a library:
@@ -75,6 +86,16 @@ natural-language description
 ```
 
 See [`docs/scope.md`](docs/scope.md), [`docs/hld.md`](docs/hld.md), [`docs/lld.md`](docs/lld.md).
+
+## The benchmark set
+
+A versioned set ships in [`benchmark/v0.2`](benchmark/) — **12 fictional operations** (coffee chain,
+ED, ride-hailing, microgrid, manufacturing, support desk, last-mile, hotel, cold chain, call-center,
+bike-share, wastewater), each authored by Claude, admitted through the gates, judged by Gemini, and
+graded. Mean anti-cliché difficulty **0.28**, mean faithfulness **1.00**; the reference grader sits at
+mean directed SHD **1.25** / F1 **0.92** (the floor your discoverer should beat). Every world is a
+self-describing bundle (`spec.json` / `data.npz` / `answer_key.json` / `manifest.json`) with full
+provenance. See [`benchmark/README.md`](benchmark/README.md).
 
 ## Built on the public domain
 

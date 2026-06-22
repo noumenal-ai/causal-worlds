@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "couriers_dispatched",
+      "route_density"
+    ],
+    [
+      "couriers_dispatched",
+      "sla_attainment"
+    ],
+    [
+      "package_volume",
+      "couriers_dispatched"
+    ],
+    [
+      "package_volume",
+      "route_density"
+    ],
+    [
+      "peak_surge",
+      "sla_attainment"
+    ],
+    [
+      "route_density",
+      "sla_attainment"
+    ],
+    [
+      "traffic_index",
+      "sla_attainment"
+    ]
+  ],
+  "confounded": [
+    [
+      "package_volume",
+      "traffic_index"
+    ]
+  ]
+}

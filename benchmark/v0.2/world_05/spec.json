@@ -1,0 +1,119 @@
+{
+  "variables": [
+    {
+      "name": "team_morale",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "automation_coverage",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "agent_headcount",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ticket_inflow",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "viral_incident",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "resolution_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "csat_score",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "monthly_churn",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "automation_coverage",
+      "terms": [
+        {
+          "parent": "team_morale",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "csat_score",
+      "terms": [
+        {
+          "parent": "team_morale",
+          "coeff": 1.1
+        },
+        {
+          "parent": "resolution_time",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "resolution_time",
+      "terms": [
+        {
+          "parent": "ticket_inflow",
+          "coeff": 1.2
+        },
+        {
+          "parent": "agent_headcount",
+          "coeff": -0.9
+        },
+        {
+          "parent": "automation_coverage",
+          "coeff": -0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "monthly_churn",
+      "terms": [
+        {
+          "parent": "csat_score",
+          "coeff": -1.0
+        },
+        {
+          "parent": "automation_coverage",
+          "coeff": -0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "viral_incident",
+      "regime_terms": [
+        {
+          "parent": "csat_score",
+          "coeff": -1.0
+        },
+        {
+          "parent": "automation_coverage",
+          "coeff": 0.8
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "edges": [
+    [
+      "event_calendar",
+      "marketing_spend"
+    ],
+    [
+      "event_calendar",
+      "occupancy"
+    ],
+    [
+      "marketing_spend",
+      "occupancy"
+    ],
+    [
+      "occupancy",
+      "revenue"
+    ],
+    [
+      "occupancy",
+      "review_score"
+    ],
+    [
+      "peak_season",
+      "event_calendar"
+    ],
+    [
+      "peak_season",
+      "occupancy"
+    ],
+    [
+      "peak_season",
+      "room_price"
+    ],
+    [
+      "review_score",
+      "revenue"
+    ],
+    [
+      "room_price",
+      "occupancy"
+    ],
+    [
+      "room_price",
+      "revenue"
+    ]
+  ],
+  "confounded": [
+    [
+      "review_score",
+      "room_price"
+    ]
+  ]
+}

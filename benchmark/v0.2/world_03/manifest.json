@@ -1,0 +1,33 @@
+{
+  "schema_version": "1",
+  "package_version": "0.2.0",
+  "prompt": "A solar microgrid with battery storage, dynamic tariffs, weather swings, and household load.",
+  "created_at": "2026-06-22T20:47:00.029371+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 1,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.368421052631579,
+  "faithfulness": 1.0,
+  "grade": {
+    "directed_shd": 1,
+    "skeleton_shd": 1,
+    "f1": 0.9411764705882353,
+    "n_truth": 9,
+    "n_recovered": 8,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "irradiance_proxy",
+    "panel_dispatch",
+    "tariff_signal",
+    "heatwave_regime",
+    "battery_soc",
+    "household_load",
+    "net_revenue"
+  ]
+}

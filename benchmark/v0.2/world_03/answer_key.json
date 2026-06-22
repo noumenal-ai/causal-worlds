@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "battery_soc",
+      "net_revenue"
+    ],
+    [
+      "heatwave_regime",
+      "household_load"
+    ],
+    [
+      "heatwave_regime",
+      "net_revenue"
+    ],
+    [
+      "household_load",
+      "net_revenue"
+    ],
+    [
+      "irradiance_proxy",
+      "panel_dispatch"
+    ],
+    [
+      "panel_dispatch",
+      "battery_soc"
+    ],
+    [
+      "tariff_signal",
+      "battery_soc"
+    ],
+    [
+      "tariff_signal",
+      "household_load"
+    ],
+    [
+      "tariff_signal",
+      "net_revenue"
+    ]
+  ],
+  "confounded": [
+    [
+      "irradiance_proxy",
+      "tariff_signal"
+    ]
+  ]
+}

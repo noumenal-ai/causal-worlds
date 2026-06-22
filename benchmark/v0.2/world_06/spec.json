@@ -1,0 +1,126 @@
+{
+  "variables": [
+    {
+      "name": "weather_front",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "couriers_dispatched",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "package_volume",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "traffic_index",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "peak_surge",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "route_density",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "sla_attainment",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "package_volume",
+      "terms": [
+        {
+          "parent": "weather_front",
+          "coeff": 1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "traffic_index",
+      "terms": [
+        {
+          "parent": "weather_front",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "couriers_dispatched",
+      "terms": [
+        {
+          "parent": "package_volume",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "route_density",
+      "terms": [
+        {
+          "parent": "couriers_dispatched",
+          "coeff": 1.1
+        },
+        {
+          "parent": "package_volume",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "sla_attainment",
+      "terms": [
+        {
+          "parent": "couriers_dispatched",
+          "coeff": 1.3
+        },
+        {
+          "parent": "traffic_index",
+          "coeff": -0.8
+        },
+        {
+          "parent": "route_density",
+          "coeff": 0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_surge",
+      "regime_terms": [
+        {
+          "parent": "couriers_dispatched",
+          "coeff": -0.9
+        },
+        {
+          "parent": "traffic_index",
+          "coeff": -0.8
+        },
+        {
+          "parent": "route_density",
+          "coeff": 0.5
+        }
+      ]
+    }
+  ]
+}

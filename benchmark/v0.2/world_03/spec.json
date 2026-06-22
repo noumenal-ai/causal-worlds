@@ -1,0 +1,147 @@
+{
+  "variables": [
+    {
+      "name": "irradiance_proxy",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "panel_dispatch",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "tariff_signal",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "heatwave_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "grid_health",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "battery_soc",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "household_load",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "net_revenue",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "irradiance_proxy",
+      "terms": [
+        {
+          "parent": "grid_health",
+          "coeff": 1.2
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "tariff_signal",
+      "terms": [
+        {
+          "parent": "grid_health",
+          "coeff": 1.4
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "panel_dispatch",
+      "terms": [
+        {
+          "parent": "irradiance_proxy",
+          "coeff": 0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "battery_soc",
+      "terms": [
+        {
+          "parent": "panel_dispatch",
+          "coeff": 1.1
+        },
+        {
+          "parent": "tariff_signal",
+          "coeff": -0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "household_load",
+      "terms": [
+        {
+          "parent": "tariff_signal",
+          "coeff": -0.8
+        },
+        {
+          "parent": "heatwave_regime",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "net_revenue",
+      "terms": [
+        {
+          "parent": "battery_soc",
+          "coeff": 0.8
+        },
+        {
+          "parent": "tariff_signal",
+          "coeff": 1.5
+        },
+        {
+          "parent": "household_load",
+          "coeff": 0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "heatwave_regime",
+      "regime_terms": [
+        {
+          "parent": "battery_soc",
+          "coeff": 0.8
+        },
+        {
+          "parent": "tariff_signal",
+          "coeff": -1.5
+        },
+        {
+          "parent": "household_load",
+          "coeff": 0.6
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "variables": [
+    {
+      "name": "rebalance_effort",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ride_price",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "storm_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "tourist_surge",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "dock_availability",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "ride_volume",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rider_churn",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "rebalance_effort",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ride_price",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "storm_regime",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "tourist_surge",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "dock_availability",
+      "terms": [
+        {
+          "parent": "rebalance_effort",
+          "coeff": 1.4
+        },
+        {
+          "parent": "tourist_surge",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ride_volume",
+      "terms": [
+        {
+          "parent": "ride_price",
+          "coeff": -1.2
+        },
+        {
+          "parent": "dock_availability",
+          "coeff": 0.9
+        },
+        {
+          "parent": "tourist_surge",
+          "coeff": 1.3
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rider_churn",
+      "terms": [
+        {
+          "parent": "ride_price",
+          "coeff": 1.1
+        },
+        {
+          "parent": "ride_volume",
+          "coeff": -0.8
+        },
+        {
+          "parent": "dock_availability",
+          "coeff": -0.6
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "storm_regime",
+      "regime_terms": [
+        {
+          "parent": "ride_price",
+          "coeff": -0.9
+        },
+        {
+          "parent": "ride_volume",
+          "coeff": -0.8
+        },
+        {
+          "parent": "dock_availability",
+          "coeff": -0.6
+        }
+      ]
+    }
+  ]
+}

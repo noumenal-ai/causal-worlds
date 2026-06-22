@@ -1,0 +1,33 @@
+{
+  "edges": [
+    [
+      "dock_availability",
+      "ride_volume"
+    ],
+    [
+      "dock_availability",
+      "rider_churn"
+    ],
+    [
+      "rebalance_effort",
+      "dock_availability"
+    ],
+    [
+      "ride_price",
+      "ride_volume"
+    ],
+    [
+      "ride_price",
+      "rider_churn"
+    ],
+    [
+      "ride_volume",
+      "rider_churn"
+    ],
+    [
+      "storm_regime",
+      "rider_churn"
+    ]
+  ],
+  "confounded": []
+}

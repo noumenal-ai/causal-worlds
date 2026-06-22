@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "ambulance_diversion",
+      "wait_time"
+    ],
+    [
+      "bed_capacity",
+      "bed_occupancy"
+    ],
+    [
+      "bed_occupancy",
+      "wait_time"
+    ],
+    [
+      "patient_inflow",
+      "bed_occupancy"
+    ],
+    [
+      "patient_inflow",
+      "wait_time"
+    ],
+    [
+      "triage_staff",
+      "wait_time"
+    ]
+  ],
+  "confounded": [
+    [
+      "patient_inflow",
+      "triage_staff"
+    ]
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "variables": [
+    {
+      "name": "barista_morale",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "weekend",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "loyalty_discount",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "supplier_lead_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "foot_traffic",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "queue_length",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "drinks_sold",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "daily_margin",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "weekend",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "loyalty_discount",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "barista_morale",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "supplier_lead_time",
+      "terms": [
+        {
+          "parent": "barista_morale",
+          "coeff": -1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "foot_traffic",
+      "terms": [
+        {
+          "parent": "weekend",
+          "coeff": 1.5
+        },
+        {
+          "parent": "loyalty_discount",
+          "coeff": 0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "queue_length",
+      "terms": [
+        {
+          "parent": "foot_traffic",
+          "coeff": 1.2
+        },
+        {
+          "parent": "barista_morale",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "drinks_sold",
+      "terms": [
+        {
+          "parent": "foot_traffic",
+          "coeff": 1.3
+        },
+        {
+          "parent": "supplier_lead_time",
+          "coeff": -0.7
+        },
+        {
+          "parent": "queue_length",
+          "coeff": -0.5
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "daily_margin",
+      "terms": [
+        {
+          "parent": "drinks_sold",
+          "coeff": 1.4
+        },
+        {
+          "parent": "loyalty_discount",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "weekend",
+      "regime_terms": [
+        {
+          "parent": "drinks_sold",
+          "coeff": 1.4
+        },
+        {
+          "parent": "loyalty_discount",
+          "coeff": 1.2
+        }
+      ]
+    }
+  ]
+}

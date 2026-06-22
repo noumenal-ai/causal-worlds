@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "cancellations",
+      "completed_trips"
+    ],
+    [
+      "driver_supply",
+      "cancellations"
+    ],
+    [
+      "driver_supply",
+      "completed_trips"
+    ],
+    [
+      "incentive_spend",
+      "driver_supply"
+    ],
+    [
+      "rider_demand",
+      "cancellations"
+    ],
+    [
+      "rider_demand",
+      "completed_trips"
+    ],
+    [
+      "surge_mult",
+      "cancellations"
+    ],
+    [
+      "surge_mult",
+      "completed_trips"
+    ],
+    [
+      "weather_shock",
+      "completed_trips"
+    ],
+    [
+      "weather_shock",
+      "rider_demand"
+    ]
+  ],
+  "confounded": [
+    [
+      "driver_supply",
+      "rider_demand"
+    ]
+  ]
+}

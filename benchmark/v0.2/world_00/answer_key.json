@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "drinks_sold",
+      "daily_margin"
+    ],
+    [
+      "foot_traffic",
+      "drinks_sold"
+    ],
+    [
+      "foot_traffic",
+      "queue_length"
+    ],
+    [
+      "loyalty_discount",
+      "daily_margin"
+    ],
+    [
+      "loyalty_discount",
+      "foot_traffic"
+    ],
+    [
+      "queue_length",
+      "drinks_sold"
+    ],
+    [
+      "supplier_lead_time",
+      "drinks_sold"
+    ],
+    [
+      "weekend",
+      "daily_margin"
+    ],
+    [
+      "weekend",
+      "foot_traffic"
+    ]
+  ],
+  "confounded": [
+    [
+      "queue_length",
+      "supplier_lead_time"
+    ]
+  ]
+}

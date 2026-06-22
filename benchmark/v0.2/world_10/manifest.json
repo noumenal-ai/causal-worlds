@@ -1,0 +1,32 @@
+{
+  "schema_version": "1",
+  "package_version": "0.2.0",
+  "prompt": "A bike-share network: station rebalancing, dynamic pricing, weather, dock availability, and churn.",
+  "created_at": "2026-06-22T20:47:00.057629+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 1,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.2857142857142857,
+  "faithfulness": 1.0,
+  "grade": {
+    "directed_shd": 2,
+    "skeleton_shd": 2,
+    "f1": 0.8571428571428571,
+    "n_truth": 7,
+    "n_recovered": 7,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "rebalance_effort",
+    "ride_price",
+    "storm_regime",
+    "dock_availability",
+    "ride_volume",
+    "rider_churn"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "1",
+  "package_version": "0.2.0",
+  "prompt": "A SaaS support desk: ticket inflow, staffing, automation coverage, and customer churn.",
+  "created_at": "2026-06-22T20:47:00.039041+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 1,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.4444444444444444,
+  "faithfulness": 1.0,
+  "grade": {
+    "directed_shd": 1,
+    "skeleton_shd": 1,
+    "f1": 0.923076923076923,
+    "n_truth": 7,
+    "n_recovered": 6,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "automation_coverage",
+    "agent_headcount",
+    "ticket_inflow",
+    "viral_incident",
+    "resolution_time",
+    "csat_score",
+    "monthly_churn"
+  ]
+}

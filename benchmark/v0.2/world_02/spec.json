@@ -1,0 +1,139 @@
+{
+  "variables": [
+    {
+      "name": "surge_mult",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "incentive_spend",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "driver_supply",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rider_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "cancellations",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "weather_shock",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "city_event",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "completed_trips",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "driver_supply",
+      "terms": [
+        {
+          "parent": "incentive_spend",
+          "coeff": 1.3
+        },
+        {
+          "parent": "city_event",
+          "coeff": 1.1
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rider_demand",
+      "terms": [
+        {
+          "parent": "city_event",
+          "coeff": 1.4
+        },
+        {
+          "parent": "weather_shock",
+          "coeff": 0.7
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "cancellations",
+      "terms": [
+        {
+          "parent": "surge_mult",
+          "coeff": 1.2
+        },
+        {
+          "parent": "rider_demand",
+          "coeff": 0.6
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": -0.8
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "completed_trips",
+      "terms": [
+        {
+          "parent": "surge_mult",
+          "coeff": 0.9
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": 1.1
+        },
+        {
+          "parent": "rider_demand",
+          "coeff": 0.7
+        },
+        {
+          "parent": "cancellations",
+          "coeff": -0.9
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "weather_shock",
+      "regime_terms": [
+        {
+          "parent": "surge_mult",
+          "coeff": -1.0
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": 1.1
+        },
+        {
+          "parent": "rider_demand",
+          "coeff": 0.7
+        },
+        {
+          "parent": "cancellations",
+          "coeff": -0.9
+        }
+      ]
+    }
+  ]
+}

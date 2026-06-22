@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "energy_cost",
+      "margin"
+    ],
+    [
+      "peak_demand_regime",
+      "margin"
+    ],
+    [
+      "restock_rate",
+      "margin"
+    ],
+    [
+      "restock_rate",
+      "spoilage"
+    ],
+    [
+      "restock_rate",
+      "stockouts"
+    ],
+    [
+      "setpoint",
+      "energy_cost"
+    ],
+    [
+      "setpoint",
+      "shelf_temp"
+    ],
+    [
+      "shelf_temp",
+      "spoilage"
+    ],
+    [
+      "spoilage",
+      "margin"
+    ],
+    [
+      "stockouts",
+      "margin"
+    ]
+  ],
+  "confounded": [
+    [
+      "energy_cost",
+      "shelf_temp"
+    ]
+  ]
+}
