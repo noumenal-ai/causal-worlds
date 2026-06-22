@@ -86,6 +86,32 @@ def worlds(rng):
         roles=dict(Ad="controllable",Discount="controllable",Traffic="observable",Sales="outcome"),
         truth={("Ad","Traffic"),("Traffic","Sales"),("Discount","Sales")},
         prior={("Ad","Traffic"),("Traffic","Sales"),("Discount","Sales")}))
+    # ---- World 5 — LOGISTICS NETWORK (SCALE: 10 obs nodes, 2 hidden confounders, 1 regime flip) ----
+    # "A regional logistics network. More trucks raise on-time delivery, which raises satisfaction. Fuel price
+    #  raises shipping cost. In peak season adding trucks congests hubs and LOWERS on-time delivery (flip). Weather
+    #  drives demand and transit delays; supplier reliability drives lead time and defect rate."
+    def w5(do):
+        R=do.get("R", rng.integers(0,2,NW).astype(float)); Wx=H(); Sup=H()   # Wx, Sup hidden
+        Tr=do.get("Trucks", rng.normal(0,1,NW)); Fu=do.get("FuelPrice", rng.normal(0,1,NW))
+        Dem=do.get("Demand", 0.8*Wx+e()); Trn=do.get("TransitDelay", 0.8*Wx+e())
+        Lead=do.get("LeadTime", 0.8*Sup+e()); Def=do.get("Defects", 0.8*Sup+e())
+        On=do.get("OnTime", np.where(R==1,-1.0,1.0)*Tr - 0.5*Trn - 0.3*Dem + e())
+        Cost=do.get("ShipCost", 0.7*Fu + 0.3*Tr + e()); Sat=do.get("Satisfaction", 0.8*On - 0.5*Def + e())
+        return {"R":R,"Trucks":Tr,"FuelPrice":Fu,"Demand":Dem,"TransitDelay":Trn,"LeadTime":Lead,
+                "Defects":Def,"OnTime":On,"ShipCost":Cost,"Satisfaction":Sat}
+    W.append(dict(name="logistics", sample=w5, ctx=["R"],
+        prose=("A regional logistics network. More trucks raise on-time delivery, which raises customer "
+               "satisfaction. Fuel price raises shipping cost. In peak season, adding trucks congests hubs and "
+               "lowers on-time delivery. Weather drives demand and transit delays; supplier reliability drives "
+               "lead time and defect rate."),
+        obs=["R","Trucks","FuelPrice","Demand","TransitDelay","LeadTime","Defects","OnTime","ShipCost","Satisfaction"],
+        roles=dict(R="disturbance",Trucks="controllable",FuelPrice="disturbance",Demand="observable",
+                   TransitDelay="observable",LeadTime="observable",Defects="observable",OnTime="outcome",
+                   ShipCost="outcome",Satisfaction="outcome"),
+        truth={("Trucks","OnTime"),("R","OnTime"),("TransitDelay","OnTime"),("Demand","OnTime"),
+               ("FuelPrice","ShipCost"),("Trucks","ShipCost"),("OnTime","Satisfaction"),("Defects","Satisfaction")},
+        prior={("Trucks","OnTime"),("OnTime","Satisfaction"),("FuelPrice","ShipCost"),("Trucks","ShipCost"),
+               ("Demand","TransitDelay"),("LeadTime","Defects"),("Demand","OnTime")}))  # naive: keeps both spurious confounded pairs
     return W
 
 # ---------- Gemini (independent LLM judge: prior-only baseline + faithfulness) ----------
@@ -236,5 +262,6 @@ for s in range(11,16):
     for x in run(s, use_gemini=False): agg[x['name']]+=int(x['t1'] and x['t2'] and x['t3'])
 for k,v in agg.items(): print(f"   {k:<14} {v}/5")
 print("\nNOTE: prior 'gap' now measured by an INDEPENDENT model (Gemini), not the author. faith = Gemini's")
-print("faithfulness-to-prose score (success #6). T3 grader is the fragile spike #2 prototype (-> build-task-1 GIES).")
+print("faithfulness-to-prose score (success #6). T3 grader = spike #2's interventional-CI prototype; build-task-1")
+print("hardens it. Vetted GES/GIES is NOT the tool — it fails the confounder trap (see spike_grader.py).")
 print("Structure-SHD is blind to sign-flips: v0 difficulty must come from STRUCTURAL traps, not regime sign-flips.")
