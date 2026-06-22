@@ -18,7 +18,8 @@ dependencies = [
 discover = ["causal-learn>=0.1.4", "gies>=0.0.1"]
 # LLM structured output (author + judge) with validation + bounded retry, provider-agnostic.
 # instructor wraps the provider SDKs; anthropic = Claude author, google-genai = Gemini judge.
-llm = ["instructor>=1.0", "anthropic>=0.40", "google-genai>=1.0"]
+# instructor[google-genai] pulls the genai SDK + jsonref (needed for Gemini structured output).
+llm = ["instructor[google-genai]>=1.0", "anthropic>=0.40"]
 # Observability/eval: Langfuse v3+ is OpenTelemetry-based.
 observability = ["langfuse>=3.0"]
 
@@ -87,6 +88,11 @@ strict = true
 files = ["src"]
 exclude = ["spikes/", "experiments/"]
 plugins = ["pydantic.mypy"]
+
+# The LLM provider SDKs are an optional extra; keyless CI typechecks src without them installed.
+[[tool.mypy.overrides]]
+module = ["instructor.*", "anthropic.*", "google.*"]
+ignore_missing_imports = true
 
 # ----------------------------------------------------------------------------
 # pytest + coverage — CI fails below the floor.

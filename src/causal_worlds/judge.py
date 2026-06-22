@@ -1,0 +1,114 @@
+"""The Gemini judge adapter: an independent second opinion, behind the seam.
+
+The judge is deliberately a *different model family* than the Claude author. It does two jobs:
+
+* :meth:`prior_edges` — guess the causal edges from variable **names and roles alone**, with no data
+  and no sight of the mechanisms. The gap between this guess and the truth is the anti-cliché signal
+  (T4): a world the judge nails from priors is a cliché.
+* :meth:`faithfulness` — score how faithfully a spec represents the prose it was authored from.
+
+Provider SDKs are imported lazily in :func:`build_gemini_judge`; the adapter logic takes an injected
+client and is unit-tested with a fake, so the package imports and CI runs without the ``llm`` extra.
+"""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
+from pydantic import BaseModel, Field
+
+from causal_worlds.schema import answer_key
+
+if TYPE_CHECKING:
+    import instructor
+
+    from causal_worlds.protocols import Edges
+    from causal_worlds.schema import WorldSpec
+
+DEFAULT_JUDGE_MODEL = "gemini-2.5-flash"
+
+
+class _Edge(BaseModel):
+    """One guessed directed edge ``src -> dst``."""
+
+    src: str = Field(description="Name of the cause variable.")
+    dst: str = Field(description="Name of the effect variable.")
+
+
+class _Prior(BaseModel):
+    """The judge's prior guess at the causal structure, from names and roles alone."""
+
+    edges: list[_Edge] = Field(
+        description="Directed edges you'd expect with no data, from intuition."
+    )
+
+
+class _Faithfulness(BaseModel):
+    """The judge's verdict on how well a spec matches the prose."""
+
+    score: float = Field(
+        ge=0.0, le=1.0, description="0 = unrelated, 1 = a faithful representation."
+    )
+    reason: str = Field(description="One sentence justifying the score.")
+
+
+def _observed(spec: WorldSpec) -> list[tuple[str, str]]:
+    """The observed ``(name, role)`` pairs the judge is allowed to see."""
+    return [(v.name, v.role.value) for v in spec.variables if not v.hidden]
+
+
+class GeminiJudge:
+    """Scores worlds via an injected ``instructor`` Gemini client (an independent family)."""
+
+    def __init__(self, client: instructor.Instructor, model: str = DEFAULT_JUDGE_MODEL) -> None:
+        """Store the client and model id (the client is constructed at the edge)."""
+        self._client = client
+        self._model = model
+
+    def prior_edges(self, spec: WorldSpec) -> Edges:
+        """Guess the causal edges over observed variables from names + roles alone (no data)."""
+        observed = _observed(spec)
+        listing = "\n".join(f"- {name} ({role})" for name, role in observed)
+        prompt = (
+            "These are the observed variables of an operation, with their roles. Using ONLY "
+            "general domain intuition (you have NO data and cannot see the true mechanism), list "
+            f"the directed causal edges (cause -> effect) you would expect among them:\n{listing}"
+        )
+        messages: Any = [{"role": "user", "content": prompt}]
+        prior: _Prior = self._client.chat.completions.create(
+            model=self._model, response_model=_Prior, messages=messages
+        )
+        names = {name for name, _ in observed}
+        return frozenset(
+            (e.src, e.dst)
+            for e in prior.edges
+            if e.src in names and e.dst in names and e.src != e.dst
+        )
+
+    def faithfulness(self, prose: str, spec: WorldSpec) -> float:
+        """Score in ``[0, 1]`` how faithfully ``spec`` represents ``prose``."""
+        names = ", ".join(f"{name} ({role})" for name, role in _observed(spec))
+        edges = answer_key(spec).edges
+        drawn = ", ".join(f"{src}->{dst}" for src, dst in sorted(edges)) or "(no edges)"
+        prompt = (
+            f"Operation described:\n{prose}\n\n"
+            f"A model proposes these observed variables: {names}\n"
+            f"and these causal edges: {drawn}\n\n"
+            "Score from 0 to 1 how faithfully this captures the described operation."
+        )
+        messages: Any = [{"role": "user", "content": prompt}]
+        verdict: _Faithfulness = self._client.chat.completions.create(
+            model=self._model, response_model=_Faithfulness, messages=messages
+        )
+        return max(0.0, min(1.0, verdict.score))
+
+
+def build_gemini_judge(
+    model: str = DEFAULT_JUDGE_MODEL, *, api_key: str | None = None
+) -> GeminiJudge:  # pragma: no cover - real provider wiring, exercised only in live runs
+    """Construct a live Gemini judge; needs the ``llm`` extra and a Gemini API key in the env."""
+    import instructor  # noqa: PLC0415 - lazy: the provider SDK is an optional `llm` extra
+    from google import genai  # noqa: PLC0415
+
+    client = instructor.from_genai(genai.Client(api_key=api_key))
+    return GeminiJudge(client, model)
