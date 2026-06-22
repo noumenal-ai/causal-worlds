@@ -19,6 +19,15 @@ _ROOT_SCALE = 1.0  # an exogenous root (no mechanism, not a regime switch) ~ N(0
 _REGIME_ON = 0.5  # a regime switch variable is "on" where its value exceeds this
 
 
+def _as_column(value: float | FloatArray, n: int) -> FloatArray:
+    """A do() value as a length-n column: an array is used as-is, a scalar is broadcast."""
+    if isinstance(value, np.ndarray):
+        arr: FloatArray = value.astype(np.float64)
+        return arr
+    full: FloatArray = np.full(n, float(value), dtype=np.float64)
+    return full
+
+
 @dataclass(frozen=True, slots=True)
 class Sample:
     """One sampled environment: the observed data plus which variables were intervened on."""
@@ -75,14 +84,16 @@ class ScmSubstrate:
         """The observed variable names, in the column order of sampled data."""
         return self._observed
 
-    def sample(self, n: int, *, seed: int, do: Mapping[str, float] | None = None) -> Sample:
-        """Sample ``n`` rows; ``do`` fixes the named variables (an intervention)."""
+    def sample(
+        self, n: int, *, seed: int, do: Mapping[str, float | FloatArray] | None = None
+    ) -> Sample:
+        """Sample ``n`` rows; ``do`` fixes variables to constants or per-row arrays."""
         rng = np.random.default_rng(seed)
-        forced = dict(do) if do else {}
+        forced: dict[str, float | FloatArray] = dict(do) if do else {}
         values: dict[str, FloatArray] = {}
         for name in self._order:
             if name in forced:
-                values[name] = np.full(n, float(forced[name]), dtype=np.float64)
+                values[name] = _as_column(forced[name], n)
             elif name in self._mechanisms:
                 values[name] = self._apply(self._mechanisms[name], values, n, rng)
             else:

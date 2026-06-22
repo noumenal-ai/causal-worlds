@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from causal_worlds.sample import Sample
+    from causal_worlds.sample import FloatArray, Sample
     from causal_worlds.schema import WorldSpec
 
 Edges = frozenset[tuple[str, str]]
@@ -43,8 +43,10 @@ class Substrate(Protocol):
         """The observed variable names, in the column order of sampled data."""
         ...
 
-    def sample(self, n: int, *, seed: int, do: Mapping[str, float] | None = None) -> Sample:
-        """Sample ``n`` rows; ``do`` fixes the named variables (an intervention)."""
+    def sample(
+        self, n: int, *, seed: int, do: Mapping[str, float | FloatArray] | None = None
+    ) -> Sample:
+        """Sample ``n`` rows; ``do`` fixes variables to constants or per-row arrays."""
         ...
 
 

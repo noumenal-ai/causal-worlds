@@ -1,5 +1,6 @@
 """causal-worlds: fictional causal operations worlds with a ground-truth answer-key."""
 
+from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
 from causal_worlds.evaluation import Report, directed_shd, f1, score, skeleton_shd
 from causal_worlds.protocols import Discoverer, Edges, Gate, Judge, Substrate
@@ -32,6 +33,7 @@ __all__ = [
     "DuplicateMechanismError",
     "Edges",
     "Gate",
+    "InterventionalCiDiscoverer",
     "Judge",
     "Mechanism",
     "Report",
