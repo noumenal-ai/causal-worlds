@@ -22,6 +22,15 @@ Edges = frozenset[tuple[str, str]]
 
 
 @runtime_checkable
+class Author(Protocol):
+    """Manufactures a world spec from a natural-language description (an LLM, behind an adapter)."""
+
+    def author(self, prompt: str, *, feedback: str | None = None) -> WorldSpec:
+        """Author a :class:`WorldSpec` from prose; ``feedback`` re-asks after a failed gate."""
+        ...
+
+
+@runtime_checkable
 class Judge(Protocol):
     """An independent LLM judge — a different model family than the world's author."""
 

@@ -1,13 +1,17 @@
 """causal-worlds: fictional causal operations worlds with a ground-truth answer-key."""
 
+from causal_worlds._version import __version__
+from causal_worlds.artifact import LoadedBundle, Provenance, load_bundle, save_bundle
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
 from causal_worlds.evaluation import Report, directed_shd, f1, score, skeleton_shd
+from causal_worlds.fakes import FakeAuthor, FakeJudge
 from causal_worlds.gates import GateReport, run_gates
+from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
 from causal_worlds.obs import NullTracer, Tracer
-from causal_worlds.protocols import Discoverer, Edges, Gate, Judge, Substrate
+from causal_worlds.protocols import Author, Discoverer, Edges, Gate, Judge, Substrate
 from causal_worlds.sample import Sample, ScmSubstrate, build_substrate
 from causal_worlds.schema import (
     AnswerKey,
@@ -24,11 +28,12 @@ from causal_worlds.schema import (
     answer_key,
     validate,
 )
-
-__version__ = "0.1.0"
+from causal_worlds.serde import WorldSpecModel, spec_from_json, spec_to_json
 
 __all__ = [
+    "AdmittedWorld",
     "AnswerKey",
+    "Author",
     "BudgetExceededError",
     "CausalWorldsError",
     "Container",
@@ -37,12 +42,17 @@ __all__ = [
     "Discoverer",
     "DuplicateMechanismError",
     "Edges",
+    "FakeAuthor",
+    "FakeJudge",
     "Gate",
     "GateReport",
     "InterventionalCiDiscoverer",
     "Judge",
+    "LoadedBundle",
     "Mechanism",
+    "NotAdmittedError",
     "NullTracer",
+    "Provenance",
     "Report",
     "Role",
     "RoleError",
@@ -55,14 +65,20 @@ __all__ = [
     "Tracer",
     "Variable",
     "WorldSpec",
+    "WorldSpecModel",
     "__version__",
     "answer_key",
     "build_container",
     "build_substrate",
     "directed_shd",
     "f1",
+    "generate",
+    "load_bundle",
     "run_gates",
+    "save_bundle",
     "score",
     "skeleton_shd",
+    "spec_from_json",
+    "spec_to_json",
     "validate",
 ]
