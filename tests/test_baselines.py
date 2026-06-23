@@ -2,6 +2,7 @@
 
 import numpy as np
 
+from causal_worlds import worlds
 from causal_worlds.baselines import (
     BASELINES,
     FciDiscoverer,
@@ -9,8 +10,10 @@ from causal_worlds.baselines import (
     PcDiscoverer,
     parse_adjacency,
     parse_endpoint_matrix,
+    pooled_interventional_sample,
 )
 from causal_worlds.protocols import Discoverer
+from causal_worlds.sample import build_substrate
 
 _NAMES = ("a", "b", "c")
 
@@ -56,3 +59,12 @@ def test_baselines_satisfy_the_discoverer_protocol():
     assert isinstance(PcDiscoverer(), Discoverer)
     assert isinstance(FciDiscoverer(), Discoverer)
     assert isinstance(GiesDiscoverer(), Discoverer)
+
+
+def test_pooled_interventional_sample_has_one_env_per_variable_plus_observational():
+    substrate = build_substrate(worlds.get("coffee"))
+    n = 200
+    pooled = pooled_interventional_sample(substrate, n=n, seed=7)
+    # observational env + one single-target interventional env per observed variable.
+    assert pooled.shape == (n * (1 + len(substrate.variables)), len(substrate.variables))
+    assert np.all(np.isfinite(pooled))

@@ -3,6 +3,38 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.16.0] — 2026-06-23
+
+**Information-fair crossover + bootstrap CIs (#9) — the identifiability finding, made fair.**
+
+The crossover gave the reference grader interventional data while PC/FCI got only observational, so
+"interventions vs not" was confounded with "method." Now every method can be given the **same
+interventional budget**, and the result is sharper and fairer.
+
+### Added
+- **`baselines.pooled_interventional_sample(substrate, n, seed)`** + an `interventional=` flag on the
+  causal-learn discoverers: pool observational + per-variable `do()` environments so PC/FCI/GES get
+  the *same interventional budget* as GIES and the reference. (Shared env-builder refactored out of
+  GIES.)
+- Crossover eval now reports an **observational track** and an **interventional track** (`pc+do`,
+  `fci+do`), the **interventional advantage** ΔF1 = F1(reference) − F1(method) with **percentile
+  bootstrap CIs** (the primary, non-tautological signal), and difficulty-vs-error with bootstrap CIs.
+
+### Finding (sharper + honest)
+- Given the **same interventional budget**, causal-sufficiency methods *still* keep the hidden-
+  confounded pair as causal: `pc+do` **15.0** (vs observational `pc` 14.3 — interventions alone don't
+  help), `gies` 17; only the latent-aware `interventional-ci` reaches **0**. The lever is
+  **latent-awareness, not interventions** — now demonstrated information-fairly.
+- Interventional advantage robust: ΔF1 = **+0.29, 95% CI [0.22, 0.35]** for `pc+do`; every method's
+  CI excludes 0.
+- Difficulty-vs-error is **descriptive, not predictive**: observational methods r≈0.40 (CIs just
+  exclude 0), the reference flat (r≈0.24, CI includes 0). Stated with CIs, not cherry-picked.
+
+### Still open (#9)
+- Name-only-LLM-baseline-at-chance (needs keys); temporal T3 decoupling.
+
+[0.16.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.16.0
+
 ## [0.15.0] — 2026-06-23
 
 **Grader-independent admission — the circularity fix (#9, the credibility keystone).**

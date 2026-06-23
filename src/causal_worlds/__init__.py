@@ -15,6 +15,7 @@ from causal_worlds.baselines import (
     GesDiscoverer,
     GiesDiscoverer,
     PcDiscoverer,
+    pooled_interventional_sample,
 )
 from causal_worlds.bench import grade_bundle, grade_spec, grade_temporal_spec
 from causal_worlds.config import Settings
@@ -149,6 +150,7 @@ __all__ = [
     "grade_temporal_spec",
     "is_nontrivial",
     "load_bundle",
+    "pooled_interventional_sample",
     "population_covariance",
     "r2sortability",
     "run_gates",

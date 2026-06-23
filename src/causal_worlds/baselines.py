@@ -32,6 +32,45 @@ _ARROW = 1  # arrowhead endpoint code (causal-learn)
 _SEED_SPACE = 2**32  # draw independent per-environment seeds from [0, this)
 
 
+def _intervention_environments(
+    substrate: Substrate, n: int, rng: np.random.Generator
+) -> tuple[list[FloatArray], list[list[int]]]:
+    """An observational env plus one single-target interventional env per variable.
+
+    Returns ``(data, targets)`` for GIES, and is the shared source of the *interventional budget*
+    the fair crossover gives every method (pooled, via :func:`pooled_interventional_sample`). Each
+    environment gets an INDEPENDENT seed: sharing one seed would alias their noise streams.
+    """
+    names = substrate.variables
+    baseline = substrate.sample(n, seed=int(rng.integers(_SEED_SPACE)))
+    binary = {i for i, col in enumerate(baseline.data.T) if len(np.unique(col)) <= _MAX_BINARY}
+    data: list[FloatArray] = [baseline.data]
+    targets: list[list[int]] = [[]]
+    for index, name in enumerate(names):
+        values = (
+            rng.integers(0, 2, n).astype(float)
+            if index in binary
+            else rng.normal(_DO_LOC, _DO_SCALE, n)
+        )
+        env = substrate.sample(n, seed=int(rng.integers(_SEED_SPACE)), do={name: values})
+        data.append(env.data)
+        targets.append([index])
+    return data, targets
+
+
+def pooled_interventional_sample(substrate: Substrate, *, n: int, seed: int) -> FloatArray:
+    """Observational + one single-target interventional env per variable, row-stacked.
+
+    This is how an observational method (PC/FCI/GES) is given the **same interventional budget** as
+    GIES and the reference grader, so the crossover compares *methods* on equal data access — the
+    information-fairness fix. The method sees the pooled distribution but not the targets.
+    """
+    rng = np.random.default_rng(seed)
+    data, _ = _intervention_environments(substrate, n, rng)
+    pooled: FloatArray = np.vstack(data)
+    return pooled
+
+
 @dataclass(frozen=True, slots=True)
 class BaselineResult:
     """A discovered structure, richer than directed edges so the crossover can score fairly.
@@ -98,21 +137,30 @@ def parse_adjacency(adjacency: FloatArray, names: tuple[str, ...]) -> BaselineRe
 
 
 class _CausalLearnDiscoverer:
-    """Shared base for the ``causal-learn`` observational methods (PC/GES/FCI)."""
+    """Shared base for the ``causal-learn`` methods (PC/GES/FCI).
 
-    def __init__(self, n: int = _N, alpha: float = _ALPHA) -> None:
-        """Store the sample size and CI significance."""
+    ``interventional`` gives the method the same interventional budget as GIES/the reference grader
+    (pooled observational + per-variable do() environments) — the information-fair comparison.
+    """
+
+    def __init__(self, n: int = _N, alpha: float = _ALPHA, *, interventional: bool = False) -> None:
+        """Store the sample size, CI significance, and whether to pool interventional data."""
         self._n = n
         self._alpha = alpha
+        self._interventional = interventional
 
     def recover(self, substrate: Substrate, *, seed: int) -> Edges:  # pragma: no cover - live run
         """Return directed causal claims (Discoverer Protocol)."""
         return self.detail(substrate, seed=seed).edges
 
     def detail(self, substrate: Substrate, *, seed: int) -> BaselineResult:  # pragma: no cover
-        """Run the method on an observational sample and parse its graph."""
-        sample = substrate.sample(self._n, seed=seed)
-        graph = self._graph(sample.data)
+        """Run the method on observational (or pooled interventional) data and parse its graph."""
+        data = (
+            pooled_interventional_sample(substrate, n=self._n, seed=seed)
+            if self._interventional
+            else substrate.sample(self._n, seed=seed).data
+        )
+        graph = self._graph(data)
         return parse_endpoint_matrix(graph, substrate.variables)
 
     def _graph(self, data: FloatArray) -> FloatArray:  # pragma: no cover - third-party call
@@ -173,25 +221,10 @@ class GiesDiscoverer:
         """Build interventional environments, run GIES, and parse its adjacency."""
         import gies  # noqa: PLC0415
 
-        names = substrate.variables
         rng = np.random.default_rng(seed)
-        # Each environment gets an INDEPENDENT seed (like the grader's _draw_seed): sharing one seed
-        # across the observational + intervention envs would alias their noise streams.
-        baseline = substrate.sample(self._n, seed=int(rng.integers(_SEED_SPACE)))
-        binary = {i for i, col in enumerate(baseline.data.T) if len(np.unique(col)) <= _MAX_BINARY}
-        data = [baseline.data]
-        targets: list[list[int]] = [[]]
-        for index, name in enumerate(names):
-            values = (
-                rng.integers(0, 2, self._n).astype(float)
-                if index in binary
-                else rng.normal(_DO_LOC, _DO_SCALE, self._n)
-            )
-            env = substrate.sample(self._n, seed=int(rng.integers(_SEED_SPACE)), do={name: values})
-            data.append(env.data)
-            targets.append([index])
+        data, targets = _intervention_environments(substrate, self._n, rng)
         adjacency, _ = gies.fit_bic(data, targets)
-        return parse_adjacency(np.asarray(adjacency), names)
+        return parse_adjacency(np.asarray(adjacency), substrate.variables)
 
 
 BASELINES: dict[str, type] = {

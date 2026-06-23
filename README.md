@@ -98,21 +98,28 @@ print(world.report.difficulty, world.report.grade)
 
 ## What the crossover shows (and what it doesn't)
 
-Across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each):
+Across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each). The comparison is
+**information-fair**: the `+do` methods get the *same interventional budget* (pooled observational +
+per-variable `do()` environments) as the latent-aware reference — so we compare *methods*, not data
+access ([full table + bootstrap CIs](evals/baseline-crossover/v0.5/)):
 
-| method | gets interventions? | latent-aware? | mean skeleton-SHD ↓ | confounded pair kept as causal ↓ |
+| method | data | latent-aware? | mean skeleton-SHD ↓ | confounded pair kept as causal ↓ |
 |---|---|---|---|---|
-| **interventional-ci** (reference) | yes | yes | **1.44** | **0** |
-| GIES | yes | no | 4.66 | 17 |
-| PC | no | no | 2.71 | 14 |
-| FCI | no | partly | 2.66 | 10 |
+| **interventional-ci** (reference) | interventional | yes | **1.44** | **0** |
+| GIES | interventional | no | 4.62 | 17 |
+| PC | observational | no | 2.72 | 14.3 |
+| **PC + interventions** | interventional | no | 3.31 | **15.0** |
+| FCI | observational | partly | 2.68 | 9.7 |
+| FCI + interventions | interventional | partly | 3.29 | 6.7 |
 
-The honest reading: the dividing line is **latent-awareness**, not interventions alone. GIES gets the
-*same* interventional budget as the reference and recovers the skeleton fine — but, assuming causal
-sufficiency, it still reports the hidden-confounded pair as a *causal* edge in most worlds; PC/FCI
-(observational) likewise. Only the latent-aware interventional rule keeps it at zero. So this is best
-read as an **identifiability result** (you cannot tell confounding from causation without both
-interventions *and* a latent-aware method), not "our method beats the toolbox."
+The honest reading: the dividing line is **latent-awareness, not interventions**. The decisive row is
+**PC + interventions** — given the *same* interventional budget as the reference, it still keeps the
+hidden-confounded pair as a *causal* edge in ~15 worlds (no better than observational PC's 14.3);
+GIES likewise (17). Only the latent-aware interventional rule reaches **0**. The interventional
+advantage is robust: ΔF1 = F1(reference) − F1(method) is **+0.29, 95% CI [0.22, 0.35]** for
+`pc+do` (every method's CI excludes 0). So this is an **identifiability result** (you cannot tell
+confounding from causation without *both* interventions *and* a latent-aware method), not "our method
+beats the toolbox."
 
 **Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) ~~the worlds are admitted by
 the reference grader itself~~ **Fixed in v0.15**: admission (gate T3) is now **grader-independent** —
@@ -124,9 +131,10 @@ with **no discovery method run**. The reference grader's score is reported, neve
 (R²-sortability). v0.14 generates worlds with **internal standardization (iSCM)**, dropping
 varsortability to 0.54 and R²-sortability 0.73 → 0.60; both trivial sorting baselines fall to F1
 ≈ 0.33–0.37, well under the real methods. The residual R²-sortability (0.60 > 0.5) is disclosed, not
-yet fully closed. (3) Structural difficulty correlates with observational error (r≈0.8, partly
-mechanically) and with the *interventional advantage* (ΔF1, r≈0.24–0.36, n=35, no CIs) — a descriptive
-axis, not a validated predictor. A name-only-at-chance baseline and difficulty CIs are the rest of #9.
+yet fully closed. (3) Difficulty vs skeleton-SHD error is **descriptive, not a validated predictor**:
+with bootstrap CIs (n=35), the observational methods show r≈0.40 (PC [0.07, 0.68], FCI [0.08, 0.68] —
+just excluding 0) while the latent-aware reference is flat (r≈0.24, [−0.06, 0.51], includes 0). A
+name-only-LLM-baseline-at-chance is the remaining piece of #9.
 
 ## What you get per world
 
