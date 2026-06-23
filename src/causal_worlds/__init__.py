@@ -30,7 +30,7 @@ from causal_worlds.evaluation import (
 from causal_worlds.fakes import FakeAuthor, FakeJudge, FakeTemporalDiscoverer
 from causal_worlds.gates import GateReport, run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
-from causal_worlds.obs import NullTracer, Tracer
+from causal_worlds.obs import LangfuseTracer, NullTracer, Tracer, build_langfuse_tracer
 from causal_worlds.protocols import (
     Author,
     Discoverer,
@@ -93,6 +93,7 @@ __all__ = [
     "GrangerDiscoverer",
     "InterventionalCiDiscoverer",
     "Judge",
+    "LangfuseTracer",
     "LoadedBundle",
     "LpcmciDiscoverer",
     "Mechanism",
@@ -122,6 +123,7 @@ __all__ = [
     "__version__",
     "answer_key",
     "build_container",
+    "build_langfuse_tracer",
     "build_substrate",
     "directed_shd",
     "f1",

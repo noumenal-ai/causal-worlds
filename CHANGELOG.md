@@ -3,6 +3,23 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.10.0] — 2026-06-23
+
+**Observability.** See every run as a trace.
+
+### Added
+- **`LangfuseTracer`** behind the existing `Tracer` seam (Langfuse / OpenTelemetry). `generate` now
+  wraps `generate` → `author` → `gate` in spans with metadata (prompt, attempt); `flush()` sends them
+  before a short-lived CLI process exits. Follows the Langfuse skill's best practices (load env before
+  the client, explicit input/metadata, flush on exit).
+- The container resolves the tracer from settings — Langfuse when `CAUSAL_WORLDS_LANGFUSE_ENABLED=true`
+  (reads `LANGFUSE_PUBLIC_KEY/SECRET_KEY/HOST`), else the no-op `NullTracer` (the default, so a
+  misconfigured backend can never break a run).
+- The CLI auto-loads a local `.env` (python-dotenv) so keys are picked up; a committed `.env.example`
+  documents every variable.
+
+[0.10.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.10.0
+
 ## [0.9.0] — 2026-06-23
 
 **The temporal generative loop closes** — natural language → an admitted *temporal* world.

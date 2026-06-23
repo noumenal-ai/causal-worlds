@@ -28,9 +28,23 @@ app = typer.Typer(
 )
 
 
+def _load_dotenv() -> None:
+    """Load a local .env into the environment (so provider + Langfuse keys are picked up).
+
+    Best practice for Langfuse: env vars must be loaded before its client is constructed. Graceful
+    if python-dotenv isn't installed.
+    """
+    try:
+        from dotenv import load_dotenv  # noqa: PLC0415 - optional convenience
+    except ImportError:
+        return
+    load_dotenv()
+
+
 @app.callback()
 def main() -> None:
     """Generate and grade fictional causal worlds."""
+    _load_dotenv()
 
 
 @app.command()
@@ -136,11 +150,22 @@ def _admit_summary(world: AdmittedWorld) -> dict[str, object]:
     }
 
 
+def _admit_detail(world: AdmittedWorld) -> str:
+    """A short human line about an admitted world (cross-sectional difficulty or temporal F1)."""
+    report = world.report
+    if report.difficulty is not None:
+        return f"difficulty={report.difficulty:.2f}"
+    if report.temporal_grade is not None:
+        return f"temporal F1={report.temporal_grade.temporal_f1:.2f}"
+    return "admitted"
+
+
 @app.command()
 def generate(prompt: str, out: Path, seed: int = 0) -> None:
     """Author a world from PROMPT, gate it, and write the admitted bundle to OUT."""
     container = build_container()
     author, judge = _live(container)
+    tracer = container.tracer()
     try:
         world = generate_world(
             prompt,
@@ -149,12 +174,15 @@ def generate(prompt: str, out: Path, seed: int = 0) -> None:
             discoverer=container.discoverer(),
             seed=seed,
             max_attempts=container.settings.max_attempts,
+            tracer=tracer,
         )
     except NotAdmittedError as exc:
         typer.echo(f"not admitted: {exc}", err=True)
         raise typer.Exit(code=1) from None
+    finally:
+        tracer.flush()
     save_bundle(world, out, provenance=_provenance(container, seed))
-    typer.echo(f"admitted -> {out}  difficulty={world.report.difficulty:.2f}")
+    typer.echo(f"admitted -> {out}  {_admit_detail(world)}")
 
 
 @app.command()
@@ -167,14 +195,19 @@ def benchmark(prompts_file: Path, out: Path, seed: int = 0) -> None:
         for line in prompts_file.read_text().splitlines()
         if line.strip() and not line.startswith("#")
     ]
-    outcomes = generate_many(
-        prompts,
-        author=author,
-        judge=judge,
-        discoverer=container.discoverer(),
-        seed=seed,
-        max_attempts=container.settings.max_attempts,
-    )
+    tracer = container.tracer()
+    try:
+        outcomes = generate_many(
+            prompts,
+            author=author,
+            judge=judge,
+            discoverer=container.discoverer(),
+            seed=seed,
+            max_attempts=container.settings.max_attempts,
+            tracer=tracer,
+        )
+    finally:
+        tracer.flush()
 
     out.mkdir(parents=True, exist_ok=True)
     index: list[dict[str, object]] = []

@@ -73,11 +73,15 @@ Or from the CLI on a persisted world: `causal-worlds score <bundle> --discoverer
 
 ## Author a world from a description (needs `[llm]` + keys)
 
-Set `ANTHROPIC_API_KEY` and `GEMINI_API_KEY` in your environment, then:
+Set `ANTHROPIC_API_KEY` and `GEMINI_API_KEY` (see [`.env.example`](.env.example); the CLI auto-loads a
+local `.env`), then:
 
 ```bash
 causal-worlds generate "a coffee chain with weekend swings and variable lead times" ./my-world
 ```
+
+**Observability:** with the `observability` extra + Langfuse keys and
+`CAUSAL_WORLDS_LANGFUSE_ENABLED=true`, every run is traced (`generate` → `author` → `gate`) in Langfuse.
 
 ```python
 from causal_worlds import generate

@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 from causal_worlds.errors import CausalWorldsError
 from causal_worlds.gates import GateReport, run_gates
+from causal_worlds.obs import NullTracer, Tracer
 from causal_worlds.protocols import Author, Discoverer, Judge, TemporalDiscoverer
 from causal_worlds.schema import WorldSpec
 
@@ -76,6 +77,7 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
     seed: int = 0,
     max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
     temporal_discoverer: TemporalDiscoverer | None = None,
+    tracer: Tracer | None = None,
 ) -> AdmittedWorld:
     """Author a world from ``prompt`` and admit it through the gates, re-asking on failure.
 
@@ -87,6 +89,7 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
         seed: Seeds sampling, grading, and the random-graph null.
         max_attempts: How many times to (re-)ask the author before giving up.
         temporal_discoverer: The reference TS grader for temporal worlds (defaults to PCMCI+).
+        tracer: Observability tracer; each author + gate step is wrapped in a span (default no-op).
 
     Returns:
         The admitted world and the gate report that admitted it.
@@ -94,22 +97,26 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
     Raises:
         NotAdmittedError: No proposed spec passed the gates within ``max_attempts``.
     """
+    tr = tracer if tracer is not None else NullTracer()
     feedback: str | None = None
     last: GateReport | None = None
-    for attempt in range(1, max_attempts + 1):
-        spec = author.author(prompt, feedback=feedback)
-        report = run_gates(
-            spec,
-            discoverer=discoverer,
-            seed=seed,
-            judge=judge,
-            prose=prompt,
-            temporal_discoverer=temporal_discoverer,
-        )
-        if report.admitted:
-            return AdmittedWorld(prompt=prompt, spec=spec, report=report, attempts=attempt)
-        last = report
-        feedback = _feedback(report)
+    with tr.span("generate", prompt=prompt, max_attempts=max_attempts):
+        for attempt in range(1, max_attempts + 1):
+            with tr.span("author", attempt=attempt):
+                spec = author.author(prompt, feedback=feedback)
+            with tr.span("gate", attempt=attempt):
+                report = run_gates(
+                    spec,
+                    discoverer=discoverer,
+                    seed=seed,
+                    judge=judge,
+                    prose=prompt,
+                    temporal_discoverer=temporal_discoverer,
+                )
+            if report.admitted:
+                return AdmittedWorld(prompt=prompt, spec=spec, report=report, attempts=attempt)
+            last = report
+            feedback = _feedback(report)
     raise NotAdmittedError(prompt, max_attempts, last)
 
 
@@ -121,6 +128,8 @@ def generate_many(  # noqa: PLR0913 — a public entrypoint; the extra params ar
     judge: Judge | None = None,
     seed: int = 0,
     max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
+    temporal_discoverer: TemporalDiscoverer | None = None,
+    tracer: Tracer | None = None,
 ) -> list[Outcome]:
     """Generate a world for each prompt; never raises — a failure becomes a non-admitted outcome.
 
@@ -136,6 +145,8 @@ def generate_many(  # noqa: PLR0913 — a public entrypoint; the extra params ar
                 judge=judge,
                 seed=seed,
                 max_attempts=max_attempts,
+                temporal_discoverer=temporal_discoverer,
+                tracer=tracer,
             )
             outcomes.append(Outcome(prompt=prompt, world=world, reason="admitted"))
         except NotAdmittedError as exc:

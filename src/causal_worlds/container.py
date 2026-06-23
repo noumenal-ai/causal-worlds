@@ -11,7 +11,7 @@ from causal_worlds.author import build_claude_author
 from causal_worlds.config import Settings
 from causal_worlds.discover import GRADER, GRADER_VERSION, InterventionalCiDiscoverer
 from causal_worlds.judge import build_gemini_judge
-from causal_worlds.obs import NullTracer, Tracer
+from causal_worlds.obs import NullTracer, Tracer, build_langfuse_tracer
 from causal_worlds.protocols import Author, Discoverer, Judge
 
 
@@ -38,7 +38,9 @@ class Container:
         return GRADER, GRADER_VERSION
 
     def tracer(self) -> Tracer:
-        """The observability tracer (no-op until Langfuse is wired)."""
+        """The observability tracer — Langfuse when enabled in settings, else a no-op."""
+        if self.settings.langfuse_enabled:
+            return build_langfuse_tracer()
         return NullTracer()
 
 
