@@ -3,6 +3,9 @@
 import numpy as np
 
 from causal_worlds import answer_key, temporal_answer_key, validate, worlds
+from causal_worlds.fakes import FakeAuthor, FakeTemporalDiscoverer
+from causal_worlds.gates import run_gates
+from causal_worlds.generate import generate
 from causal_worlds.sample import build_substrate
 from causal_worlds.schema import (
     CyclicGraphError,
@@ -81,6 +84,34 @@ def test_builtin_supply_world_is_temporal_and_admits_a_confounded_pair():
     # the lagged truth carries autoregressive self-loops
     assert ("leadtime", "leadtime", 1) in temporal_answer_key(spec)
     assert ("inventory", "inventory", 1) in temporal_answer_key(spec)
+
+
+def test_temporal_gate_admits_when_ts_reference_recovers_structure():
+    spec = worlds.get("supply")
+    perfect = FakeTemporalDiscoverer(temporal_answer_key(spec))  # F1 = 1.0 -> admit
+    report = run_gates(spec, seed=7, temporal_discoverer=perfect)
+    assert report.admitted
+    assert report.temporal_grade is not None
+    assert report.temporal_grade.temporal_f1 == 1.0
+
+
+def test_temporal_gate_rejects_when_structure_not_recoverable():
+    blind = FakeTemporalDiscoverer(frozenset())  # recovers nothing -> F1 0 -> reject
+    report = run_gates(worlds.get("supply"), seed=7, temporal_discoverer=blind)
+    assert not report.admitted
+    assert "T3 temporal" in report.reason
+
+
+def test_generate_admits_a_temporal_world_via_the_temporal_gate():
+    spec = worlds.get("supply")
+    world = generate(
+        "a supply operation over time",
+        author=FakeAuthor([spec]),
+        temporal_discoverer=FakeTemporalDiscoverer(temporal_answer_key(spec)),
+        seed=7,
+    )
+    assert world.report.admitted
+    assert world.report.temporal_grade is not None
 
 
 def test_cross_sectional_worlds_unchanged_by_temporal_path():

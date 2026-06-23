@@ -3,6 +3,26 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] — 2026-06-23
+
+**The temporal generative loop closes** — natural language → an admitted *temporal* world.
+
+### Added
+- **Temporal gating** (`gates`): `run_gates` detects a temporal world (any lagged term) and admits it
+  via a temporal T3 — a TS reference (PCMCI+ by default, injectable) must recover the lagged structure
+  above an F1 floor. `GateReport.temporal_grade` carries the lagged grade. T1/T2 work unchanged.
+- **Author temporal mode**: `build_claude_author(temporal=True)` / `ClaudeAuthor(temporal=...)` adds a
+  brief instructing lagged + autoregressive (stationary) terms, so the LLM can author temporal worlds.
+- `generate` threads a `temporal_discoverer` through to the gate; `FakeTemporalDiscoverer` for keyless
+  tests.
+
+### Validated (live)
+- Claude (temporal mode) authored a reservoir operation — rainfall→inflow at lag 1, autoregressive
+  storage/inflow, a hidden `soil_saturation` confounder, a snowmelt regime — **admitted in 1 attempt**
+  through the PCMCI+ temporal gate (F1 0.56). Next: a scaled temporal benchmark set + crossover at n>1.
+
+[0.9.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.9.0
+
 ## [0.8.1] — 2026-06-23
 
 ### Fixed

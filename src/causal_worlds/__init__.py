@@ -27,7 +27,7 @@ from causal_worlds.evaluation import (
     temporal_f1,
     temporal_score,
 )
-from causal_worlds.fakes import FakeAuthor, FakeJudge
+from causal_worlds.fakes import FakeAuthor, FakeJudge, FakeTemporalDiscoverer
 from causal_worlds.gates import GateReport, run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
 from causal_worlds.obs import NullTracer, Tracer
@@ -84,6 +84,7 @@ __all__ = [
     "Edges",
     "FakeAuthor",
     "FakeJudge",
+    "FakeTemporalDiscoverer",
     "FciDiscoverer",
     "Gate",
     "GateReport",

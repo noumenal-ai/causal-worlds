@@ -54,6 +54,19 @@ def test_author_complexity_shapes_the_system_brief():
     assert "TWO OR MORE hidden confounders" in captured["system"]
 
 
+def test_author_temporal_mode_adds_the_temporal_clause():
+    coffee = worlds.get("coffee")
+    captured = {}
+
+    def responder(_model, kwargs):
+        captured["system"] = kwargs["messages"][0]["content"]
+        return WorldSpecModel.from_spec(coffee)
+
+    ClaudeAuthor(_FakeClient(responder), model="t", temporal=True).author("x")
+    assert "TEMPORAL operation" in captured["system"]
+    assert "autoregressive" in captured["system"]
+
+
 def test_author_rejects_unknown_complexity():
     with pytest.raises(ValueError, match="unknown complexity"):
         ClaudeAuthor(_FakeClient(lambda _m, _k: None), complexity="nope")

@@ -51,36 +51,46 @@ _COMPLEXITY = {
     "a common cause of 2+ observed variables) AND TWO regime flips. The structure must not be "
     "guessable from the variable names.",
 }
+_TEMPORAL_CLAUSE = (
+    "This is a TEMPORAL operation that evolves over time. Use lagged terms (set a term's 'lag' to "
+    "1 or 2) for delayed effects, and give at least one variable an autoregressive term (its own "
+    "past, lag 1). Keep every autoregressive coefficient below 1 in magnitude (stationarity)."
+)
 _CLOSING = (
     "The world should be plausible for the described operation. These worlds are fictional; do not "
     "model any real system. Return ONLY the structured world."
 )
 
 
-def _system(complexity: str) -> str:
-    """Assemble the system brief for a complexity level."""
+def _system(complexity: str, *, temporal: bool = False) -> str:
+    """Assemble the system brief for a complexity level (optionally temporal)."""
     if complexity not in _COMPLEXITY:
         msg = f"unknown complexity {complexity!r}; choose from {sorted(_COMPLEXITY)}"
         raise ValueError(msg)
-    return f"{_SYSTEM_BASE}\n\n{_COMPLEXITY[complexity]}\n\n{_CLOSING}"
+    parts = [_SYSTEM_BASE, _COMPLEXITY[complexity]]
+    if temporal:
+        parts.append(_TEMPORAL_CLAUSE)
+    parts.append(_CLOSING)
+    return "\n\n".join(parts)
 
 
 class ClaudeAuthor:
     """Authors a :class:`WorldSpec` from prose via an injected ``instructor`` Claude client."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0913 — keyword-only construction knobs for the live adapter
         self,
         client: instructor.Instructor,
         model: str = DEFAULT_AUTHOR_MODEL,
         *,
         complexity: str = "standard",
+        temporal: bool = False,
         max_tokens: int = _MAX_TOKENS,
         max_retries: int = _MAX_RETRIES,
     ) -> None:
         """Store the client, model, and the system brief for the chosen complexity level."""
         self._client = client
         self._model = model
-        self._system = _system(complexity)
+        self._system = _system(complexity, temporal=temporal)
         self._max_tokens = max_tokens
         self._max_retries = max_retries
 
@@ -107,11 +117,15 @@ class ClaudeAuthor:
 
 
 def build_claude_author(
-    model: str = DEFAULT_AUTHOR_MODEL, *, complexity: str = "standard", api_key: str | None = None
+    model: str = DEFAULT_AUTHOR_MODEL,
+    *,
+    complexity: str = "standard",
+    temporal: bool = False,
+    api_key: str | None = None,
 ) -> ClaudeAuthor:  # pragma: no cover - real provider wiring, exercised only in live runs
     """Construct a live Claude author; needs the ``llm`` extra and an Anthropic API key in env."""
     import instructor  # noqa: PLC0415 - lazy: the provider SDK is an optional `llm` extra
     from anthropic import Anthropic  # noqa: PLC0415
 
     client = instructor.from_anthropic(Anthropic(api_key=api_key))
-    return ClaudeAuthor(client, model, complexity=complexity)
+    return ClaudeAuthor(client, model, complexity=complexity, temporal=temporal)

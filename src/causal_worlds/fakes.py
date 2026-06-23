@@ -8,7 +8,7 @@ an LLM, so they exercise the same code paths the live adapters do.
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
-from causal_worlds.protocols import Edges
+from causal_worlds.protocols import Edges, Substrate, TemporalEdges
 from causal_worlds.schema import WorldSpec
 
 
@@ -48,3 +48,14 @@ class FakeJudge:
     def faithfulness(self, prose: str, spec: WorldSpec) -> float:  # noqa: ARG002
         """Return the canned faithfulness score."""
         return self.score
+
+
+@dataclass(slots=True)
+class FakeTemporalDiscoverer:
+    """A :class:`TemporalDiscoverer` returning canned lagged edges (for keyless temporal tests)."""
+
+    edges: TemporalEdges = frozenset()
+
+    def recover_temporal(self, substrate: Substrate, *, seed: int) -> TemporalEdges:  # noqa: ARG002
+        """Return the canned lagged edges (independent of the substrate)."""
+        return self.edges

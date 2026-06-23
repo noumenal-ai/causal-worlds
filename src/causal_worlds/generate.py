@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 from causal_worlds.errors import CausalWorldsError
 from causal_worlds.gates import GateReport, run_gates
-from causal_worlds.protocols import Author, Discoverer, Judge
+from causal_worlds.protocols import Author, Discoverer, Judge, TemporalDiscoverer
 from causal_worlds.schema import WorldSpec
 
 _DEFAULT_MAX_ATTEMPTS = 3
@@ -75,6 +75,7 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
     judge: Judge | None = None,
     seed: int = 0,
     max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
+    temporal_discoverer: TemporalDiscoverer | None = None,
 ) -> AdmittedWorld:
     """Author a world from ``prompt`` and admit it through the gates, re-asking on failure.
 
@@ -85,6 +86,7 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
         judge: An independent judge; enables the T4 anti-cliché gate when supplied.
         seed: Seeds sampling, grading, and the random-graph null.
         max_attempts: How many times to (re-)ask the author before giving up.
+        temporal_discoverer: The reference TS grader for temporal worlds (defaults to PCMCI+).
 
     Returns:
         The admitted world and the gate report that admitted it.
@@ -96,7 +98,14 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
     last: GateReport | None = None
     for attempt in range(1, max_attempts + 1):
         spec = author.author(prompt, feedback=feedback)
-        report = run_gates(spec, discoverer=discoverer, seed=seed, judge=judge, prose=prompt)
+        report = run_gates(
+            spec,
+            discoverer=discoverer,
+            seed=seed,
+            judge=judge,
+            prose=prompt,
+            temporal_discoverer=temporal_discoverer,
+        )
         if report.admitted:
             return AdmittedWorld(prompt=prompt, spec=spec, report=report, attempts=attempt)
         last = report

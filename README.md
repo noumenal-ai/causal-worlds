@@ -133,8 +133,9 @@ Depth: [`docs/scope.md`](docs/scope.md) · [`docs/hld.md`](docs/hld.md) · [`doc
 Shipped: NL authoring, independent judge + anti-cliché gate, artifact persistence, the baseline
 crossover, a structural-difficulty axis, a 35-world benchmark, **temporal worlds** (lagged edges +
 autoregression — see the built-in `supply`), and **time-series grading** (PCMCI+, LPCMCI, VARLiNGAM,
-Granger — `grade_temporal_spec`). Next: **authoring temporal worlds** + a temporal benchmark *set*,
-**a Gymnasium env** with perturbations + counterfactual replay, **scaling to 100+ worlds**, and
+Granger — `grade_temporal_spec`), and **authoring temporal worlds** (an LLM-authored lagged world,
+admitted through a PCMCI+ temporal gate). Next: a **temporal benchmark *set*** (scale + crossover at
+n>1), **a Gymnasium env** with perturbations + counterfactual replay, **scaling to 100+ worlds**, and
 conversational **elicitation**. Tracked as [issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection

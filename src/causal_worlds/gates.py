@@ -18,10 +18,18 @@ from dataclasses import dataclass
 import numpy as np
 
 from causal_worlds.discover import InterventionalCiDiscoverer
-from causal_worlds.evaluation import Report, directed_shd, f1, score
-from causal_worlds.protocols import Discoverer, Judge
+from causal_worlds.evaluation import Report, TemporalReport, directed_shd, f1, score, temporal_score
+from causal_worlds.protocols import Discoverer, Judge, Substrate, TemporalDiscoverer
 from causal_worlds.sample import Sample, build_substrate
-from causal_worlds.schema import AnswerKey, SpecError, WorldSpec, answer_key, validate
+from causal_worlds.schema import (
+    AnswerKey,
+    SpecError,
+    WorldSpec,
+    answer_key,
+    temporal_answer_key,
+    validate,
+)
+from causal_worlds.temporal_baselines import PcmciPlusDiscoverer
 
 _NONTRIVIAL_FRACTION = 0.5  # admit iff the grader's directed SHD <= this * the random-graph null
 _NULL_REPS = 1000
@@ -29,6 +37,9 @@ _SANITY_N = 500
 _STD_EPS = 1e-9
 _FAITHFUL_MIN = 0.6  # T4: reject a spec the judge deems an unfaithful reading of the prose
 _CLICHE_MAX_F1 = 0.9  # T4: reject a world the judge all but recovers from priors alone (a cliché)
+_TEMPORAL_F1_MIN = (
+    0.5  # T3 (temporal): admit iff a TS reference recovers lagged edges above this F1
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,6 +48,7 @@ class GateReport:
 
     ``difficulty`` and ``faithfulness`` are populated only when T4 ran (a judge + prose were given);
     ``difficulty`` is ``1 - F1(judge_prior, truth)`` — higher means harder to guess from priors.
+    ``temporal_grade`` replaces ``grade`` for temporal worlds (scored on lagged edges).
     """
 
     admitted: bool
@@ -45,6 +57,16 @@ class GateReport:
     grade: Report | None
     difficulty: float | None = None
     faithfulness: float | None = None
+    temporal_grade: TemporalReport | None = None
+
+
+def _is_temporal(spec: WorldSpec) -> bool:
+    """True if any term carries a lag (the world has temporal structure)."""
+    return any(
+        term.lag > 0
+        for mechanism in spec.mechanisms
+        for term in (*mechanism.terms, *(mechanism.regime_terms or ()))
+    )
 
 
 def _random_null_shd(key: AnswerKey, names: tuple[str, ...], seed: int, reps: int) -> float:
@@ -68,13 +90,14 @@ def _is_degenerate(sample: Sample) -> bool:
     )
 
 
-def run_gates(
+def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keyword-only knobs
     spec: WorldSpec,
     *,
     discoverer: Discoverer | None = None,
     seed: int = 0,
     judge: Judge | None = None,
     prose: str | None = None,
+    temporal_discoverer: TemporalDiscoverer | None = None,
 ) -> GateReport:
     """Run the validity gates; admit the world only if all pass.
 
@@ -84,6 +107,7 @@ def run_gates(
         seed: Determines sampling and the random-null baseline.
         judge: An independent LLM judge; enables T4 (anti-cliché) when given with ``prose``.
         prose: The natural-language description the spec was authored from (for T4 faithfulness).
+        temporal_discoverer: The reference TS grader for temporal worlds (defaults to PCMCI+).
 
     Returns:
         A :class:`GateReport` with the admit decision, the failing gate's reason, the grade, and —
@@ -104,6 +128,9 @@ def run_gates(
             null_shd=0.0,
             grade=None,
         )
+
+    if _is_temporal(spec):
+        return _temporal_gates(spec, substrate, temporal_discoverer, seed)
 
     key = answer_key(spec)
     if not key.edges:
@@ -132,6 +159,31 @@ def run_gates(
         grade=grade,
         difficulty=difficulty,
         faithfulness=faithfulness,
+    )
+
+
+def _temporal_gates(
+    spec: WorldSpec,
+    substrate: Substrate,
+    temporal_discoverer: TemporalDiscoverer | None,
+    seed: int,
+) -> GateReport:
+    """Temporal T3: admit iff a TS reference recovers the lagged structure above the F1 floor."""
+    truth = temporal_answer_key(spec)
+    if not truth:
+        return GateReport(
+            admitted=False, reason="T3 no temporal structure to discover", null_shd=0.0, grade=None
+        )
+    grader = temporal_discoverer if temporal_discoverer is not None else PcmciPlusDiscoverer()
+    report = temporal_score(grader.recover_temporal(substrate, seed=seed), truth)
+    admitted = report.temporal_f1 >= _TEMPORAL_F1_MIN
+    reason = (
+        "admitted"
+        if admitted
+        else f"T3 temporal structure not recoverable: F1 {report.temporal_f1:.2f}"
+    )
+    return GateReport(
+        admitted=admitted, reason=reason, null_shd=0.0, grade=None, temporal_grade=report
     )
 
 
