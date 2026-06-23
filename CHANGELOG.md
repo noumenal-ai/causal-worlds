@@ -3,6 +3,25 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] — 2026-06-23
+
+**Temporal worlds (foundation).** Worlds can now carry *time* — lagged edges and autoregression —
+not just cross-sectional structure. (Time-series *grading* + baselines land next.)
+
+### Added
+- **Lagged IR** (`schema`): `Term.lag` (default 0). Only the contemporaneous (lag-0) subgraph must be
+  acyclic; lagged edges — including autoregressive self-loops — are valid (they read the past).
+- **Temporal substrate** (`sample`): when any lag is present, sampling becomes sequential over
+  timesteps with a burn-in (near-stationary); `do()` interventions hold across time. Cross-sectional
+  worlds keep the original vectorized i.i.d. path unchanged.
+- **`temporal_answer_key(spec)`** → lagged ground truth `(src, dst, lag)` incl. autoregression; the
+  summary `answer_key` now collapses lags and drops self-loops, so existing tooling is unaffected.
+- **Built-in `supply`** — a temporal world (autoregressive lead time + inventory, a hidden logistics
+  confounder), in a separate registry (`worlds.temporal_names()`) so the still-contemporaneous CLI
+  `grade`/`gate` don't mis-score it.
+
+[0.7.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.7.0
+
 ## [0.6.1] — 2026-06-23
 
 ### Docs

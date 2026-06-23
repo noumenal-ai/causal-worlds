@@ -33,10 +33,17 @@ class Variable:
 
 @dataclass(frozen=True, slots=True)
 class Term:
-    """A single linear term ``coeff * parent`` in a mechanism."""
+    """A single linear term ``coeff * parent`` in a mechanism.
+
+    ``lag`` is how many timesteps back the parent is read: ``0`` is contemporaneous (the default;
+    purely cross-sectional worlds use only this), ``>= 1`` is a temporal/lagged edge. A lagged
+    self-reference (``parent`` equals the target) is autoregression and is allowed; a *lag-0*
+    self-reference is an instantaneous cycle and is rejected.
+    """
 
     parent: str
     coeff: float
+    lag: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,6 +112,19 @@ def _parents(mechanism: Mechanism) -> set[str]:
     return parents
 
 
+def _contemporaneous_parents(mechanism: Mechanism) -> set[str]:
+    """Parents read at the *current* timestep (lag-0 terms + the regime switch).
+
+    These are the only edges that constrain within-timestep evaluation order and the only ones that
+    can form an instantaneous cycle; lagged edges read already-computed history.
+    """
+    parents = {term.parent for term in mechanism.terms if term.lag == 0}
+    parents |= {term.parent for term in (mechanism.regime_terms or ()) if term.lag == 0}
+    if mechanism.regime is not None:
+        parents.add(mechanism.regime)
+    return parents
+
+
 def validate(spec: WorldSpec) -> None:
     """Validate a world spec — the static T1 gate.
 
@@ -147,10 +167,14 @@ def validate(spec: WorldSpec) -> None:
 
 
 def _ensure_acyclic(spec: WorldSpec) -> None:
-    """Raise :class:`CyclicGraphError` if the generative graph (parents -> target) has a cycle."""
+    """Raise :class:`CyclicGraphError` if the *contemporaneous* graph has a cycle.
+
+    Only lag-0 edges are checked: lagged edges read past timesteps, so a temporal cycle (e.g. an
+    autoregressive self-loop, or ``x_t -> y_{t+1} -> x_{t+2}``) is legitimate, not a contradiction.
+    """
     adjacency: dict[str, list[str]] = {variable.name: [] for variable in spec.variables}
     for mechanism in spec.mechanisms:
-        for parent in _parents(mechanism):
+        for parent in _contemporaneous_parents(mechanism):
             adjacency[parent].append(mechanism.target)
 
     visiting: set[str] = set()
@@ -185,11 +209,12 @@ def answer_key(spec: WorldSpec) -> AnswerKey:
     observed = {variable.name for variable in spec.variables if not variable.hidden}
     hidden = {variable.name for variable in spec.variables if variable.hidden}
 
+    # The summary graph: collapse lags, drop autoregressive self-loops (not cross-variable edges).
     edges = {
         (parent, mechanism.target)
         for mechanism in spec.mechanisms
         for parent in _parents(mechanism)
-        if parent in observed and mechanism.target in observed
+        if parent in observed and mechanism.target in observed and parent != mechanism.target
     }
 
     children_of: dict[str, set[str]] = {name: set() for name in hidden}
@@ -209,3 +234,19 @@ def answer_key(spec: WorldSpec) -> AnswerKey:
                     confounded.add(frozenset((left, right)))
 
     return AnswerKey(edges=frozenset(edges), confounded=frozenset(confounded))
+
+
+def temporal_answer_key(spec: WorldSpec) -> frozenset[tuple[str, str, int]]:
+    """Derive the lagged ground-truth edges ``(src, dst, lag)`` over observed variables.
+
+    Unlike the summary :func:`answer_key`, this keeps the lag on each edge and retains
+    autoregressive self-loops (``src == dst``, ``lag >= 1``) — the truth a time-series method is
+    graded against. Regime terms contribute their own lagged edges.
+    """
+    observed = {variable.name for variable in spec.variables if not variable.hidden}
+    return frozenset(
+        (term.parent, mechanism.target, term.lag)
+        for mechanism in spec.mechanisms
+        for term in (*mechanism.terms, *(mechanism.regime_terms or ()))
+        if term.parent in observed and mechanism.target in observed
+    )

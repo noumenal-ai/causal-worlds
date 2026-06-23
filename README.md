@@ -130,9 +130,10 @@ Depth: [`docs/scope.md`](docs/scope.md) · [`docs/hld.md`](docs/hld.md) · [`doc
 ## Roadmap
 
 Shipped: NL authoring, independent judge + anti-cliché gate, artifact persistence, the baseline
-crossover, a structural-difficulty axis, a 35-world benchmark. Next: **genuine temporal/lagged worlds**
-+ time-series baselines (PCMCI+, VARLiNGAM), **a Gymnasium env** with perturbations + counterfactual
-replay, **scaling to 100+ worlds**, and conversational **elicitation**. Tracked as
+crossover, a structural-difficulty axis, a 35-world benchmark, and **temporal worlds** (lagged edges +
+autoregression — see the built-in `supply`). Next: **time-series grading** for the temporal worlds
+(PCMCI+, VARLiNGAM), **a Gymnasium env** with perturbations + counterfactual replay, **scaling to
+100+ worlds**, and conversational **elicitation**. Tracked as
 [issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection

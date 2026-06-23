@@ -38,6 +38,40 @@ def _coffee() -> WorldSpec:
     return WorldSpec(variables=variables, mechanisms=mechanisms)
 
 
+def _supply() -> WorldSpec:
+    """A temporal supply operation: autoregressive lead time + inventory + a hidden confounder.
+
+    Lags make it genuinely temporal: ``leadtime`` and ``inventory`` carry their own past (AR < 1,
+    so stationary), orders arrive next step, and a long lead time depletes next-step inventory. A
+    hidden ``L`` (logistics) drives both ``leadtime`` and ``cost`` with no direct edge between them
+    (the confounded pair). Grading this needs a time-series method (later); here it exercises the
+    temporal substrate and the lagged answer-key.
+    """
+    variables = (
+        Variable("order", Role.CONTROLLABLE),
+        Variable("demand", Role.DISTURBANCE),
+        Variable("L", Role.DISTURBANCE, hidden=True),
+        Variable("leadtime", Role.OBSERVABLE),
+        Variable("inventory", Role.OBSERVABLE),
+        Variable("cost", Role.OBSERVABLE),
+        Variable("stockout", Role.OUTCOME),
+    )
+    mechanisms = (
+        Mechanism("leadtime", (Term("L", 0.8), Term("leadtime", 0.4, lag=1))),
+        Mechanism("cost", (Term("L", 0.6), Term("order", 0.3))),
+        Mechanism(
+            "inventory",
+            (
+                Term("inventory", 0.5, lag=1),
+                Term("order", 0.8, lag=1),
+                Term("leadtime", -0.5, lag=1),
+            ),
+        ),
+        Mechanism("stockout", (Term("inventory", -0.8), Term("demand", 0.6))),
+    )
+    return WorldSpec(variables=variables, mechanisms=mechanisms)
+
+
 def _ecommerce() -> WorldSpec:
     """Textbook control: ad spend -> traffic -> sales; discounts -> sales. No hidden confounder."""
     variables = (
@@ -57,18 +91,31 @@ BUILTINS: dict[str, WorldSpec] = {
     "coffee": _coffee(),
     "ecommerce": _ecommerce(),
 }
+"""Cross-sectional built-ins — gradeable by the (contemporaneous) reference discoverer today."""
+
+TEMPORAL: dict[str, WorldSpec] = {
+    "supply": _supply(),
+}
+"""Temporal (lagged) built-ins — sampleable now; time-series grading lands in a later release."""
+
+_ALL = {**BUILTINS, **TEMPORAL}
 
 
 def names() -> list[str]:
-    """The names of the built-in worlds, sorted."""
+    """The cross-sectional built-in world names, sorted (what the CLI grades/gates)."""
     return sorted(BUILTINS)
 
 
+def temporal_names() -> list[str]:
+    """The temporal built-in world names, sorted."""
+    return sorted(TEMPORAL)
+
+
 def get(name: str) -> WorldSpec:
-    """Return a built-in world spec by name.
+    """Return a built-in world spec by name (cross-sectional or temporal).
 
     Args:
-        name: A built-in world name (see :func:`names`).
+        name: A built-in world name (see :func:`names` and :func:`temporal_names`).
 
     Returns:
         The world spec.
@@ -77,7 +124,8 @@ def get(name: str) -> WorldSpec:
         UnknownWorldError: No built-in world has that name.
     """
     try:
-        return BUILTINS[name]
+        return _ALL[name]
     except KeyError:
-        msg = f"unknown world {name!r}; available: {', '.join(names())}"
+        available = ", ".join(sorted(_ALL))
+        msg = f"unknown world {name!r}; available: {available}"
         raise UnknownWorldError(msg) from None

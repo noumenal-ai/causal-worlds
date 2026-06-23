@@ -36,6 +36,7 @@ from causal_worlds.schema import (
     Variable,
     WorldSpec,
     answer_key,
+    temporal_answer_key,
     validate,
 )
 from causal_worlds.serde import WorldSpecModel, spec_from_json, spec_to_json
@@ -100,5 +101,6 @@ __all__ = [
     "spec_from_json",
     "spec_to_json",
     "structural_difficulty",
+    "temporal_answer_key",
     "validate",
 ]
