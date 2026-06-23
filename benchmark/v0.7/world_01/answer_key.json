@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "ambulance_inflow",
+      "door_to_doctor_wait"
+    ],
+    [
+      "bed_occupancy",
+      "boarding_count"
+    ],
+    [
+      "door_to_doctor_wait",
+      "boarding_count"
+    ],
+    [
+      "fast_track_throughput",
+      "door_to_doctor_wait"
+    ],
+    [
+      "shift_regime",
+      "door_to_doctor_wait"
+    ],
+    [
+      "triage_nurses",
+      "fast_track_throughput"
+    ]
+  ],
+  "confounded": [
+    [
+      "ambulance_inflow",
+      "bed_occupancy"
+    ]
+  ]
+}

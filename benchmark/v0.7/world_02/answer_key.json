@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "cancellation_rate",
+      "completed_trips"
+    ],
+    [
+      "driver_supply",
+      "cancellation_rate"
+    ],
+    [
+      "driver_supply",
+      "completed_trips"
+    ],
+    [
+      "event_regime",
+      "wait_time"
+    ],
+    [
+      "rider_demand",
+      "cancellation_rate"
+    ],
+    [
+      "surge_multiplier",
+      "wait_time"
+    ],
+    [
+      "wait_time",
+      "driver_supply"
+    ]
+  ],
+  "confounded": [
+    [
+      "rider_demand",
+      "surge_multiplier"
+    ]
+  ]
+}

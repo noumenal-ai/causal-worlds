@@ -21,6 +21,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from causal_worlds.admission import check_faithfulness, is_nontrivial
+from causal_worlds.anonymize import anonymize_spec
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.evaluation import Report, TemporalReport, directed_shd, f1, score, temporal_score
 from causal_worlds.protocols import Discoverer, Judge, Substrate, TemporalDiscoverer
@@ -40,6 +41,9 @@ _SANITY_N = 500
 _STD_EPS = 1e-9
 _FAITHFUL_MIN = 0.6  # T4: reject a spec the judge deems an unfaithful reading of the prose
 _CLICHE_MAX_F1 = 0.5  # T4: admit only if the named-prior guess recovers < half (difficulty >= 0.5)
+_ROLES_ONLY_MAX_F1 = (
+    0.4  # T4: the name-blind (roles-kept) prior must not recover it from roles alone
+)
 _BLIND_MAX_F1 = 0.35  # T4: the name+role-blind prior must sit near the chance floor (a control)
 _TEMPORAL_F1_MIN = (
     0.5  # T3 (temporal): admit iff a TS reference recovers lagged edges above this F1
@@ -222,7 +226,18 @@ def _anti_cliche(
             difficulty,
             faithfulness,
         )
-    # Control (Caliper): with names anonymized and roles hidden, the prior must be near chance —
+    # Roles-only control: with names anonymized but roles kept, the prior must not recover it from
+    # role conventions alone (controllable -> outcome). Closes the role-label leak (#13).
+    anon, _ = anonymize_spec(spec)
+    roles_f1 = f1(judge.prior_edges(anon), answer_key(anon).edges)
+    if roles_f1 >= _ROLES_ONLY_MAX_F1:
+        return (
+            False,
+            f"T4 role cliché: roles alone recover it (F1 {roles_f1:.2f} >= {_ROLES_ONLY_MAX_F1})",
+            difficulty,
+            faithfulness,
+        )
+    # Structural control (Caliper): with names AND roles hidden, the prior must sit near chance —
     # otherwise the structure itself is a cliché (a canonical chain a guesser nails blind).
     blind_f1 = f1(judge.prior_edges(spec, blind=True), key.edges)
     if blind_f1 >= _BLIND_MAX_F1:

@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "concierge_spend",
+      "guest_reviews"
+    ],
+    [
+      "concierge_spend",
+      "revpar"
+    ],
+    [
+      "event_season",
+      "guest_reviews"
+    ],
+    [
+      "guest_reviews",
+      "occupancy"
+    ],
+    [
+      "occupancy",
+      "revpar"
+    ],
+    [
+      "room_rate",
+      "concierge_spend"
+    ]
+  ],
+  "confounded": [
+    [
+      "occupancy",
+      "room_rate"
+    ]
+  ]
+}

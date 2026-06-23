@@ -17,6 +17,22 @@ class _BlindDiscoverer:
         return frozenset()
 
 
+class _RoleGuesser:
+    """Guesses nothing from real names but recovers the truth once names are anonymized.
+
+    Isolates the roles-only T4 gate: the leak is purely the role labels, not the names.
+    """
+
+    def prior_edges(self, spec, *, blind: bool = False):
+        if blind:
+            return frozenset()
+        anonymized = all(v.name.startswith("X") for v in spec.variables)
+        return answer_key(spec).edges if anonymized else frozenset()
+
+    def faithfulness(self, prose: str, spec) -> float:  # noqa: ARG002
+        return 1.0
+
+
 def test_coffee_admitted_and_confounder_dropped():
     report = run_gates(worlds.get("coffee"), discoverer=_FAST, seed=7)
     assert report.admitted
@@ -84,6 +100,15 @@ def test_t4_rejects_an_unfaithful_spec():
 
 def test_ecommerce_admitted():
     assert run_gates(worlds.get("ecommerce"), discoverer=_FAST, seed=7).admitted
+
+
+def test_t4_rejects_a_role_cliche():
+    # names give nothing, but the roles-only (name-anonymized) prior nails it -> role cliché (#13).
+    report = run_gates(
+        worlds.get("coffee"), discoverer=_FAST, seed=7, judge=_RoleGuesser(), prose="a coffee chain"
+    )
+    assert not report.admitted
+    assert "role cliché" in report.reason
 
 
 def test_admission_is_grader_independent():

@@ -1,0 +1,154 @@
+{
+  "variables": [
+    {
+      "name": "surge_multiplier",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "driver_supply",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rider_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "cancellation_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "wait_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "market_heat",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "event_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "completed_trips",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "market_heat",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "event_regime",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "surge_multiplier",
+      "terms": [
+        {
+          "parent": "market_heat",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rider_demand",
+      "terms": [
+        {
+          "parent": "market_heat",
+          "coeff": 1.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "wait_time",
+      "terms": [
+        {
+          "parent": "surge_multiplier",
+          "coeff": 1.2,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "event_regime",
+      "regime_terms": [
+        {
+          "parent": "surge_multiplier",
+          "coeff": -1.1,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "driver_supply",
+      "terms": [
+        {
+          "parent": "wait_time",
+          "coeff": -1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "cancellation_rate",
+      "terms": [
+        {
+          "parent": "rider_demand",
+          "coeff": 0.9,
+          "lag": 0
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": -1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "completed_trips",
+      "terms": [
+        {
+          "parent": "driver_supply",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "cancellation_rate",
+          "coeff": -1.2,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

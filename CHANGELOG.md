@@ -3,6 +3,27 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.24.0] — 2026-06-23
+
+**Gymnasium control env (#14) + the roles-only anti-cliché gate (#13 machinery).**
+
+### Added
+- **`causal_worlds.gym.ControlEnv`** — a `gymnasium.Env` over the Stage-2 control loop: action = lever
+  values, reward = the control objective under the *current* regime, and the **regime shifts between
+  steps** (a perturbation). `info` carries the regime-aware `optimal_reward` and `regret`, so
+  cumulative regret is the stay-optimal-under-perturbation score; the agent sees only the
+  observed-variable means (it must *detect* the shift, never the spec). New `gym` extra. (Closes #14.)
+- **Roles-only T4 gate** — admission now also rejects worlds whose **name-anonymized, roles-kept**
+  prior recovers the graph (`>= 0.4`), closing the role-label leak the v0.6 certificate surfaced; and
+  the `adversarial` author tier gained a **role-misdirection** lever (route the lever's influence
+  through an observable mediator, no obvious direct lever→outcome edge). (#13 machinery.)
+
+### Notes
+- `import causal_worlds` stays keyless — `gym.py` is imported explicitly (gymnasium isn't pulled by
+  the base package). 135 tests, 95% coverage. The role-clean regenerated set rides #13.
+
+[0.24.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.24.0
+
 ## [0.23.0] — 2026-06-23
 
 **Stage-2 control: regret-under-perturbation — the stay-optimal thesis, measured.**

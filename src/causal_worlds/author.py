@@ -58,8 +58,12 @@ _COMPLEXITY = {
     "  2. REVERSED EDGE: where intuition says A causes B, declare the true edge B -> A.\n"
     "  3. FLIPPED REGIME: take a 'known' positive relationship and flip its sign in a regime, so "
     "its pooled effect contradicts the naive expectation.\n"
+    "  4. ROLE MISDIRECTION: do NOT give the controllable lever the obvious DIRECT edge to the "
+    "outcome its role implies — route its real influence through an OBSERVABLE mediator (lever -> "
+    "observable -> outcome, with no direct lever -> outcome edge), so the structure is not "
+    "guessable from the roles alone either.\n"
     "Name variables evocatively (real operational terms) so the misdirection is sharp, but the "
-    "true mechanism follows the levers above, not the names.",
+    "true mechanism follows the levers above, not the names or roles.",
 }
 _TEMPORAL_CLAUSE = (
     "This is a TEMPORAL operation that evolves over time. Use lagged terms (set a term's 'lag' to "

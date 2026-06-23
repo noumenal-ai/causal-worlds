@@ -88,6 +88,13 @@ print(report.regret, report.optimal_policy)    # regret vs the declared optimum 
 
 A pluggable `Controller` (one method, `control(substrate, objective, *, seed) -> {lever: value}`,
 which may `do()`-experiment on the world but never sees the mechanisms) is graded by `grade_controller`.
+Or drive it as a **Gymnasium env** (`pip install 'causal-worlds[gym]'`):
+
+```python
+from causal_worlds.gym import ControlEnv          # the regime shifts between steps (a perturbation)
+env = ControlEnv(worlds.get("coffee"))            # action = lever values; reward = objective
+obs, info = env.reset(seed=0)                      # info["optimal_reward"] / info["regret"] per step
+```
 
 ## Author a world from a description (needs `[llm]` + keys)
 
@@ -210,9 +217,10 @@ admitted through a PCMCI+ temporal gate), and **conversational elicitation** (`c
 — a dialogue that builds a `WorldBrief` before authoring). and the **control track** (Stage 2): a
 **by-construction optimal-policy answer-key** with regret scoring *and* **regret-under-perturbation**
 (`regret_under_perturbation` — a regime-blind policy collapses when a sign-flipped regime is active,
-the stay-optimal thesis; see [scope §1a](docs/scope.md)). Next: a **Gymnasium env** wrapping the
-control loop; a **roles-only anti-cliché gate** (#13); **nonlinearity** (#10); a **temporal benchmark
-*set*** (n>1). Tracked as [issues](https://github.com/noumenal-ai/causal-worlds/issues).
+the stay-optimal thesis; see [scope §1a](docs/scope.md)), and a **Gymnasium env**
+(`causal_worlds.gym.ControlEnv`) that drives the control loop as an RL environment with regime-shift
+perturbations. Next: **nonlinearity** (#10) and a **temporal benchmark *set*** (n>1). Tracked as
+[issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection
 

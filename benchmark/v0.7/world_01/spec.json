@@ -1,0 +1,139 @@
+{
+  "variables": [
+    {
+      "name": "triage_nurses",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "fast_track_throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "ambulance_inflow",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "bed_occupancy",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "boarding_count",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "door_to_doctor_wait",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "shift_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "surge_pressure",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "surge_pressure",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "ambulance_inflow",
+      "terms": [
+        {
+          "parent": "surge_pressure",
+          "coeff": 1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "bed_occupancy",
+      "terms": [
+        {
+          "parent": "surge_pressure",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "fast_track_throughput",
+      "terms": [
+        {
+          "parent": "triage_nurses",
+          "coeff": 1.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "boarding_count",
+      "terms": [
+        {
+          "parent": "bed_occupancy",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "door_to_doctor_wait",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "door_to_doctor_wait",
+      "terms": [
+        {
+          "parent": "fast_track_throughput",
+          "coeff": -1.3,
+          "lag": 0
+        },
+        {
+          "parent": "ambulance_inflow",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_regime",
+      "regime_terms": [
+        {
+          "parent": "fast_track_throughput",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "ambulance_inflow",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}
