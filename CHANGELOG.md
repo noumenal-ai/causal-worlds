@@ -3,6 +3,34 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.17.0] — 2026-06-23
+
+**Name-only baseline (#9, final piece) — and it caught a real anti-cliché leak.**
+
+The last #9 control: an LLM that guesses the graph from variable names alone (no data) must score near
+chance, or the benchmark tests memorized priors, not discovery. It does **not** — an honest negative.
+
+### Added
+- **`anonymize.anonymize_spec(spec)`** — relabels every variable to `X1..Xn` while preserving roles,
+  mechanisms, and structure exactly (the Caliper-style control; pure + bijective).
+- **`evals/name-only-baseline`** — directed F1 of the name-only LLM guess (named + anonymized) vs the
+  truth, against a random-graph chance floor, with bootstrap CIs.
+
+### Finding (honest negative)
+- On `benchmark/v0.5` (35 worlds, gemini-2.5-flash): name-only **F1 0.71** [0.68, 0.74] vs a **0.20**
+  chance floor — the worlds are substantially guessable from names. **Anonymizing** names only drops
+  it to **0.61** [0.58, 0.65], so the leak is through variable names *and* role labels + graph
+  conventions, not names alone.
+- **Implication:** the T4 anti-cliché gate (rejects only at prior-F1 ≥ 0.9) is too lax. Tightening it
+  and authoring worlds where priors actively mislead is the next milestone (#12).
+
+### #9 status
+Grader-independent admission (v0.15), information-fair crossover + CIs (v0.16), and this name-only
+control (v0.17) are all done. The control's job was to *measure* anti-cliché honestly — it did, and
+surfaced that the claim is currently weak. Closing #9; opening #12 for the difficulty/gate work.
+
+[0.17.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.17.0
+
 ## [0.16.0] — 2026-06-23
 
 **Information-fair crossover + bootstrap CIs (#9) — the identifiability finding, made fair.**

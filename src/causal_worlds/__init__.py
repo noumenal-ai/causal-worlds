@@ -7,6 +7,7 @@ from causal_worlds.admission import (
     is_nontrivial,
     population_covariance,
 )
+from causal_worlds.anonymize import anonymize_spec
 from causal_worlds.artifact import LoadedBundle, Provenance, load_bundle, save_bundle
 from causal_worlds.baselines import (
     BASELINES,
@@ -137,6 +138,7 @@ __all__ = [
     "WorldSpec",
     "WorldSpecModel",
     "__version__",
+    "anonymize_spec",
     "answer_key",
     "build_container",
     "build_langfuse_tracer",
