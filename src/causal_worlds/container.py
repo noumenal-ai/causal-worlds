@@ -10,9 +10,10 @@ from dataclasses import dataclass
 from causal_worlds.author import build_claude_author
 from causal_worlds.config import Settings
 from causal_worlds.discover import GRADER, GRADER_VERSION, InterventionalCiDiscoverer
+from causal_worlds.elicit import build_claude_elicitor
 from causal_worlds.judge import build_gemini_judge
 from causal_worlds.obs import NullTracer, Tracer, build_langfuse_tracer
-from causal_worlds.protocols import Author, Discoverer, Judge
+from causal_worlds.protocols import Author, Discoverer, Elicitor, Judge
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,6 +29,10 @@ class Container:
     def author(self) -> Author:
         """The live world author (Claude); needs the ``llm`` extra and an Anthropic key in env."""
         return build_claude_author(self.settings.author_model)
+
+    def elicitor(self) -> Elicitor:
+        """The live elicitor (Claude, the author family); needs the ``llm`` extra + an API key."""
+        return build_claude_elicitor(self.settings.author_model)
 
     def judge(self) -> Judge:
         """The live independent judge (Gemini); needs the ``llm`` extra and a Gemini key in env."""

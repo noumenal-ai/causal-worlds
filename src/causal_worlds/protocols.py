@@ -12,8 +12,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping
+    from collections.abc import Mapping, Sequence
 
+    from causal_worlds.brief import WorldBrief
     from causal_worlds.sample import FloatArray, Sample
     from causal_worlds.schema import WorldSpec
 
@@ -22,6 +23,24 @@ Edges = frozenset[tuple[str, str]]
 
 TemporalEdges = frozenset[tuple[str, str, int]]
 """Directed temporal edges ``(src, dst, lag)``; lag 0 is contemporaneous, >= 1 is lagged."""
+
+
+@runtime_checkable
+class Elicitor(Protocol):
+    """Drives the clarify dialogue toward a complete ``WorldBrief`` (the author model, an adapter).
+
+    Stateless across calls: it reads the whole transcript each turn and returns the updated brief
+    plus the next question (``None`` when the brief is ready). The :class:`Session` holds the state.
+    """
+
+    def advance(
+        self, transcript: Sequence[tuple[str, str]], brief: WorldBrief
+    ) -> tuple[WorldBrief, str | None]:
+        """Given the dialogue and the running brief, return ``(updated brief, next question)``.
+
+        ``next question`` is ``None`` exactly when the elicitor judges the brief complete.
+        """
+        ...
 
 
 @runtime_checkable

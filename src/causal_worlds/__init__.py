@@ -19,6 +19,7 @@ from causal_worlds.baselines import (
     pooled_interventional_sample,
 )
 from causal_worlds.bench import grade_bundle, grade_spec, grade_temporal_spec
+from causal_worlds.brief import WorldBrief, is_complete, missing_fields, render
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
 from causal_worlds.controls import (
@@ -29,6 +30,14 @@ from causal_worlds.controls import (
 )
 from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
 from causal_worlds.discover import InterventionalCiDiscoverer
+from causal_worlds.elicit import (
+    ClaudeElicitor,
+    Session,
+    build_claude_elicitor,
+    force_ready,
+    respond,
+    start_session,
+)
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
 from causal_worlds.evaluation import (
     Report,
@@ -41,7 +50,7 @@ from causal_worlds.evaluation import (
     temporal_f1,
     temporal_score,
 )
-from causal_worlds.fakes import FakeAuthor, FakeJudge, FakeTemporalDiscoverer
+from causal_worlds.fakes import FakeAuthor, FakeElicitor, FakeJudge, FakeTemporalDiscoverer
 from causal_worlds.gates import GateReport, run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
 from causal_worlds.obs import LangfuseTracer, NullTracer, Tracer, build_langfuse_tracer
@@ -49,6 +58,7 @@ from causal_worlds.protocols import (
     Author,
     Discoverer,
     Edges,
+    Elicitor,
     Gate,
     Judge,
     Substrate,
@@ -90,14 +100,17 @@ __all__ = [
     "BaselineResult",
     "BudgetExceededError",
     "CausalWorldsError",
+    "ClaudeElicitor",
     "Container",
     "CyclicGraphError",
     "DanglingReferenceError",
     "Discoverer",
     "DuplicateMechanismError",
     "Edges",
+    "Elicitor",
     "FaithfulnessReport",
     "FakeAuthor",
+    "FakeElicitor",
     "FakeJudge",
     "FakeTemporalDiscoverer",
     "FciDiscoverer",
@@ -123,6 +136,7 @@ __all__ = [
     "RoleError",
     "Sample",
     "ScmSubstrate",
+    "Session",
     "Settings",
     "SortnregressDiscoverer",
     "SpecError",
@@ -135,32 +149,40 @@ __all__ = [
     "Tracer",
     "VarLingamDiscoverer",
     "Variable",
+    "WorldBrief",
     "WorldSpec",
     "WorldSpecModel",
     "__version__",
     "anonymize_spec",
     "answer_key",
+    "build_claude_elicitor",
     "build_container",
     "build_langfuse_tracer",
     "build_substrate",
     "check_faithfulness",
     "directed_shd",
     "f1",
+    "force_ready",
     "generate",
     "grade_bundle",
     "grade_spec",
     "grade_temporal_spec",
+    "is_complete",
     "is_nontrivial",
     "load_bundle",
+    "missing_fields",
     "pooled_interventional_sample",
     "population_covariance",
     "r2sortability",
+    "render",
+    "respond",
     "run_gates",
     "save_bundle",
     "score",
     "skeleton_shd",
     "spec_from_json",
     "spec_to_json",
+    "start_session",
     "structural_difficulty",
     "temporal_answer_key",
     "temporal_directed_shd",

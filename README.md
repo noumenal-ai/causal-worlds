@@ -80,6 +80,15 @@ local `.env`), then:
 causal-worlds generate "a coffee chain with weekend swings and variable lead times" ./my-world
 ```
 
+**Or describe a world conversationally.** A one-shot prompt is underspecified, so `elicit` runs a
+short dialogue first — it asks the *minimal* clarifying questions (entities & roles, what drives what,
+regimes, hidden causes, the objective), shows the accumulating brief, and authors only once the brief
+is complete (or you type `go`):
+
+```bash
+causal-worlds elicit ./my-world      # interactive: answer a few questions, then it generates
+```
+
 **Observability:** with the `observability` extra + Langfuse keys and
 `CAUSAL_WORLDS_LANGFUSE_ENABLED=true`, every run is traced (`generate` → `author` → `gate`) in Langfuse.
 
@@ -166,10 +175,13 @@ Depth: [`docs/scope.md`](docs/scope.md) · [`docs/hld.md`](docs/hld.md) · [`doc
 Shipped: NL authoring, independent judge + anti-cliché gate, artifact persistence, the baseline
 crossover, a structural-difficulty axis, a 35-world benchmark, **temporal worlds** (lagged edges +
 autoregression — see the built-in `supply`), and **time-series grading** (PCMCI+, LPCMCI, VARLiNGAM,
-Granger — `grade_temporal_spec`), and **authoring temporal worlds** (an LLM-authored lagged world,
-admitted through a PCMCI+ temporal gate). Next: a **temporal benchmark *set*** (scale + crossover at
-n>1), **a Gymnasium env** with perturbations + counterfactual replay, **scaling to 100+ worlds**, and
-conversational **elicitation**. Tracked as [issues](https://github.com/noumenal-ai/causal-worlds/issues).
+Granger — `grade_temporal_spec`), **authoring temporal worlds** (an LLM-authored lagged world,
+admitted through a PCMCI+ temporal gate), and **conversational elicitation** (`causal-worlds elicit`
+— a dialogue that builds a `WorldBrief` before authoring). Next: **tightening the anti-cliché gate**
+(the name-only baseline shows worlds are still guessable — #12), a **control track** (objective +
+optimal-policy answer-key + regret-under-perturbation — [scope §1a](docs/scope.md)), a **temporal
+benchmark *set*** (n>1), **a Gymnasium env**, and **scaling to 100+ worlds**. Tracked as
+[issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection
 

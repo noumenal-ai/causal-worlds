@@ -3,6 +3,31 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.18.0] — 2026-06-23
+
+**Conversational world elicitation — the "describe a world" UX (issue #3).**
+
+A one-shot prompt is underspecified. Interactive use now runs a dialogue first: the elicitor asks the
+*minimal* clarifying questions against a brief-completeness checklist, shows the accumulating brief,
+and authors only once it's complete (or the user says "go").
+
+### Added
+- **`brief.WorldBrief`** — structured intent (domain, variables+roles, relationships, regimes, hidden
+  causes, objective) with a completeness checklist (`missing_fields`, `is_complete`) and prose
+  `render`. Pure core.
+- **`Elicitor` Protocol** + **`elicit.Session`** state model (`start_session` / `respond` /
+  `force_ready`) and the **`ClaudeElicitor`** adapter (the *author* model family — judge-independence
+  applies only to grading). `FakeElicitor` for keyless tests.
+- **`causal-worlds elicit OUT`** — interactive clarify loop → author → gate → bundle, reusing the
+  existing generate pipeline.
+
+### Notes
+- The elicitor uses the author model (it helps you *specify*, not grade). The brief renders to the
+  same prose the one-shot author consumes, so the author→gate→grade spine is unchanged.
+- 117 tests, 95% coverage. Closes #3.
+
+[0.18.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.18.0
+
 ## [0.17.0] — 2026-06-23
 
 **Name-only baseline (#9, final piece) — and it caught a real anti-cliché leak.**

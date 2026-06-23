@@ -8,6 +8,7 @@ an LLM, so they exercise the same code paths the live adapters do.
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
+from causal_worlds.brief import WorldBrief
 from causal_worlds.protocols import Edges, Substrate, TemporalEdges
 from causal_worlds.schema import WorldSpec
 
@@ -48,6 +49,28 @@ class FakeJudge:
     def faithfulness(self, prose: str, spec: WorldSpec) -> float:  # noqa: ARG002
         """Return the canned faithfulness score."""
         return self.score
+
+
+@dataclass(slots=True)
+class FakeElicitor:
+    """An :class:`Elicitor` that returns canned ``(brief, question)`` steps in order.
+
+    Each call returns the next scripted step; a step with ``question=None`` signals the brief is
+    ready. The last step repeats once the sequence is exhausted. Records the transcripts it saw.
+    """
+
+    steps: Sequence[tuple[WorldBrief, str | None]]
+    calls: list[int] = field(default_factory=list)
+
+    def advance(
+        self,
+        transcript: Sequence[tuple[str, str]],
+        brief: WorldBrief,  # noqa: ARG002
+    ) -> tuple[WorldBrief, str | None]:
+        """Return the next scripted ``(brief, question)`` step, recording the transcript length."""
+        index = min(len(self.calls), len(self.steps) - 1)
+        self.calls.append(len(transcript))
+        return self.steps[index]
 
 
 @dataclass(slots=True)

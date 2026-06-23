@@ -10,15 +10,20 @@ import typer
 from causal_worlds import __version__, worlds
 from causal_worlds.artifact import Provenance, save_bundle
 from causal_worlds.bench import grade_bundle
+from causal_worlds.brief import is_complete, render
 from causal_worlds.container import Container, build_container
+from causal_worlds.elicit import Session, force_ready, respond, start_session
 from causal_worlds.evaluation import score
 from causal_worlds.gates import run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate_many
 from causal_worlds.generate import generate as generate_world
-from causal_worlds.protocols import Author, Discoverer, Judge
+from causal_worlds.protocols import Author, Discoverer, Elicitor, Judge
 from causal_worlds.sample import build_substrate
 from causal_worlds.schema import WorldSpec, answer_key
 from causal_worlds.worlds import UnknownWorldError
+
+_GO_WORDS = {"go", "ready", "done", "generate"}  # user can force handoff with any of these
+_MAX_TURNS = 12  # bound the clarify loop
 
 _LLM_HINT = "Live generation needs the 'llm' extra and API keys: uv add 'causal-worlds[llm]'"
 
@@ -160,11 +165,10 @@ def _admit_detail(world: AdmittedWorld) -> str:
     return "admitted"
 
 
-@app.command()
-def generate(prompt: str, out: Path, seed: int = 0) -> None:
-    """Author a world from PROMPT, gate it, and write the admitted bundle to OUT."""
-    container = build_container()
-    author, judge = _live(container)
+def _author_and_save(  # noqa: PLR0913 - a shell glue function over the generate pipeline's inputs
+    container: Container, author: Author, judge: Judge, prompt: str, out: Path, seed: int
+) -> None:
+    """Author a world from ``prompt``, gate it, save the bundle (the shared generate path)."""
     tracer = container.tracer()
     try:
         world = generate_world(
@@ -183,6 +187,54 @@ def generate(prompt: str, out: Path, seed: int = 0) -> None:
         tracer.flush()
     save_bundle(world, out, provenance=_provenance(container, seed))
     typer.echo(f"admitted -> {out}  {_admit_detail(world)}")
+
+
+@app.command()
+def generate(prompt: str, out: Path, seed: int = 0) -> None:
+    """Author a world from PROMPT, gate it, and write the admitted bundle to OUT."""
+    container = build_container()
+    author, judge = _live(container)
+    _author_and_save(container, author, judge, prompt, out, seed)
+
+
+def _live_elicitor(container: Container) -> Elicitor:
+    """Build the live elicitor, exiting with a hint if the ``llm`` extra is missing."""
+    try:
+        return container.elicitor()
+    except ImportError:
+        typer.echo(_LLM_HINT, err=True)
+        raise typer.Exit(code=1) from None
+
+
+def _run_dialogue(elicitor: Elicitor) -> Session:
+    """Run the clarify loop until the brief is ready, the user says 'go', or turns run out."""
+    session = start_session()
+    typer.echo(f"\n{session.question}")
+    for _ in range(_MAX_TURNS):
+        answer = typer.prompt("you").strip()
+        session = (
+            force_ready(session)
+            if answer.lower() in _GO_WORDS
+            else respond(elicitor, session, answer)
+        )
+        typer.echo(f"\n--- brief so far ---\n{render(session.brief)}\n")
+        if session.ready:
+            return session
+        typer.echo(str(session.question))
+    typer.echo("(turn limit reached — generating from the brief so far)", err=True)
+    return force_ready(session)
+
+
+@app.command()
+def elicit(out: Path, seed: int = 0) -> None:
+    """Interactively elicit a world brief through dialogue, then author + gate it into OUT."""
+    container = build_container()
+    elicitor = _live_elicitor(container)
+    author, judge = _live(container)
+    session = _run_dialogue(elicitor)
+    if not is_complete(session.brief):
+        typer.echo("note: the brief is still thin; authoring from what we have.", err=True)
+    _author_and_save(container, author, judge, render(session.brief), out, seed)
 
 
 @app.command()
