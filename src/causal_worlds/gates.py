@@ -39,7 +39,8 @@ _NULL_REPS = 1000
 _SANITY_N = 500
 _STD_EPS = 1e-9
 _FAITHFUL_MIN = 0.6  # T4: reject a spec the judge deems an unfaithful reading of the prose
-_CLICHE_MAX_F1 = 0.9  # T4: reject a world the judge all but recovers from priors alone (a cliché)
+_CLICHE_MAX_F1 = 0.5  # T4: admit only if the named-prior guess recovers < half (difficulty >= 0.5)
+_BLIND_MAX_F1 = 0.35  # T4: the name+role-blind prior must sit near the chance floor (a control)
 _TEMPORAL_F1_MIN = (
     0.5  # T3 (temporal): admit iff a TS reference recovers lagged edges above this F1
 )
@@ -217,7 +218,17 @@ def _anti_cliche(
     if prior_f1 >= _CLICHE_MAX_F1:
         return (
             False,
-            f"T4 cliché: recovered from priors (F1 {prior_f1:.2f})",
+            f"T4 cliché: names+roles recover it (prior F1 {prior_f1:.2f} >= {_CLICHE_MAX_F1})",
+            difficulty,
+            faithfulness,
+        )
+    # Control (Caliper): with names anonymized and roles hidden, the prior must be near chance —
+    # otherwise the structure itself is a cliché (a canonical chain a guesser nails blind).
+    blind_f1 = f1(judge.prior_edges(spec, blind=True), key.edges)
+    if blind_f1 >= _BLIND_MAX_F1:
+        return (
+            False,
+            f"T4 structural cliché: blind prior recovers it (F1 {blind_f1:.2f} >= {_BLIND_MAX_F1})",
             difficulty,
             faithfulness,
         )

@@ -56,8 +56,11 @@ class Author(Protocol):
 class Judge(Protocol):
     """An independent LLM judge — a different model family than the world's author."""
 
-    def prior_edges(self, spec: WorldSpec) -> Edges:
-        """Guess the causal edges from variable names + prose alone, with no data."""
+    def prior_edges(self, spec: WorldSpec, *, blind: bool = False) -> Edges:
+        """Guess the causal edges from priors alone (no data).
+
+        ``blind`` hides names (anonymized) and roles — a control that should score at chance.
+        """
         ...
 
     def faithfulness(self, prose: str, spec: WorldSpec) -> float:

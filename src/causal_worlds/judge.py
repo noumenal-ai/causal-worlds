@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
 
+from causal_worlds.anonymize import anonymize_spec
 from causal_worlds.schema import answer_key
 
 if TYPE_CHECKING:
@@ -65,8 +66,16 @@ class GeminiJudge:
         self._client = client
         self._model = model
 
-    def prior_edges(self, spec: WorldSpec) -> Edges:
-        """Guess the causal edges over observed variables from names + roles alone (no data)."""
+    def prior_edges(self, spec: WorldSpec, *, blind: bool = False) -> Edges:
+        """Guess the causal edges from priors alone (no data).
+
+        Default: names + roles visible — the anti-cliché signal (how guessable a world is). With
+        ``blind``, names are anonymized to ``X1..Xn`` and roles are hidden, so the guess can only
+        use graph conventions — a control that should sit at chance (Caliper). Blind edges are
+        mapped back to the real names, so the return is always over the spec's variables.
+        """
+        if blind:
+            return self._blind_prior(spec)
         observed = _observed(spec)
         listing = "\n".join(f"- {name} ({role})" for name, role in observed)
         prompt = (
@@ -74,11 +83,29 @@ class GeminiJudge:
             "general domain intuition (you have NO data and cannot see the true mechanism), list "
             f"the directed causal edges (cause -> effect) you would expect among them:\n{listing}"
         )
+        return self._guess(prompt, {name for name, _ in observed})
+
+    def _blind_prior(self, spec: WorldSpec) -> Edges:
+        """Guess with anonymized names and NO roles, then map the edges back to the real names."""
+        anon, mapping = anonymize_spec(spec)
+        inverse = {anon_name: original for original, anon_name in mapping.items()}
+        names = tuple(v.name for v in anon.variables if not v.hidden)
+        listing = "\n".join(f"- {name}" for name in names)
+        prompt = (
+            "These are the (anonymized) observed variables of an operation. You have NO data, NO "
+            "names, and NO roles — only the variable tokens. List any directed causal edges "
+            f"(cause -> effect) you would guess among them:\n{listing}"
+        )
+        return frozenset(
+            (inverse[src], inverse[dst]) for src, dst in self._guess(prompt, set(names))
+        )
+
+    def _guess(self, prompt: str, names: set[str]) -> Edges:
+        """Ask the judge for prior edges and keep only valid, non-self edges among ``names``."""
         messages: Any = [{"role": "user", "content": prompt}]
         prior: _Prior = self._client.chat.completions.create(
             model=self._model, response_model=_Prior, messages=messages
         )
-        names = {name for name, _ in observed}
         return frozenset(
             (e.src, e.dst)
             for e in prior.edges

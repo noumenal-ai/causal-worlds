@@ -41,9 +41,12 @@ class FakeJudge:
 
     prior: Edges = frozenset()
     score: float = 1.0
+    blind_prior: Edges | None = None
 
-    def prior_edges(self, spec: WorldSpec) -> Edges:  # noqa: ARG002
-        """Return the canned prior edges (independent of the spec)."""
+    def prior_edges(self, spec: WorldSpec, *, blind: bool = False) -> Edges:  # noqa: ARG002
+        """Return the canned prior (``blind_prior`` when blind and set, else ``prior``)."""
+        if blind and self.blind_prior is not None:
+            return self.blind_prior
         return self.prior
 
     def faithfulness(self, prose: str, spec: WorldSpec) -> float:  # noqa: ARG002

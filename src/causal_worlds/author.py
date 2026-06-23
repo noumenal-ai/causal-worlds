@@ -50,6 +50,16 @@ _COMPLEXITY = {
     "hard": "Structure target: make it genuinely deceptive — TWO OR MORE hidden confounders (each "
     "a common cause of 2+ observed variables) AND TWO regime flips. The structure must not be "
     "guessable from the variable names.",
+    "adversarial": "Structure target: the obvious common-sense guess from the variable NAMES must "
+    "be WRONG, so a name-only guesser scores near chance. Use these levers (keep every declared "
+    "edge detectable — do NOT make a true edge invisible by cancellation):\n"
+    "  1. PHANTOM EDGE: pick two variables a reader would 'obviously' link causally and make them "
+    "have NO direct edge — instead a hidden confounder makes them merely correlate.\n"
+    "  2. REVERSED EDGE: where intuition says A causes B, declare the true edge B -> A.\n"
+    "  3. FLIPPED REGIME: take a 'known' positive relationship and flip its sign in a regime, so "
+    "its pooled effect contradicts the naive expectation.\n"
+    "Name variables evocatively (real operational terms) so the misdirection is sharp, but the "
+    "true mechanism follows the levers above, not the names.",
 }
 _TEMPORAL_CLAUSE = (
     "This is a TEMPORAL operation that evolves over time. Use lagged terms (set a term's 'lag' to "

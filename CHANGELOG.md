@@ -3,6 +3,37 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.19.0] — 2026-06-23
+
+**Anti-cliché hardening (#12) — strict gate, blind control, adversarial author tier.**
+
+The v0.17 name-only baseline found the worlds too guessable (named F1 0.71 vs 0.20 chance). Grounded
+in a literature review (Caliper 2606.04915 — *the blind score is the real score*; Corr2Cause; the
+contamination/critical-review line), v0.19 hardens the machinery so the *next* generation produces
+genuinely hard worlds. (The shipped `benchmark/v0.5` predates this; regenerating it is the next run.)
+
+### Changed
+- **T4 anti-cliché is strict.** Admit only if the named-prior F1 < **0.5** (difficulty ≥ 0.5, down
+  from the old 0.9 bar). Plus a **blind control**: the name+role-anonymized prior must stay near the
+  chance floor (< 0.35) — else the structure itself is a cliché.
+
+### Added
+- **`Judge.prior_edges(spec, *, blind=True)`** — guesses with names anonymized to `X1..Xn` *and roles
+  hidden*, mapping edges back to the real names. Isolates name-leak from role-leak from chance.
+- **`adversarial` author complexity tier** — instructs the author to make the obvious name-based guess
+  *wrong* via phantom edges (no edge where one is "obvious"), reversed edges, and regime sign-flips,
+  while keeping every declared edge detectable (so the v0.15 faithfulness gate still holds — the lever
+  is making priors *wrong*, not making true edges invisible).
+- The name-only eval is now a **3-tier certificate**: named / name-blind / name+role-blind vs the
+  chance floor, with bootstrap CIs.
+
+### Notes
+- The faithfulness gate (v0.15) and the anti-cliché lever are deliberately compatible: suppressor /
+  near-cancellation tricks that hide a true edge are *excluded* (an invisible edge isn't a fair
+  target). 120 tests, 95% coverage. Advances #12.
+
+[0.19.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.19.0
+
 ## [0.18.0] — 2026-06-23
 
 **Conversational world elicitation — the "describe a world" UX (issue #3).**

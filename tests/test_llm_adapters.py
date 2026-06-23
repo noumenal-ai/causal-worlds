@@ -52,6 +52,9 @@ def test_author_complexity_shapes_the_system_brief():
     assert "NO hidden confounder" in captured["system"]
     ClaudeAuthor(_FakeClient(responder), model="t", complexity="hard").author("x")
     assert "TWO OR MORE hidden confounders" in captured["system"]
+    ClaudeAuthor(_FakeClient(responder), model="t", complexity="adversarial").author("x")
+    assert "PHANTOM EDGE" in captured["system"]
+    assert "must be\nWRONG" in captured["system"] or "must be WRONG" in captured["system"]
 
 
 def test_author_temporal_mode_adds_the_temporal_clause():
@@ -91,6 +94,23 @@ def test_judge_prior_filters_unknown_and_self_loops():
     client = _FakeClient(lambda _model, _kwargs: _Prior(edges=edges))
     prior = GeminiJudge(client, model="gemini-test").prior_edges(worlds.get("coffee"))
     assert prior == frozenset({("price", "demand")})
+
+
+def test_judge_blind_prior_anonymizes_and_maps_edges_back():
+    # In blind mode the judge sees X1..Xn (no roles); coffee maps price->X2, demand->X6.
+    # An X2->X6 guess must map back to the real (price, demand) edge.
+    captured = {}
+
+    def responder(_model, kwargs):
+        captured["prompt"] = kwargs["messages"][0]["content"]
+        return _Prior(edges=[_Edge(src="X2", dst="X6")])
+
+    prior = GeminiJudge(_FakeClient(responder), model="t").prior_edges(
+        worlds.get("coffee"), blind=True
+    )
+    assert prior == frozenset({("price", "demand")})
+    assert "price" not in captured["prompt"]  # names were hidden
+    assert "controllable" not in captured["prompt"]  # roles were hidden
 
 
 def test_judge_faithfulness_is_clamped():

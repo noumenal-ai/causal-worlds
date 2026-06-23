@@ -46,6 +46,29 @@ def test_t4_rejects_a_cliche_world():
     assert report.difficulty == 0.0
 
 
+def test_t4_rejects_a_half_guessable_world_under_the_strict_gate():
+    # the named prior recovers 3 of 5 truth edges -> F1 ~0.67 >= 0.5 -> rejected (strict gate).
+    truth = answer_key(worlds.get("ecommerce")).edges
+    half = frozenset(list(truth)[: max(1, len(truth) // 2 + 1)])
+    judge = FakeJudge(prior=half)
+    report = run_gates(
+        worlds.get("ecommerce"), discoverer=_FAST, seed=7, judge=judge, prose="an ecommerce store"
+    )
+    assert not report.admitted
+    assert "T4 cliché" in report.reason
+
+
+def test_t4_rejects_a_structural_cliche_via_the_blind_control():
+    # names give nothing (prior empty), but the BLIND prior nails the truth -> structural cliché.
+    truth = answer_key(worlds.get("coffee")).edges
+    judge = FakeJudge(prior=frozenset(), blind_prior=truth)
+    report = run_gates(
+        worlds.get("coffee"), discoverer=_FAST, seed=7, judge=judge, prose="a coffee chain"
+    )
+    assert not report.admitted
+    assert "structural cliché" in report.reason
+
+
 def test_t4_rejects_an_unfaithful_spec():
     report = run_gates(
         worlds.get("coffee"),

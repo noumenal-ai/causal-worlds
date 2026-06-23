@@ -143,11 +143,14 @@ varsortability to 0.54 and R²-sortability 0.73 → 0.60; both trivial sorting b
 yet fully closed. (3) Difficulty vs skeleton-SHD error is **descriptive, not a validated predictor**:
 with bootstrap CIs (n=35), the observational methods show r≈0.40 (PC [0.07, 0.68], FCI [0.08, 0.68] —
 just excluding 0) while the latent-aware reference is flat (r≈0.24, [−0.06, 0.51], includes 0).
-(4) **The anti-cliché claim is currently weak — a known, measured gap.** A name-only LLM baseline
-(guess the graph from names, no data) scores [F1 0.71](evals/name-only-baseline/) vs a 0.20 chance
-floor; **anonymizing** names to `X1..Xn` only drops it to 0.61 — so the worlds leak through variable
-names *and* through role labels + graph conventions. The T4 gate (rejects only at prior-F1 ≥ 0.9) is
-too lax. Tightening the gate and authoring worlds where priors actively mislead is the next milestone.
+(4) **The shipped `benchmark/v0.5` is still name-guessable — being fixed.** A name-only LLM baseline
+scores [F1 0.71](evals/name-only-baseline/) vs a 0.20 chance floor (names *and* roles leak). **v0.19**
+hardens the machinery for the next generation: T4 now admits only worlds with **difficulty ≥ 0.5**
+(named-prior F1 < 0.5, down from the old 0.9 bar) plus a **blind control** (the name+role-anonymized
+prior must sit near chance), and an **`adversarial` author tier** writes worlds where the obvious
+name-based guess is *wrong* (phantom edges, reversed edges, regime sign-flips — keeping every true
+edge detectable). The `v0.5` set predates this; regenerating it under the strict gate is the next
+scaled run.
 
 ## What you get per world
 
@@ -162,8 +165,9 @@ too lax. Tightening the gate and authoring worlds where priors actively mislead 
 - **Answer key** — directed edges over *observed* variables + the hidden-confounded pairs; *derived*
   from the spec, never stored separately, so they can't disagree.
 - **Gates** — T1 validity · T2 sample-sanity · T3 faithfulness (grader-independent: the declared SCM
-  is faithful & non-trivial by construction) · T4 anti-cliché (the judge can't guess it from names).
-  A world is admitted only if all pass.
+  is faithful & non-trivial by construction) · T4 anti-cliché (the named prior recovers < half —
+  difficulty ≥ 0.5 — *and* a name+role-blind prior stays near chance). A world is admitted only if all
+  pass.
 - **Reference grader** — an interventional-CI discoverer that uses `do()` data to tell *confounding*
   from *causation*, where PC/GES/GIES/FCI (which assume causal sufficiency) cannot.
 

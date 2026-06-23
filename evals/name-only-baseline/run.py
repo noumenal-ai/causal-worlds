@@ -92,12 +92,21 @@ def main():
             anon_f1 = f1(
                 _with_retries(lambda: judge.prior_edges(anon_spec), what="anon"), anon_truth
             )
+            blind_f1 = f1(
+                _with_retries(lambda: judge.prior_edges(spec, blind=True), what="blind"), truth
+            )
         except Exception as exc:  # noqa: BLE001 - skip a persistently-failing world, keep the rest
             print(f"{wdir.name}: SKIPPED ({type(exc).__name__})")
             continue
         null_f1 = _random_null_f1(truth, names, rng, NULL_REPS)
-        rows.append({"world": wdir.name, "named_f1": named_f1, "anon_f1": anon_f1, "null_f1": null_f1})
-        print(f"{wdir.name}: named {named_f1:.2f}  anon {anon_f1:.2f}  null {null_f1:.2f}")
+        rows.append({
+            "world": wdir.name, "named_f1": named_f1, "anon_f1": anon_f1,
+            "blind_f1": blind_f1, "null_f1": null_f1,
+        })
+        print(
+            f"{wdir.name}: named {named_f1:.2f}  name-blind {anon_f1:.2f}  "
+            f"name+role-blind {blind_f1:.2f}  null {null_f1:.2f}"
+        )
 
     if not rows:
         print("no worlds scored (provider unavailable) — nothing written")
@@ -106,10 +115,12 @@ def main():
         "scored": len(rows),
         "mean_named_f1": mean(r["named_f1"] for r in rows),
         "mean_anon_f1": mean(r["anon_f1"] for r in rows),
+        "mean_blind_f1": mean(r["blind_f1"] for r in rows),
         "mean_null_f1": mean(r["null_f1"] for r in rows),
         "named_ci95": _bootstrap_ci([r["named_f1"] for r in rows], BOOT_REPS, seed=1),
         "anon_ci95": _bootstrap_ci([r["anon_f1"] for r in rows], BOOT_REPS, seed=2),
-        "null_ci95": _bootstrap_ci([r["null_f1"] for r in rows], BOOT_REPS, seed=3),
+        "blind_ci95": _bootstrap_ci([r["blind_f1"] for r in rows], BOOT_REPS, seed=3),
+        "null_ci95": _bootstrap_ci([r["null_f1"] for r in rows], BOOT_REPS, seed=4),
     }
     report = {
         "eval": "name-only-baseline",
@@ -122,8 +133,8 @@ def main():
     (OUT / "report.json").write_text(json.dumps(report, indent=2))
     _write_readme(report)
     print(
-        f"\nmean named F1 {agg['mean_named_f1']:.2f} | anon {agg['mean_anon_f1']:.2f} | "
-        f"null {agg['mean_null_f1']:.2f}"
+        f"\nmean named F1 {agg['mean_named_f1']:.2f} | name-blind {agg['mean_anon_f1']:.2f} | "
+        f"name+role-blind {agg['mean_blind_f1']:.2f} | null {agg['mean_null_f1']:.2f}"
     )
 
 
@@ -139,18 +150,20 @@ def _write_readme(report):
         "ANTI-CLICHÉ HOLDS — the name-only baseline is near chance; the benchmark tests discovery, "
         "not memorized priors."
         if near_chance
-        else "LEAKY — the name-only baseline beats chance; some worlds are guessable from names."
+        else "LEAKY — priors beat chance; worlds are guessable from names and/or roles."
     )
     lines = [
-        "# Name-only baseline (anti-cliché control)",
+        "# Name-only baseline (anti-cliché certificate)",
         "",
         f"Benchmark `{report['benchmark']}`, judge `{report['judge_model']}`. Directed F1 of a "
-        "name-only LLM guess (no data) vs the truth, against the random-graph chance floor. "
-        "**anon** repeats the guess after anonymizing names to `X1..Xn` (Caliper-style): if the "
-        "benchmark were leaking through names, anonymizing would drop the score toward `null`.",
+        "prior-only LLM guess (no data) vs the truth, against the random-graph chance floor, at "
+        "three disclosure levels (Caliper-style). If a level beats `null`, the answer leaks at that "
+        "level: **named** = names + roles; **name-blind** = names anonymized to `X1..Xn`, roles "
+        "kept; **name+role-blind** = names anonymized AND roles hidden (should sit at chance).",
         "",
         f"- **named** F1 {a['mean_named_f1']:.2f}  {ci(a['named_ci95'])}",
-        f"- **anon**  F1 {a['mean_anon_f1']:.2f}  {ci(a['anon_ci95'])}",
+        f"- **name-blind** F1 {a['mean_anon_f1']:.2f}  {ci(a['anon_ci95'])}",
+        f"- **name+role-blind** F1 {a['mean_blind_f1']:.2f}  {ci(a['blind_ci95'])}",
         f"- **null** (chance) F1 {a['mean_null_f1']:.2f}  {ci(a['null_ci95'])}",
         "",
         f"**Verdict: {verdict}**",
