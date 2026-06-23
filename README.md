@@ -114,17 +114,19 @@ sufficiency, it still reports the hidden-confounded pair as a *causal* edge in m
 read as an **identifiability result** (you cannot tell confounding from causation without both
 interventions *and* a latent-aware method), not "our method beats the toolbox."
 
-**Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) the worlds are currently
-*admitted by the reference grader itself* (gate T3), so admission and the headline aren't yet fully
-decoupled. (2) **Simulated-DAG leakage** — synthetic SCMs can leak the causal order through marginal
-variance ([varsortability](evals/varsortability/)) *and* through scale-invariant predictability
-(R²-sortability). v0.14 generates worlds with **internal standardization (iSCM)**, which drops
+**Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) ~~the worlds are admitted by
+the reference grader itself~~ **Fixed in v0.15**: admission (gate T3) is now **grader-independent** —
+a world is admitted iff its declared SCM is *faithful by construction* (every edge induces a
+detectable partial correlation; regimes genuinely modulate), computed in closed form from the spec
+with **no discovery method run**. The reference grader's score is reported, never gates. (2)
+**Simulated-DAG leakage** — synthetic SCMs can leak the causal order through marginal variance
+([varsortability](evals/varsortability/)) *and* through scale-invariant predictability
+(R²-sortability). v0.14 generates worlds with **internal standardization (iSCM)**, dropping
 varsortability to 0.54 and R²-sortability 0.73 → 0.60; both trivial sorting baselines fall to F1
 ≈ 0.33–0.37, well under the real methods. The residual R²-sortability (0.60 > 0.5) is disclosed, not
 yet fully closed. (3) Structural difficulty correlates with observational error (r≈0.8, partly
 mechanically) and with the *interventional advantage* (ΔF1, r≈0.24–0.36, n=35, no CIs) — a descriptive
-axis, not a validated predictor. Fixing (1), plus a name-only-at-chance baseline, is the next
-milestone (#9).
+axis, not a validated predictor. A name-only-at-chance baseline and difficulty CIs are the rest of #9.
 
 ## What you get per world
 
@@ -138,8 +140,9 @@ milestone (#9).
 - **Spec / IR** — variables (with roles, incl. hidden), linear-Gaussian mechanisms, regime sign-flips.
 - **Answer key** — directed edges over *observed* variables + the hidden-confounded pairs; *derived*
   from the spec, never stored separately, so they can't disagree.
-- **Gates** — T1 validity · T2 sample-sanity · T3 non-triviality vs a random-graph null · T4
-  anti-cliché (the judge can't guess it from names). A world is admitted only if all pass.
+- **Gates** — T1 validity · T2 sample-sanity · T3 faithfulness (grader-independent: the declared SCM
+  is faithful & non-trivial by construction) · T4 anti-cliché (the judge can't guess it from names).
+  A world is admitted only if all pass.
 - **Reference grader** — an interventional-CI discoverer that uses `do()` data to tell *confounding*
   from *causation*, where PC/GES/GIES/FCI (which assume causal sufficiency) cannot.
 

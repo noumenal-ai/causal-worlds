@@ -3,6 +3,42 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.15.0] — 2026-06-23
+
+**Grader-independent admission — the circularity fix (#9, the credibility keystone).**
+
+The benchmark was circular: gate T3 admitted a world iff the *reference interventional-CI grader
+recovered it*, so the benchmark was the set of worlds that grader solves — and we then reported that
+grader winning. T3 is now a property of the **declared SCM itself**, computed in closed form.
+
+### Added
+- **`admission`**: `check_faithfulness(spec)` and `population_covariance(spec)`. For the
+  linear-Gaussian SCM, the population covariance is `(I-B)⁻¹ Ω (I-B)⁻ᵀ`; a declared edge is
+  **faithful** iff it induces a detectable partial correlation (`>= 0.05`) given the target's other
+  observed parents — i.e. the parameters don't cancel and hide a true edge. Partial correlations are
+  scale-invariant, so this holds for the iSCM data the substrate emits. Regime edges are checked
+  structurally (the regime must genuinely change a coefficient). Plus `is_nontrivial(spec)`.
+
+### Changed
+- **Gate T3 is now grader-independent.** A world is admitted iff its SCM is faithful + non-trivial by
+  construction — **no discovery method is run to decide admission**. The reference grader is still
+  run, but only to *report* its score on the independently-admitted world.
+
+### Validated
+- All 35 cross-sectional `benchmark/v0.5` worlds remain admitted (min partial correlation 0.187 across
+  the set, well above the 0.05 floor) — decoupling admission did **not** shrink or reshape the
+  benchmark, so the crossover finding stands on a now-non-circular set.
+- New decoupling test: a world stays admitted even when the supplied discoverer recovers **nothing**
+  (`test_admission_is_grader_independent`). Degenerate/cancelling edges and spurious regime edges are
+  rejected.
+- 104 tests, 97% coverage.
+
+### Still open (#9)
+- Temporal T3 still uses a PCMCI+ recovery floor (grader-dependent) — cross-sectional is decoupled.
+- Information-fair crossover; difficulty CIs/bootstrap; name-only-LLM-baseline-at-chance.
+
+[0.15.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.15.0
+
 ## [0.14.0] — 2026-06-23
 
 **R²-sortability — the scale-invariant leak v0.13 couldn't reach, and the iSCM fix for it.**

@@ -4,7 +4,10 @@ The gates run cheapest-first and fail loud — a world is admitted only if every
 
 * **T1 static validity** — the spec is well-formed (acyclic, roles present, no dangling refs).
 * **T2 sample-sanity** — a sample is finite and non-degenerate (no zero-variance column).
-* **T3 non-triviality** — the reference grader beats a per-world random-graph null by a margin.
+* **T3 faithfulness (grader-independent)** — the declared SCM is *faithful by construction* (every
+  edge induces a detectable partial correlation; regimes genuinely modulate) and structurally
+  non-trivial. Computed in closed form from the spec — no discovery method is run, so admission
+  privileges none. The reference grader's score is still recorded, but only as an observation.
 * **T4 anti-cliché** — *only when an independent judge + the originating prose are supplied*: the
   spec faithfully represents the prose, and it is not guessable from priors alone. T4 also records a
   ``difficulty`` score (how far the judge's prior is from the truth) — the anti-cliché axis.
@@ -17,6 +20,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from causal_worlds.admission import check_faithfulness, is_nontrivial
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.evaluation import Report, TemporalReport, directed_shd, f1, score, temporal_score
 from causal_worlds.protocols import Discoverer, Judge, Substrate, TemporalDiscoverer
@@ -31,7 +35,6 @@ from causal_worlds.schema import (
 )
 from causal_worlds.temporal_baselines import PcmciPlusDiscoverer
 
-_NONTRIVIAL_FRACTION = 0.5  # admit iff the grader's directed SHD <= this * the random-graph null
 _NULL_REPS = 1000
 _SANITY_N = 500
 _STD_EPS = 1e-9
@@ -138,16 +141,21 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
             admitted=False, reason="T3 no causal structure to discover", null_shd=0.0, grade=None
         )
 
+    # T3 is now GRADER-INDEPENDENT: admit on a closed-form property of the declared SCM (every edge
+    # faithful, structure non-trivial), never on whether the reference grader recovers the world.
+    if not is_nontrivial(spec):
+        return GateReport(
+            admitted=False, reason="T3 trivial: (near-)complete graph", null_shd=0.0, grade=None
+        )
+    faith = check_faithfulness(spec)
+    if not faith.faithful:
+        return GateReport(admitted=False, reason=f"T3 {faith.reason}", null_shd=0.0, grade=None)
+
+    # The reference grader is still run, but only to *report* its score on this independently-
+    # admitted world, not to decide admission. The random-null is recorded for context.
     grader = discoverer if discoverer is not None else InterventionalCiDiscoverer()
     grade = score(grader.recover(substrate, seed=seed), key)
     null_shd = _random_null_shd(key, substrate.variables, seed, _NULL_REPS)
-    if grade.directed_shd > _NONTRIVIAL_FRACTION * null_shd:
-        return GateReport(
-            admitted=False,
-            reason=f"T3 not recoverable: SHD {grade.directed_shd} vs null {null_shd:.1f}",
-            null_shd=null_shd,
-            grade=grade,
-        )
 
     if judge is None or prose is None:
         return GateReport(admitted=True, reason="admitted", null_shd=null_shd, grade=grade)

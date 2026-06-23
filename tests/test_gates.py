@@ -4,9 +4,17 @@ from causal_worlds import answer_key, worlds
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.fakes import FakeJudge
 from causal_worlds.gates import run_gates
+from causal_worlds.protocols import Edges, Substrate
 from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
 
 _FAST = InterventionalCiDiscoverer(n=4000)
+
+
+class _BlindDiscoverer:
+    """Recovers nothing — used to prove admission no longer depends on the grader."""
+
+    def recover(self, substrate: Substrate, *, seed: int) -> Edges:  # noqa: ARG002
+        return frozenset()
 
 
 def test_coffee_admitted_and_confounder_dropped():
@@ -53,6 +61,15 @@ def test_t4_rejects_an_unfaithful_spec():
 
 def test_ecommerce_admitted():
     assert run_gates(worlds.get("ecommerce"), discoverer=_FAST, seed=7).admitted
+
+
+def test_admission_is_grader_independent():
+    # The decisive decoupling test: a world faithful by construction is admitted even when the
+    # supplied discoverer recovers nothing. Admission is now a property of the SCM, not the grader.
+    report = run_gates(worlds.get("coffee"), discoverer=_BlindDiscoverer(), seed=7)
+    assert report.admitted
+    assert report.grade is not None
+    assert report.grade.directed_shd > 0  # the blind grader failed — but the world still admits
 
 
 def test_invalid_spec_rejected_at_t1():

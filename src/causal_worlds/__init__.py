@@ -1,6 +1,12 @@
 """causal-worlds: fictional causal operations worlds with a ground-truth answer-key."""
 
 from causal_worlds._version import __version__
+from causal_worlds.admission import (
+    FaithfulnessReport,
+    check_faithfulness,
+    is_nontrivial,
+    population_covariance,
+)
 from causal_worlds.artifact import LoadedBundle, Provenance, load_bundle, save_bundle
 from causal_worlds.baselines import (
     BASELINES,
@@ -88,6 +94,7 @@ __all__ = [
     "Discoverer",
     "DuplicateMechanismError",
     "Edges",
+    "FaithfulnessReport",
     "FakeAuthor",
     "FakeJudge",
     "FakeTemporalDiscoverer",
@@ -133,13 +140,16 @@ __all__ = [
     "build_container",
     "build_langfuse_tracer",
     "build_substrate",
+    "check_faithfulness",
     "directed_shd",
     "f1",
     "generate",
     "grade_bundle",
     "grade_spec",
     "grade_temporal_spec",
+    "is_nontrivial",
     "load_bundle",
+    "population_covariance",
     "r2sortability",
     "run_gates",
     "save_bundle",
