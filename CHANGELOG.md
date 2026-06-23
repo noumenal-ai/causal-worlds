@@ -3,6 +3,16 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.11.1] — 2026-06-23
+
+### Fixed
+- **Empty Langfuse traces.** Spans were attaching `metadata` but not `input`/`output` — which is the
+  content the Langfuse UI shows — so traces arrived looking empty. The `Tracer` seam now records span
+  **input** on open and **output** via `record(...)`; `generate`/`author`/`gate` spans carry the
+  prompt, attempt, recovered variables, and admit decision. Verified live against the API.
+
+[0.11.1]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.11.1
+
 ## [0.11.0] — 2026-06-23
 
 **Integrity pass** (from an adversarial self-audit + a 2026 landscape review). No new capability — this

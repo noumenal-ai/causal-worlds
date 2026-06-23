@@ -102,8 +102,12 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
     last: GateReport | None = None
     with tr.span("generate", prompt=prompt, max_attempts=max_attempts):
         for attempt in range(1, max_attempts + 1):
-            with tr.span("author", attempt=attempt):
+            with tr.span("author", attempt=attempt, prompt=prompt, feedback=feedback):
                 spec = author.author(prompt, feedback=feedback)
+                tr.record(
+                    variables=[v.name for v in spec.variables],
+                    n_mechanisms=len(spec.mechanisms),
+                )
             with tr.span("gate", attempt=attempt):
                 report = run_gates(
                     spec,
@@ -113,10 +117,13 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
                     prose=prompt,
                     temporal_discoverer=temporal_discoverer,
                 )
+                tr.record(admitted=report.admitted, reason=report.reason)
             if report.admitted:
+                tr.record(admitted=True, attempts=attempt, reason=report.reason)
                 return AdmittedWorld(prompt=prompt, spec=spec, report=report, attempts=attempt)
             last = report
             feedback = _feedback(report)
+        tr.record(admitted=False, attempts=max_attempts)
     raise NotAdmittedError(prompt, max_attempts, last)
 
 

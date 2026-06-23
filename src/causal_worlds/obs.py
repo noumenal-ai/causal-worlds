@@ -18,8 +18,12 @@ if TYPE_CHECKING:
 class Tracer(Protocol):
     """Wrap a unit of work in an observability span."""
 
-    def span(self, name: str, **metadata: object) -> AbstractContextManager[None]:
-        """Open a span named ``name`` (with optional metadata) around a unit of work."""
+    def span(self, name: str, **inputs: object) -> AbstractContextManager[None]:
+        """Open a span named ``name``, recording ``inputs`` as the span's input."""
+        ...
+
+    def record(self, **outputs: object) -> None:
+        """Record outputs on the currently-open span (call inside a :meth:`span` block)."""
         ...
 
     def flush(self) -> None:
@@ -31,10 +35,14 @@ class NullTracer:
     """A tracer that records nothing — the default until observability is configured."""
 
     @contextmanager
-    def span(self, name: str, **metadata: object) -> Iterator[None]:
-        """A no-op span (name and metadata are ignored)."""
-        _ = (name, metadata)
+    def span(self, name: str, **inputs: object) -> Iterator[None]:
+        """A no-op span (name and inputs are ignored)."""
+        _ = (name, inputs)
         yield
+
+    def record(self, **outputs: object) -> None:
+        """No-op output recording."""
+        _ = outputs
 
     def flush(self) -> None:
         """No-op flush."""
@@ -48,12 +56,16 @@ class LangfuseTracer:
         self._client = client
 
     @contextmanager
-    def span(self, name: str, **metadata: object) -> Iterator[None]:
-        """Open a Langfuse span named ``name`` (attaching ``metadata`` if any) for the block."""
+    def span(self, name: str, **inputs: object) -> Iterator[None]:
+        """Open a Langfuse span named ``name``, recording ``inputs`` as its input, for the block."""
         with self._client.start_as_current_observation(name=name, as_type="span"):
-            if metadata:
-                self._client.update_current_span(metadata=metadata)
+            if inputs:
+                self._client.update_current_span(input=inputs)
             yield
+
+    def record(self, **outputs: object) -> None:
+        """Set the output of the currently-open Langfuse span."""
+        self._client.update_current_span(output=outputs)
 
     def flush(self) -> None:
         """Flush buffered spans to Langfuse (best practice before a script/CLI exits)."""

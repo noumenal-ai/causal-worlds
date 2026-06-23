@@ -12,15 +12,19 @@ _FAST = InterventionalCiDiscoverer(n=4000)
 
 
 class _RecordingTracer:
-    """A Tracer that records the span names it opened (to prove instrumentation fires)."""
+    """A Tracer that records the span names + recorded outputs (to prove instrumentation fires)."""
 
     def __init__(self):
         self.spans = []
+        self.outputs = []
         self.flushed = False
 
-    def span(self, name, **metadata):
+    def span(self, name, **inputs):
         self.spans.append(name)
-        return NullTracer().span(name, **metadata)  # reuse the no-op context manager
+        return NullTracer().span(name, **inputs)  # reuse the no-op context manager
+
+    def record(self, **outputs):
+        self.outputs.append(outputs)
 
     def flush(self):
         self.flushed = True
@@ -31,15 +35,15 @@ class _FakeLangfuseClient:
 
     def __init__(self):
         self.observations = []
-        self.metadata = []
+        self.updates = []
         self.flushed = False
 
     def start_as_current_observation(self, *, name, as_type):
         self.observations.append((name, as_type))
         return NullTracer().span(name)
 
-    def update_current_span(self, *, metadata):
-        self.metadata.append(metadata)
+    def update_current_span(self, **kwargs):
+        self.updates.append(kwargs)
 
     def flush(self):
         self.flushed = True
@@ -47,30 +51,30 @@ class _FakeLangfuseClient:
 
 def test_nulltracer_is_a_tracer_and_no_ops():
     assert isinstance(NullTracer(), Tracer)
-    with NullTracer().span("anything"):
-        pass  # must not raise
+    with NullTracer().span("anything", x=1):
+        NullTracer().record(y=2)  # must not raise
 
 
-def test_langfuse_tracer_opens_a_span_attaches_metadata_and_flushes():
+def test_langfuse_tracer_sets_input_output_and_flushes():
     client = _FakeLangfuseClient()
     tracer = LangfuseTracer(client)
     assert isinstance(tracer, Tracer)
     with tracer.span("generate", prompt="a webshop"):
-        pass
+        tracer.record(admitted=True)
     assert client.observations == [("generate", "span")]
-    assert client.metadata == [{"prompt": "a webshop"}]
+    assert {"input": {"prompt": "a webshop"}} in client.updates
+    assert {"output": {"admitted": True}} in client.updates
     tracer.flush()
     assert client.flushed
 
 
-def test_generate_wraps_steps_in_spans():
+def test_generate_wraps_steps_in_spans_and_records_outputs():
     tracer = _RecordingTracer()
     generate(
         "a webshop", author=FakeAuthor([worlds.get("ecommerce")]), discoverer=_FAST, tracer=tracer
     )
-    assert "generate" in tracer.spans
-    assert "author" in tracer.spans
-    assert "gate" in tracer.spans
+    assert {"generate", "author", "gate"} <= set(tracer.spans)
+    assert any(o.get("admitted") for o in tracer.outputs)  # an admit outcome was recorded
 
 
 def test_container_defaults_to_null_tracer():
