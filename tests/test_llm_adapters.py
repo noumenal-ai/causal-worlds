@@ -117,3 +117,46 @@ def test_judge_faithfulness_is_clamped():
     high = _FakeClient(lambda _model, _kwargs: _Faithfulness(score=1.0, reason="ok"))
     judge = GeminiJudge(high, model="gemini-test")
     assert judge.faithfulness("a coffee chain", worlds.get("coffee")) == 1.0
+
+
+def test_judge_retries_transient_overload_then_succeeds():
+    # A Gemini 503 spike is transient: the judge must retry it rather than fail the (paid) author.
+    calls = {"n": 0}
+
+    def responder(_model, _kwargs):
+        calls["n"] += 1
+        if calls["n"] < 3:  # fail twice, succeed on the third attempt
+            raise RuntimeError("503 UNAVAILABLE: the model is experiencing high demand")
+        return _Faithfulness(score=0.9, reason="ok")
+
+    judge = GeminiJudge(_FakeClient(responder), model="t", retries=4, backoff=0.0)
+    assert judge.faithfulness("a coffee chain", worlds.get("coffee")) == 0.9
+    assert calls["n"] == 3  # two failures + one success
+
+
+def test_judge_reraises_a_nontransient_error_without_retrying():
+    # A schema/bad-request error is not transient — fail loud immediately, don't burn retries.
+    calls = {"n": 0}
+
+    def responder(_model, _kwargs):
+        calls["n"] += 1
+        raise ValueError("invalid request: malformed schema")
+
+    judge = GeminiJudge(_FakeClient(responder), model="t", retries=4, backoff=0.0)
+    with pytest.raises(ValueError, match="malformed schema"):
+        judge.faithfulness("a coffee chain", worlds.get("coffee"))
+    assert calls["n"] == 1  # no retry on a non-transient error
+
+
+def test_judge_gives_up_after_exhausting_transient_retries():
+    # A persistent outage still fails loud after the bounded retries (not an infinite loop).
+    calls = {"n": 0}
+
+    def responder(_model, _kwargs):
+        calls["n"] += 1
+        raise RuntimeError("503 UNAVAILABLE")
+
+    judge = GeminiJudge(_FakeClient(responder), model="t", retries=2, backoff=0.0)
+    with pytest.raises(RuntimeError, match="503"):
+        judge.faithfulness("a coffee chain", worlds.get("coffee"))
+    assert calls["n"] == 3  # initial attempt + 2 retries

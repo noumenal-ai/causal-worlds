@@ -98,6 +98,7 @@ ignore = [
     "ANN",     # type annotations optional in tests
     "PLR2004", # magic values are fine in test assertions
     "INP001",  # tests need no __init__
+    "EM",      # throwaway exceptions (e.g. simulating provider errors) needn't be assigned first
 ]
 
 [tool.ruff.lint.pydocstyle]

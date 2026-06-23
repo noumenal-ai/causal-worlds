@@ -13,7 +13,8 @@ client and is unit-tested with a fake, so the package imports and CI runs withou
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+import time
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -27,6 +28,29 @@ if TYPE_CHECKING:
     from causal_worlds.schema import WorldSpec
 
 DEFAULT_JUDGE_MODEL = "gemini-2.5-flash"
+
+_M = TypeVar("_M", bound=BaseModel)  # the structured response model a judge call returns
+
+# Provider overload is transient and common (Gemini 503 "high demand"). We retry it behind the seam
+# so a spike doesn't bubble up and waste the (paid) upstream author call that produced the spec
+# being judged. Matched on the error string to stay SDK-agnostic — any provider's overload is one.
+_TRANSIENT_MARKERS = (
+    "503",
+    "unavailable",
+    "overloaded",
+    "resource_exhausted",
+    "high demand",
+    "429",
+    "rate limit",
+    "deadline",
+    "timeout",
+)
+
+
+def _is_transient(exc: Exception) -> bool:
+    """True if an error looks like a transient provider overload/throttle worth retrying."""
+    text = str(exc).lower()
+    return any(marker in text for marker in _TRANSIENT_MARKERS)
 
 
 class _Edge(BaseModel):
@@ -61,10 +85,45 @@ def _observed(spec: WorldSpec) -> list[tuple[str, str]]:
 class GeminiJudge:
     """Scores worlds via an injected ``instructor`` Gemini client (an independent family)."""
 
-    def __init__(self, client: instructor.Instructor, model: str = DEFAULT_JUDGE_MODEL) -> None:
-        """Store the client and model id (the client is constructed at the edge)."""
+    def __init__(
+        self,
+        client: instructor.Instructor,
+        model: str = DEFAULT_JUDGE_MODEL,
+        *,
+        retries: int = 4,
+        backoff: float = 2.0,
+    ) -> None:
+        """Store the client and model id (the client is constructed at the edge).
+
+        ``retries`` and ``backoff`` bound transient-overload retry: attempt ``i`` waits
+        ``backoff * 2**i`` seconds (default rides through a ~30s spike). ``backoff=0`` disables the
+        wait — used in tests so they stay fast.
+        """
         self._client = client
         self._model = model
+        self._retries = retries
+        self._backoff = backoff
+
+    def _create(self, response_model: type[_M], prompt: str) -> _M:
+        """Call the judge for ``response_model``, retrying transient overloads with backoff.
+
+        A non-transient error is re-raised at once (no point retrying a bad request); a transient
+        one is retried up to ``self._retries`` times, then re-raised so the caller still fails loud.
+        """
+        messages: Any = [{"role": "user", "content": prompt}]
+        for attempt in range(self._retries + 1):
+            try:
+                result: _M = self._client.chat.completions.create(
+                    model=self._model, response_model=response_model, messages=messages
+                )
+            except Exception as exc:
+                if attempt == self._retries or not _is_transient(exc):
+                    raise
+                time.sleep(self._backoff * 2**attempt)
+            else:
+                return result
+        msg = "unreachable: the retry loop always returns or raises"
+        raise AssertionError(msg)  # pragma: no cover
 
     def prior_edges(self, spec: WorldSpec, *, blind: bool = False) -> Edges:
         """Guess the causal edges from priors alone (no data).
@@ -102,10 +161,7 @@ class GeminiJudge:
 
     def _guess(self, prompt: str, names: set[str]) -> Edges:
         """Ask the judge for prior edges and keep only valid, non-self edges among ``names``."""
-        messages: Any = [{"role": "user", "content": prompt}]
-        prior: _Prior = self._client.chat.completions.create(
-            model=self._model, response_model=_Prior, messages=messages
-        )
+        prior: _Prior = self._create(_Prior, prompt)
         return frozenset(
             (e.src, e.dst)
             for e in prior.edges
@@ -123,10 +179,7 @@ class GeminiJudge:
             f"and these causal edges: {drawn}\n\n"
             "Score from 0 to 1 how faithfully this captures the described operation."
         )
-        messages: Any = [{"role": "user", "content": prompt}]
-        verdict: _Faithfulness = self._client.chat.completions.create(
-            model=self._model, response_model=_Faithfulness, messages=messages
-        )
+        verdict: _Faithfulness = self._create(_Faithfulness, prompt)
         return max(0.0, min(1.0, verdict.score))
 
 

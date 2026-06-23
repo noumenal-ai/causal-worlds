@@ -3,6 +3,31 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.27.0] — 2026-06-23
+
+**The Gemini judge rides through transient provider overloads — so a 503 spike no longer wastes the
+(paid) author call that produced the spec being judged.**
+
+### Added
+- **Bounded transient-retry in `GeminiJudge`.** Both judge calls (`prior_edges`/`_guess` and
+  `faithfulness`) now route through a private `_create` that retries transient provider errors
+  (Gemini 503 "high demand", `UNAVAILABLE`, `RESOURCE_EXHAUSTED`, 429/rate-limit, timeouts) with
+  exponential backoff (`retries=4`, `backoff=2.0` by default → rides through a ~30s spike).
+  Classification is by error *string*, not exception type, to stay SDK-agnostic behind our seam.
+  Non-transient errors (e.g. a malformed request) are re-raised immediately; a persistent outage
+  still fails loud after the bounded retries.
+
+### Why
+- During temporal-world generation, a Gemini 503 propagated out of T4 and was caught by the
+  generation-resilience loop, which retried the **whole** `generate()` — re-running the upstream
+  Claude author call each time. Retrying the transient failure *inside the judge* preserves the
+  already-paid spec across a spike, which matters on a fixed eval budget. (Mirrors the
+  generation-resilience added in v0.25.)
+- `backoff` is injectable (`backoff=0.0`) so the three new unit tests — retry-then-succeed,
+  re-raise-non-transient, give-up-after-exhaustion — stay fast and need no real sleep. 139 tests.
+
+[0.27.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.27.0
+
 ## [0.26.0] — 2026-06-23
 
 **Temporal worlds now clear the T4 anti-cliché gate too — closing the gap that could invalidate a
