@@ -1,128 +1,163 @@
 # causal-worlds
 
-**Generate a fictional-but-coherent causal *operation* from a plain-language description** — an executable
-simulator, the multivariate time-series it emits, and a **declared ground-truth causal structure** (the
-*answer-key*) — for **benchmarking causal-discovery agents against a known truth** (and, on the roadmap,
-stress-testing control agents under perturbation).
+[![CI](https://github.com/noumenal-ai/causal-worlds/actions/workflows/ci.yml/badge.svg)](https://github.com/noumenal-ai/causal-worlds/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org)
 
-> **Status: v0.2.0 — the loop is closed.** Describe an operation in plain language and get back an *admitted*
-> causal world: an executable simulator, the time-series it emits, a declared ground-truth answer-key, and a
-> manifest. A Claude **author** proposes the world; an independent Gemini **judge** (a different model family)
-> plus statistical gates admit only worlds that are valid, recoverable, and *not* guessable from priors;
-> admitted worlds are persisted as self-describing bundles. The deterministic v0.1 **engine** (specify → sample →
-> grade → score) is still fully usable with **no API key**. See [`CHANGELOG.md`](CHANGELOG.md).
->
-> What's validated: on the built-in `coffee` world (a hidden confounder + a regime sign-flip), standard
-> observational/score-based discovery fails, but the reference **interventional-CI** grader recovers the structure
-> (directed SHD 0) and drops the confounded edge — pinned as a test. The author model is chosen by a reproducible,
-> judged [bake-off](evals/author-model-bakeoff/), not by assertion.
+**Turn a plain-language description of an operation into a fictional causal world with a declared,
+ground-truth causal graph — then benchmark whether a causal-discovery method can recover it.**
 
-## Quickstart
-
-```bash
-uv add causal-worlds            # or: pip install causal-worlds   (once published)
-causal-worlds worlds            # list built-in worlds: coffee, ecommerce
-causal-worlds gate coffee       # run the validity gates -> admitted=True
-causal-worlds grade coffee      # grade the reference discoverer -> directed_shd=0  f1=1.00  confounded_reported=0
-```
-
-Author a world from a description (needs the `llm` extra + an Anthropic and a Gemini key in the env):
-
-```bash
-uv add 'causal-worlds[llm]'
-causal-worlds generate "a coffee chain with weekend swings and variable lead times" ./my-world
-causal-worlds benchmark benchmark/prompts.txt ./benchmark/v0.2   # author + admit a whole set
-```
-
-As a library:
+Because the structure is *declared* (not learned from data), it's an **answer key**: run any
+discovery method on the generated data and *score* how well it recovered the world. The worlds are
+**fiction-first** — plausible and internally consistent, not models of any real system — so there is
+no data to leak and nothing to memorize, which is exactly what makes a causal benchmark trustworthy.
 
 ```python
 from causal_worlds import worlds, grade_spec, InterventionalCiDiscoverer
 
-spec = worlds.get("coffee")
-print(grade_spec(spec, InterventionalCiDiscoverer()))   # plug in YOUR discoverer to benchmark it
+spec = worlds.get("coffee")                          # a hidden confounder + a regime sign-flip
+report = grade_spec(spec, InterventionalCiDiscoverer())
+print(report)   # directed_shd=0  skeleton_shd=0  f1=1.0  confounded_reported=0
+#                ^ swap in YOUR discoverer to benchmark it against a known truth
 ```
 
-Grade your own method on a shipped world from the CLI:
+> **Status — v0.6, beta.** The full loop works: natural language → an *admitted* causal world,
+> persisted with provenance. A Claude **author** proposes the world; an independent Gemini **judge**
+> (a different model family) plus statistical gates admit only worlds that are valid, recoverable, and
+> *not* guessable from variable names. The deterministic engine (specify → sample → grade → score) and
+> all grading run with **no API key**; only *authoring* needs keys. Worlds are currently tabular SCMs
+> with `do()` interventions — a Gymnasium env, temporal lags, and counterfactual replay are on the
+> [roadmap](#roadmap). See the [CHANGELOG](CHANGELOG.md).
+
+## Install
 
 ```bash
-causal-worlds score benchmark/v0.5/world_01                       # the reference grader
-causal-worlds score benchmark/v0.5/world_01 --discoverer your_pkg:YourDiscoverer
+uv add causal-worlds            # or: pip install causal-worlds   (once published)
+uv add 'causal-worlds[discover]'  # + the baseline discovery stack (PC/GES/FCI/GIES)
+uv add 'causal-worlds[llm]'       # + natural-language authoring (Claude + Gemini)
 ```
 
-## Why
+The base install (engine, grading, built-in worlds, CLI) needs only `typer`, `pydantic`, `numpy`.
 
-Describe an operation in a sentence — *"a three-store coffee chain with weekend demand swings and variable
-supplier lead times"* — and get back a small world you can **run, perturb, intervene on, and replay
-counterfactually**, together with the **causal structure that generated it**. Because the structure is *declared*
-(not learned), it serves as a ground-truth **answer-key**: you can run a causal-discovery method on the generated
-data and *score* how well it recovered the world.
+## 60-second quickstart (no API key)
 
-There is a real gap here. Today's tools each own one corner of the problem but not the whole:
+```bash
+causal-worlds worlds                     # list built-in worlds: coffee, ecommerce
+causal-worlds gate coffee                # run the validity gates -> admitted=True
+causal-worlds grade coffee               # grade the reference discoverer -> directed_shd=0 ...
+causal-worlds score benchmark/v0.5/world_01   # grade the reference on a shipped benchmark world
+```
+
+New to it? Walk through the **[getting-started guide](docs/getting-started.md)** or run the
+**[examples](examples/)**.
+
+## Benchmark your own discoverer
+
+Implement one method — `recover(substrate, *, seed) -> set[(src, dst)]` — and grade it against any
+world's answer key:
+
+```python
+from causal_worlds import grade_spec, worlds
+
+class MyDiscoverer:
+    def recover(self, substrate, *, seed):
+        sample = substrate.sample(2000, seed=seed)        # observational data...
+        flows = substrate.sample(2000, seed=seed, do={"price": 1.0})  # ...or interventional
+        return {("price", "demand")}                       # your recovered edges
+
+print(grade_spec(worlds.get("coffee"), MyDiscoverer()))
+```
+
+Or from the CLI on a persisted world: `causal-worlds score <bundle> --discoverer your_pkg:YourClass`.
+
+## Author a world from a description (needs `[llm]` + keys)
+
+Set `ANTHROPIC_API_KEY` and `GEMINI_API_KEY` in your environment, then:
+
+```bash
+causal-worlds generate "a coffee chain with weekend swings and variable lead times" ./my-world
+```
+
+```python
+from causal_worlds import generate
+from causal_worlds.author import build_claude_author
+from causal_worlds.judge import build_gemini_judge
+
+world = generate(
+    "a hospital ED with triage staffing and bed pressure",
+    author=build_claude_author(complexity="hard"),   # easy | standard | hard
+    judge=build_gemini_judge(),                       # independent model family
+)
+print(world.report.difficulty, world.report.grade)
+```
+
+## Does it actually defeat the standard toolbox?
+
+Measured across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each):
+
+| method | mean skeleton-SHD ↓ | directed F1 ↑ | confounded pair kept as causal ↓ |
+|---|---|---|---|
+| **interventional-ci** (reference) | **1.47** | **0.91** | **0** |
+| PC | 2.81 | 0.67 | 13 |
+| FCI | 2.67 | 0.71 | 8 |
+| GIES | 6.66 | 0.68 | 17 |
+
+Observational/score-based methods keep the hidden-confounded pair as a *causal* edge in most worlds;
+the interventional grader never does. And **structural** difficulty (confounders + regime sign-flips)
+predicts the observational collapse (corr +0.62) where name-guessability does not (+0.14) — so the
+difficulty score is a real instrument. Reproduce: [`evals/`](evals/).
+
+## What you get per world
+
+1. **An executable SCM** — sample observational data and `do()`-intervene, deterministically by seed.
+2. **A time-series dataset** — the observed variables (the input to a discovery method).
+3. **An answer key** — the declared causal edges + the hidden-confounded pairs, derived from the spec.
+4. **A manifest** — full provenance (models, grader version, seed, difficulty) and an honesty label.
+
+## Concepts
+
+- **Spec / IR** — variables (with roles, incl. hidden), linear-Gaussian mechanisms, regime sign-flips.
+- **Answer key** — directed edges over *observed* variables + the hidden-confounded pairs; *derived*
+  from the spec, never stored separately, so they can't disagree.
+- **Gates** — T1 validity · T2 sample-sanity · T3 non-triviality vs a random-graph null · T4
+  anti-cliché (the judge can't guess it from names). A world is admitted only if all pass.
+- **Reference grader** — an interventional-CI discoverer that uses `do()` data to tell *confounding*
+  from *causation*, where PC/GES/GIES/FCI (which assume causal sufficiency) cannot.
+
+Depth: [`docs/scope.md`](docs/scope.md) · [`docs/hld.md`](docs/hld.md) · [`docs/lld.md`](docs/lld.md)
+· [`docs/architecture.md`](docs/architecture.md) · [`docs/validation.md`](docs/validation.md).
+
+## Roadmap
+
+Shipped: NL authoring, independent judge + anti-cliché gate, artifact persistence, the baseline
+crossover, a structural-difficulty axis, a 35-world benchmark. Next: **genuine temporal/lagged worlds**
++ time-series baselines (PCMCI+, VARLiNGAM), **a Gymnasium env** with perturbations + counterfactual
+replay, **scaling to 100+ worlds**, and conversational **elicitation**. Tracked as
+[issues](https://github.com/noumenal-ai/causal-worlds/issues).
+
+## Why this is the unoccupied intersection
+
+Today's tools each own one corner — *natural-language authoring × executable causal simulator ×
+ground-truth answer-key for discovery* is the gap:
 
 | Tool | Corner it owns | What it lacks (for this job) |
 |---|---|---|
 | **[G-Sim](https://arxiv.org/abs/2506.09272)** | LLM authors a sim + calibrates to data | needs *real data*; aimed at fidelity, not a declared answer-key |
-| **[DEVS-Gen](https://arxiv.org/abs/2603.03784)** | NL → executable discrete-event ops sim | validates against constraints; no declared causal-graph answer-key |
-| **[SD-SCM](https://arxiv.org/abs/2411.08019)** | LLM fills mechanisms → ground-truth counterfactuals | needs a *user-supplied* DAG; tabular, not an executable temporal sim |
-| **[TimeGraph](https://arxiv.org/abs/2506.01361)** | known-graph time-series for benchmarking discovery | parametric/templated; no natural-language authoring |
-| **[GIF-MCTS](https://arxiv.org/abs/2405.15383)** / **[WorldCoder](https://arxiv.org/abs/2402.12275)** | LLM writes a runnable "Code World Model" | no causal answer-key; discrete-RL domains |
+| **[DEVS-Gen](https://arxiv.org/abs/2603.03784)** | NL → executable discrete-event ops sim | no declared causal-graph answer-key |
+| **[SD-SCM](https://arxiv.org/abs/2411.08019)** | LLM fills mechanisms → counterfactuals | needs a *user-supplied* DAG; tabular, not an executable sim |
+| **[TimeGraph](https://arxiv.org/abs/2506.01361)** | known-graph time-series for discovery | parametric/templated; no natural-language authoring |
 
-`causal-worlds` targets the **unoccupied intersection**: *natural-language authoring × temporal/regime causal
-structure × executable simulator × ground-truth answer-key*, **fiction-first** — the goal is *plausible and
-internally consistent*, not matching any real system (so no calibration data is required).
+Built on the shoulders of [pgmpy](https://github.com/pgmpy/pgmpy),
+[DoWhy](https://github.com/py-why/dowhy),
+[CausalPlayground](https://github.com/sa-and/CausalPlayground),
+[causal-learn](https://github.com/py-why/causal-learn), and
+[Gymnasium](https://github.com/Farama-Foundation/Gymnasium).
 
-## What you get (per generated world)
+## Contributing
 
-1. **An executable simulator** — a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-style `reset()` / `step(action) → (obs, reward, done)` environment.
-2. **A time-series dataset** — the simulator's output (the input to a causal-discovery method).
-3. **An answer-key** — the declared causal structure: variables and their roles, a causal graph (direction + lag),
-   functional forms, and regimes — emitted in an open, documented schema.
-4. **A manifest** binding them together, plus an explicit **honesty label**: these worlds are *fictional* and not
-   real-world advice.
-
-## How it works (sketch)
-
-```
-natural-language description
-   → author a world spec (LLM proposes variables, roles, causal graph, functional forms, lags, regimes)
-   → consistency / conformance checks (acyclic, constraint-respecting, non-degenerate, identifiable) — no calibration data
-   → sample + execute  (SCM sampling, or staged discrete-event synthesis, by world type)
-   → emit the artifact triple + score a pluggable causal-discovery agent against the answer-key (SHD / F1, interventional, counterfactual)
-```
-
-See [`docs/scope.md`](docs/scope.md), [`docs/hld.md`](docs/hld.md), [`docs/lld.md`](docs/lld.md).
-
-## The benchmark set
-
-The headline set ships in [`benchmark/v0.5`](benchmark/v0.5/) — **35 fictional operations** authored by
-Claude across an **easy→hard complexity spread**, admitted through the gates, judged by Gemini, and
-graded. Each is a self-describing bundle (`spec.json` / `data.npz` / `answer_key.json` / `manifest.json`)
-with full provenance (models, grader version, seed, difficulty, structural difficulty, complexity). The
-original 12-world [`benchmark/v0.2`](benchmark/v0.2/) is kept for continuity.
-
-**Does it defeat the standard toolbox?** Yes — measured across 35 worlds: the reference interventional-CI
-grader **never** reports a hidden-confounded pair as causal (confounded-kept 0, SHD 1.47, F1 0.91) while
-PC/FCI/GIES report 8–17 such spurious edges and post 2–4× the structural error. See the
-[baseline crossover](evals/baseline-crossover/v0.5/).
-
-**Is difficulty a real instrument?** Yes, when measured on *structure*: **structural** difficulty
-(hidden confounders + regime sign-flips) predicts observational error (corr **+0.62**), whereas
-name-guessability difficulty does not (**+0.14**). See [structural difficulty](evals/structural-difficulty/v0.5/).
-
-## Built on the public domain
-
-Stands on the shoulders of (and learns from): [pgmpy](https://github.com/pgmpy/pgmpy),
-[DoWhy](https://github.com/py-why/dowhy), [CausalPlayground](https://github.com/sa-and/CausalPlayground),
-[Gymnasium](https://github.com/Farama-Foundation/Gymnasium), and the ideas in
-[G-Sim](https://arxiv.org/abs/2506.09272), [DEVS-Gen](https://arxiv.org/abs/2603.03784),
-[SD-SCM](https://arxiv.org/abs/2411.08019), [TimeGraph](https://arxiv.org/abs/2506.01361),
-[GIF-MCTS](https://arxiv.org/abs/2405.15383), and [WorldCoder](https://arxiv.org/abs/2402.12275).
+Issues and PRs welcome. The bar: `make validate` green (ruff `select=ALL`, mypy `strict`, pytest with
+a coverage floor) — see [`docs/engineering.md`](docs/engineering.md). Atomic, conventional commits.
 
 ## License
 
-[MIT](LICENSE).
-
----
-
-An open-source project from [Noumenal](https://github.com/noumenal-ai).
+[MIT](LICENSE). An open-source project from [Noumenal](https://github.com/noumenal-ai).

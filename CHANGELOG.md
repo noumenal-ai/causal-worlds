@@ -3,6 +3,17 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.6.1] — 2026-06-23
+
+### Docs
+- Rewrote the README around a getting-started flow (honest shipped-vs-roadmap; the gym/temporal/
+  counterfactual claims are now roadmap, not overclaims), with a lead example, the measured crossover
+  result, install/extras, concepts, and a roadmap.
+- Added a guided [`docs/getting-started.md`](docs/getting-started.md) and runnable
+  [`examples/`](examples/) (grade-your-discoverer, inspect-a-bundle — keyless — and author-a-world).
+
+[0.6.1]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.6.1
+
 ## [0.6.0] — 2026-06-23
 
 **Use the benchmark.** Grading your own discoverer against a shipped world is now a first-class,
