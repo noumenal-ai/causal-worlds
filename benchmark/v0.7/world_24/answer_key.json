@@ -1,0 +1,30 @@
+{
+  "edges": [
+    [
+      "queue_inflow",
+      "backlog_depth"
+    ],
+    [
+      "review_latency",
+      "backlog_depth"
+    ],
+    [
+      "review_latency",
+      "error_rate"
+    ],
+    [
+      "reviewers_staffed",
+      "review_latency"
+    ],
+    [
+      "surge_event",
+      "error_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "queue_inflow",
+      "reviewers_staffed"
+    ]
+  ]
+}

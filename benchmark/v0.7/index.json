@@ -1,0 +1,186 @@
+[
+  {
+    "admitted": false,
+    "prompt": "A regional coffee chain with weekend demand swings and variable supplier lead times.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.75 >= 0.5)"
+  },
+  {
+    "slug": "world_01",
+    "admitted": true,
+    "prompt": "A hospital emergency department with triage staffing, inflow, beds, and wait times.",
+    "difficulty": 0.5789473684210527,
+    "resumed": true
+  },
+  {
+    "slug": "world_02",
+    "admitted": true,
+    "prompt": "A ride-hailing marketplace with surge pricing, driver supply, demand, and cancellations.",
+    "difficulty": 0.6190476190476191,
+    "resumed": true
+  },
+  {
+    "admitted": false,
+    "prompt": "A solar microgrid with battery storage, dynamic tariffs, weather, and household load.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.50 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A contract manufacturing line: maintenance, throughput, defect rate, and on-time delivery.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.59 >= 0.5)"
+  },
+  {
+    "slug": "world_05",
+    "admitted": true,
+    "prompt": "A SaaS support desk: ticket inflow, staffing, automation coverage, and churn.",
+    "difficulty": 0.5294117647058824,
+    "resumed": true
+  },
+  {
+    "admitted": false,
+    "prompt": "A last-mile delivery network: courier dispatch, traffic, package volume, and SLA.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.52 >= 0.5)"
+  },
+  {
+    "slug": "world_07",
+    "admitted": true,
+    "prompt": "A boutique hotel with dynamic room pricing, seasonal events, occupancy, and reviews.",
+    "difficulty": 0.5714285714285714,
+    "resumed": true
+  },
+  {
+    "admitted": false,
+    "prompt": "A grocery cold chain: refrigeration setpoints, energy cost, spoilage, and stockouts.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.67 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A call-center workforce plan: scheduling, call volume, handle time, and abandonment.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.71 >= 0.5)"
+  },
+  {
+    "slug": "world_10",
+    "admitted": true,
+    "prompt": "A bike-share network: rebalancing, dynamic pricing, weather, docks, and churn.",
+    "difficulty": 0.5714285714285714,
+    "resumed": true
+  },
+  {
+    "admitted": false,
+    "prompt": "A wastewater treatment plant: aeration control, inflow load, energy use, and effluent quality.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.62 >= 0.5)"
+  },
+  {
+    "slug": "world_12",
+    "admitted": true,
+    "prompt": "An outpatient clinic with appointment scheduling, no-shows, room utilization, and overtime.",
+    "difficulty": 0.6666666666666667,
+    "resumed": true
+  },
+  {
+    "admitted": false,
+    "prompt": "A pharmacy inventory operation: reorder points, demand, stockouts, and expiry write-offs.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.53 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "An airport ground-handling operation: gate assignment, turnaround, delays, and fuel use.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.56 >= 0.5)"
+  },
+  {
+    "slug": "world_15",
+    "admitted": true,
+    "prompt": "An EV-charging network: pricing, session demand, queueing, and grid-draw penalties.",
+    "attempts": 2,
+    "difficulty": 0.6000000000000001,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 2,
+    "f1": 0.8888888888888888
+  },
+  {
+    "slug": "world_16",
+    "admitted": true,
+    "prompt": "A transit bus line: frequency, ridership, bunching, and on-time performance.",
+    "difficulty": 0.6521739130434783,
+    "resumed": true
+  },
+  {
+    "admitted": false,
+    "prompt": "A district heating system: supply temperature, demand, pump energy, and complaints.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.62 >= 0.5)"
+  },
+  {
+    "slug": "world_18",
+    "admitted": true,
+    "prompt": "A wind farm: maintenance scheduling, downtime, output, and curtailment.",
+    "difficulty": 0.6,
+    "resumed": true
+  },
+  {
+    "slug": "world_19",
+    "admitted": true,
+    "prompt": "A data-center cooling operation: setpoints, IT load, PUE, and thermal alarms.",
+    "attempts": 1,
+    "difficulty": 0.6,
+    "faithfulness": 0.7,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  },
+  {
+    "admitted": false,
+    "prompt": "A semiconductor fab: tool maintenance, wafer starts, yield, and cycle time.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.63 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A craft brewery: batch scheduling, fermentation temperature, throughput, and spoilage.",
+    "reason": "not admitted after 4 attempt(s): T4 role clich\u00e9: roles alone recover it (F1 0.56 >= 0.4)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A 3D-print farm: queue policy, printer uptime, throughput, and reject rate.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.59 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A textile dyeing line: batch size, water temperature, color defects, and rework.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.50 >= 0.5)"
+  },
+  {
+    "slug": "world_24",
+    "admitted": true,
+    "prompt": "A content-moderation queue: reviewer staffing, inflow, backlog, and error rate.",
+    "attempts": 2,
+    "difficulty": 0.6363636363636365,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.888888888888889
+  },
+  {
+    "admitted": false,
+    "prompt": "A fraud-review pipeline: alert thresholds, analyst load, false positives, and losses.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.56 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A vertical farm: lighting schedule, nutrient dosing, growth rate, and energy cost.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.75 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A dairy herd operation: feed mix, milking frequency, yield, and health incidents.",
+    "reason": "not admitted after 4 attempt(s): T4 role clich\u00e9: roles alone recover it (F1 0.43 >= 0.4)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A warehouse pick-pack operation: slotting, labor, throughput, and mispicks.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.53 >= 0.5)"
+  },
+  {
+    "admitted": false,
+    "prompt": "A port container yard: crane scheduling, dwell time, congestion, and demurrage.",
+    "reason": "not admitted after 4 attempt(s): T4 role clich\u00e9: roles alone recover it (F1 0.48 >= 0.4)"
+  }
+]

@@ -1,0 +1,162 @@
+{
+  "variables": [
+    {
+      "name": "price_per_kwh",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "loyalty_credits",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "session_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "queue_length",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "grid_draw",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "site_utilization",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "demand_surge",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "ambient_temp",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "net_margin",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "price_per_kwh",
+      "terms": [
+        {
+          "parent": "demand_surge",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "loyalty_credits",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "session_demand",
+      "terms": [
+        {
+          "parent": "loyalty_credits",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "ambient_temp",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "queue_length",
+      "terms": [
+        {
+          "parent": "session_demand",
+          "coeff": 1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "demand_surge",
+      "regime_terms": [
+        {
+          "parent": "session_demand",
+          "coeff": -1.2,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "grid_draw",
+      "terms": [
+        {
+          "parent": "ambient_temp",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "queue_length",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "site_utilization",
+      "terms": [
+        {
+          "parent": "price_per_kwh",
+          "coeff": -1.5,
+          "lag": 0
+        },
+        {
+          "parent": "queue_length",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "net_margin",
+      "terms": [
+        {
+          "parent": "site_utilization",
+          "coeff": 1.6,
+          "lag": 0
+        },
+        {
+          "parent": "grid_draw",
+          "coeff": -0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

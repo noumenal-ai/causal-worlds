@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "demand_surge",
+      "price_per_kwh"
+    ],
+    [
+      "demand_surge",
+      "queue_length"
+    ],
+    [
+      "grid_draw",
+      "net_margin"
+    ],
+    [
+      "loyalty_credits",
+      "session_demand"
+    ],
+    [
+      "price_per_kwh",
+      "site_utilization"
+    ],
+    [
+      "queue_length",
+      "grid_draw"
+    ],
+    [
+      "queue_length",
+      "site_utilization"
+    ],
+    [
+      "session_demand",
+      "queue_length"
+    ],
+    [
+      "site_utilization",
+      "net_margin"
+    ]
+  ],
+  "confounded": [
+    [
+      "grid_draw",
+      "session_demand"
+    ]
+  ]
+}

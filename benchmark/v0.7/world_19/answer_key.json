@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "chiller_duty",
+      "pue"
+    ],
+    [
+      "chiller_duty",
+      "thermal_alarms"
+    ],
+    [
+      "coolant_setpoint",
+      "chiller_duty"
+    ],
+    [
+      "grid_strain",
+      "pue"
+    ],
+    [
+      "pue",
+      "inlet_temp"
+    ],
+    [
+      "thermal_alarms",
+      "it_load"
+    ]
+  ],
+  "confounded": [
+    [
+      "chiller_duty",
+      "inlet_temp"
+    ]
+  ]
+}

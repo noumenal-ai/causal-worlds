@@ -1,0 +1,42 @@
+{
+  "schema_version": "1",
+  "package_version": "0.24.0",
+  "prompt": "An EV-charging network: pricing, session demand, queueing, and grid-draw penalties.",
+  "created_at": "2026-06-23T10:31:12.098818+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 2,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "complexity": "adversarial",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.6000000000000001,
+  "faithfulness": 1.0,
+  "structural_difficulty": {
+    "score": 2.0,
+    "hidden_confounders": 1,
+    "confounded_pairs": 1,
+    "sign_flips": 1,
+    "density": 0.16071428571428573
+  },
+  "grade": {
+    "directed_shd": 2,
+    "skeleton_shd": 2,
+    "f1": 0.8888888888888888,
+    "n_truth": 9,
+    "n_recovered": 9,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "price_per_kwh",
+    "loyalty_credits",
+    "session_demand",
+    "queue_length",
+    "grid_draw",
+    "site_utilization",
+    "demand_surge",
+    "net_margin"
+  ]
+}

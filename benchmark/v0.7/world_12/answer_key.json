@@ -1,0 +1,42 @@
+{
+  "edges": [
+    [
+      "confirmed_arrivals",
+      "room_utilization"
+    ],
+    [
+      "overbooking_factor",
+      "confirmed_arrivals"
+    ],
+    [
+      "patient_acuity",
+      "confirmed_arrivals"
+    ],
+    [
+      "patient_acuity",
+      "room_utilization"
+    ],
+    [
+      "patient_acuity",
+      "staff_overtime"
+    ],
+    [
+      "room_utilization",
+      "staff_overtime"
+    ],
+    [
+      "winter_surge",
+      "no_show_rate"
+    ],
+    [
+      "winter_surge",
+      "room_utilization"
+    ]
+  ],
+  "confounded": [
+    [
+      "no_show_rate",
+      "reminder_intensity"
+    ]
+  ]
+}

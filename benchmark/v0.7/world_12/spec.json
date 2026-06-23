@@ -1,0 +1,147 @@
+{
+  "variables": [
+    {
+      "name": "reminder_intensity",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "overbooking_factor",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "confirmed_arrivals",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "room_utilization",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "no_show_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "staff_overtime",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "patient_acuity",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "scheduler_load",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "winter_surge",
+      "role": "disturbance",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "no_show_rate",
+      "terms": [
+        {
+          "parent": "scheduler_load",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "winter_surge",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "reminder_intensity",
+      "terms": [
+        {
+          "parent": "scheduler_load",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "confirmed_arrivals",
+      "terms": [
+        {
+          "parent": "overbooking_factor",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "patient_acuity",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "room_utilization",
+      "terms": [
+        {
+          "parent": "confirmed_arrivals",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "patient_acuity",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "winter_surge",
+      "regime_terms": [
+        {
+          "parent": "confirmed_arrivals",
+          "coeff": -1.3,
+          "lag": 0
+        },
+        {
+          "parent": "patient_acuity",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "staff_overtime",
+      "terms": [
+        {
+          "parent": "room_utilization",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "patient_acuity",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

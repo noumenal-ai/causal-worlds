@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "headway_variance",
+      "bunching_rate"
+    ],
+    [
+      "headway_variance",
+      "on_time_performance"
+    ],
+    [
+      "platform_dwell",
+      "headway_variance"
+    ],
+    [
+      "platform_dwell",
+      "ridership"
+    ],
+    [
+      "ridership",
+      "on_time_performance"
+    ],
+    [
+      "service_frequency",
+      "platform_dwell"
+    ],
+    [
+      "weather_shock",
+      "headway_variance"
+    ]
+  ],
+  "confounded": [
+    [
+      "bunching_rate",
+      "platform_dwell"
+    ]
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "crew_dispatch",
+      "turbine_downtime"
+    ],
+    [
+      "grid_congestion_regime",
+      "power_output"
+    ],
+    [
+      "maintenance_budget",
+      "crew_dispatch"
+    ],
+    [
+      "power_output",
+      "grid_curtailment"
+    ],
+    [
+      "turbine_downtime",
+      "power_output"
+    ],
+    [
+      "vibration_alerts",
+      "turbine_downtime"
+    ]
+  ],
+  "confounded": [
+    [
+      "power_output",
+      "vibration_alerts"
+    ]
+  ]
+}

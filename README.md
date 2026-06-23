@@ -179,10 +179,14 @@ strict T4 gate (v0.19) regenerated the set as [`benchmark/v0.6`](benchmark/v0.6/
 [3-tier certificate](evals/name-only-baseline/v0.6/), the **named** name-only prior fell from v0.5's
 **0.71** to **0.38** (chance 0.18) — and the **name+role-blind** prior collapses to **0.01**, proving
 the structure itself is *not* guessable once semantics are stripped. Strikingly, the **name-blind**
-prior (0.46) is *higher* than named — the adversarial names now actively **mislead**. The remaining
-leak is therefore **role labels** (controllable→outcome conventions): the gate checks the named and
-fully-blind priors but not the roles-only prior. Adding a roles-only gate (or randomizing role hints)
-is the next step (#13).
+prior (0.46) is *higher* than named — the adversarial names now actively **mislead**. The residual is
+**role-type priors** (controllable→outcome conventions). v0.24 added a **roles-only gate** and a
+companion [`benchmark/v0.7`](benchmark/v0.7/) authored under it (11 worlds): it only nudged the
+name-blind prior 0.46 → 0.43 (chance 0.16) — single-sample LLM-judge gating is noisy and role-type is
+*intrinsically* informative (you can't remove it while keeping the lever→outcome path). The honest
+bottom line, separated by the [3-tier certificate](evals/name-only-baseline/v0.6/): the cliché that
+matters — **name/structure memorization — is eliminated** (fully-blind ≈ 0.00, named cut 0.71→0.4);
+the remaining role-type signal is legitimate operational prior, transparently reported, not hidden.
 
 ## What you get per world
 

@@ -3,6 +3,32 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.25.0] — 2026-06-23
+
+**`benchmark/v0.7` (role-gated companion) + generation resilience — and an honest read on roles.**
+
+### Added
+- **`benchmark/v0.7`** — 11 worlds authored under the v0.24 roles-only gate (named<0.5 **and**
+  roles-only<0.4 **and** blind<0.35), mean difficulty 0.60. The strict companion to the 26-world v0.6.
+- **Generation resilience** (`evals/scale/generate_hardened.py`): retry transient provider errors
+  (Gemini 503) + **resume from disk** (skip worlds already written) — a transient blip no longer
+  wastes a whole run.
+
+### Finding (honest, partly negative)
+- The roles-only gate is **marginal**: v0.7's name-blind prior is **0.43** vs v0.6's 0.46 (chance
+  0.16). Single-sample LLM-judge gating is noisy, and role-type ("controllable→outcome") is
+  *intrinsically* informative — unremovable while keeping the lever→outcome path. It cost 26→11 worlds
+  for a 0.03 nudge.
+- **What's actually clean:** the 3-tier certificate shows **name+role-blind ≈ 0.00** (structure not
+  guessable without semantics) and **named cut 0.71→0.4**. So name/structure *memorization* — the
+  cliché that matters — is eliminated; the residual is legitimate role-type prior, transparently
+  reported. (#13 closed on disclosure, not a false "leak fixed".)
+
+### Notes
+- Package code unchanged since v0.24 (benchmark + eval-script + docs release). 135 tests, 95% coverage.
+
+[0.25.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.25.0
+
 ## [0.24.0] — 2026-06-23
 
 **Gymnasium control env (#14) + the roles-only anti-cliché gate (#13 machinery).**

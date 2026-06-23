@@ -1,0 +1,151 @@
+{
+  "variables": [
+    {
+      "name": "coolant_setpoint",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "chiller_duty",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "pue",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "it_load",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "inlet_temp",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "thermal_alarms",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "grid_strain",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "ambient_humidity",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "coolant_setpoint",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "grid_strain",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "chiller_duty",
+      "terms": [
+        {
+          "parent": "coolant_setpoint",
+          "coeff": -1.4,
+          "lag": 0
+        },
+        {
+          "parent": "ambient_humidity",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "pue",
+      "terms": [
+        {
+          "parent": "chiller_duty",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "grid_strain",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "grid_strain",
+      "regime_terms": [
+        {
+          "parent": "chiller_duty",
+          "coeff": -1.2,
+          "lag": 0
+        },
+        {
+          "parent": "grid_strain",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "inlet_temp",
+      "terms": [
+        {
+          "parent": "pue",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "ambient_humidity",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "it_load",
+      "terms": [
+        {
+          "parent": "thermal_alarms",
+          "coeff": -1.0,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "thermal_alarms",
+      "terms": [
+        {
+          "parent": "chiller_duty",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

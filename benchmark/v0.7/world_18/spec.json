@@ -1,0 +1,142 @@
+{
+  "variables": [
+    {
+      "name": "maintenance_budget",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "crew_dispatch",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "turbine_downtime",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "grid_curtailment",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "power_output",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "wind_resource",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "grid_congestion_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "vibration_alerts",
+      "role": "observable",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "crew_dispatch",
+      "terms": [
+        {
+          "parent": "maintenance_budget",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "vibration_alerts",
+      "terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "turbine_downtime",
+      "terms": [
+        {
+          "parent": "crew_dispatch",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "vibration_alerts",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "grid_curtailment",
+      "terms": [
+        {
+          "parent": "power_output",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "power_output",
+      "terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "turbine_downtime",
+          "coeff": -0.8,
+          "lag": 0
+        },
+        {
+          "parent": "grid_congestion_regime",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "grid_congestion_regime",
+      "regime_terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "turbine_downtime",
+          "coeff": 0.9,
+          "lag": 0
+        },
+        {
+          "parent": "grid_congestion_regime",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

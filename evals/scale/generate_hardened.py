@@ -11,6 +11,7 @@ worlds) for the private eval at that scale; scale up later as needed. Needs the 
 
 import json
 import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -27,6 +28,7 @@ SEED = 7
 N = 4000
 MAX_ATTEMPTS = 4  # bound re-author cost per world under the strict gate
 DEFAULT_COUNT = 30  # cap (the user allows up to 30)
+TRANSIENT_RETRIES = 5  # retry a transient provider error (e.g. Gemini 503) before giving up
 
 PROMPTS = [
     "A regional coffee chain with weekend demand swings and variable supplier lead times.",
@@ -72,16 +74,19 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     index = []
     for i, prompt in enumerate(prompts):
+        slug = f"world_{i:02d}"
+        if (out / slug).exists():  # resume: don't re-spend on worlds already written
+            man = json.loads((out / slug / "manifest.json").read_text())
+            index.append({"slug": slug, "admitted": True, "prompt": prompt,
+                          "difficulty": man.get("difficulty"), "resumed": True})
+            print(f"{slug} resumed (exists)")
+            continue
         try:
-            world = generate(
-                prompt, author=author, judge=judge, discoverer=discoverer,
-                seed=SEED, max_attempts=MAX_ATTEMPTS,
-            )
+            world = _generate_resilient(prompt, author, judge, discoverer)
         except NotAdmittedError as exc:
             index.append({"admitted": False, "prompt": prompt, "reason": str(exc)[:90]})
-            print(f"world_{i:02d} NOT ADMITTED ({world_attempts(exc)}): {str(exc)[:70]}")
+            print(f"{slug} NOT ADMITTED ({world_attempts(exc)}): {str(exc)[:70]}")
             continue
-        slug = f"world_{i:02d}"
         provenance = Provenance(
             author_model="claude-opus-4-8",
             judge_model=DEFAULT_JUDGE_MODEL,
@@ -115,6 +120,25 @@ def main():
     admitted = [e for e in index if e["admitted"]]
     mean_diff = sum(e["difficulty"] for e in admitted) / len(admitted) if admitted else 0.0
     print(f"\n{len(admitted)}/{len(index)} admitted -> {out} | mean difficulty {mean_diff:.2f}")
+
+
+def _generate_resilient(prompt, author, judge, discoverer):
+    """Run generate(), retrying transient provider errors (e.g. Gemini 503); admit/reject pass through."""
+    for attempt in range(TRANSIENT_RETRIES):
+        try:
+            return generate(
+                prompt, author=author, judge=judge, discoverer=discoverer,
+                seed=SEED, max_attempts=MAX_ATTEMPTS,
+            )
+        except NotAdmittedError:
+            raise  # a real verdict, not a transient failure
+        except Exception as exc:  # noqa: BLE001 - retry any transient API/transport error
+            if attempt == TRANSIENT_RETRIES - 1:
+                raise
+            wait = 10 * (attempt + 1)
+            print(f"  transient {type(exc).__name__}, retry {attempt + 1}/{TRANSIENT_RETRIES} in {wait}s")
+            time.sleep(wait)
+    raise RuntimeError("unreachable")
 
 
 def world_attempts(exc):
