@@ -1,0 +1,155 @@
+{
+  "variables": [
+    {
+      "name": "fermentation_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "batch_size",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "spoilage_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "tank_pressure",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "demand_surge",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "wild_yeast_load",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "batch_quality",
+      "role": "outcome",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "fermentation_temp",
+      "terms": [
+        {
+          "parent": "demand_surge",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "batch_size",
+      "terms": [
+        {
+          "parent": "demand_surge",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "tank_pressure",
+      "terms": [
+        {
+          "parent": "fermentation_temp",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "batch_size",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "batch_quality",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "tank_pressure",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "spoilage_rate",
+      "terms": [
+        {
+          "parent": "wild_yeast_load",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "batch_size",
+          "coeff": 0.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "batch_quality",
+      "terms": [
+        {
+          "parent": "fermentation_temp",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "wild_yeast_load",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "demand_surge",
+      "regime_terms": [
+        {
+          "parent": "fermentation_temp",
+          "coeff": -1.1,
+          "lag": 0
+        },
+        {
+          "parent": "wild_yeast_load",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "cancellation_rate",
+      "driver_supply"
+    ],
+    [
+      "driver_supply",
+      "completed_trips"
+    ],
+    [
+      "driver_supply",
+      "eta_minutes"
+    ],
+    [
+      "driver_supply",
+      "surge_multiplier"
+    ],
+    [
+      "eta_minutes",
+      "completed_trips"
+    ],
+    [
+      "peak_event",
+      "driver_supply"
+    ],
+    [
+      "peak_event",
+      "eta_minutes"
+    ],
+    [
+      "peak_event",
+      "rider_demand"
+    ],
+    [
+      "rider_demand",
+      "surge_multiplier"
+    ],
+    [
+      "surge_multiplier",
+      "eta_minutes"
+    ]
+  ],
+  "confounded": [
+    [
+      "cancellation_rate",
+      "rider_demand"
+    ]
+  ]
+}

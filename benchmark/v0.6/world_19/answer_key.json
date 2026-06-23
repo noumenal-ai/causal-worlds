@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "coolant_setpoint",
+      "pue"
+    ],
+    [
+      "fan_speed",
+      "it_load"
+    ],
+    [
+      "grid_demand_shock",
+      "it_load"
+    ],
+    [
+      "grid_demand_shock",
+      "pue"
+    ],
+    [
+      "it_load",
+      "pue"
+    ],
+    [
+      "thermal_alarms",
+      "fan_speed"
+    ]
+  ],
+  "confounded": [
+    [
+      "coolant_setpoint",
+      "thermal_alarms"
+    ]
+  ]
+}

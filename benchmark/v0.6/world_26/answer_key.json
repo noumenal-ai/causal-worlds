@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "canopy_temp",
+      "energy_cost"
+    ],
+    [
+      "canopy_temp",
+      "growth_rate"
+    ],
+    [
+      "grid_strain",
+      "light_hours"
+    ],
+    [
+      "harvest_season",
+      "growth_rate"
+    ],
+    [
+      "light_hours",
+      "canopy_temp"
+    ],
+    [
+      "nutrient_dose",
+      "growth_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "energy_cost",
+      "nutrient_dose"
+    ]
+  ]
+}

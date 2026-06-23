@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "bus_bunching",
+      "on_time_rate"
+    ],
+    [
+      "bus_bunching",
+      "stop_dwell_time"
+    ],
+    [
+      "rush_hour",
+      "on_time_rate"
+    ],
+    [
+      "service_frequency",
+      "bus_bunching"
+    ],
+    [
+      "service_frequency",
+      "on_time_rate"
+    ],
+    [
+      "stop_dwell_time",
+      "ridership"
+    ]
+  ],
+  "confounded": [
+    [
+      "bus_bunching",
+      "ridership"
+    ]
+  ]
+}

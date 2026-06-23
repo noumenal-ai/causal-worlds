@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "alert_threshold",
+      "false_positive_rate"
+    ],
+    [
+      "alert_threshold",
+      "fraud_loss"
+    ],
+    [
+      "false_positive_rate",
+      "fraud_loss"
+    ],
+    [
+      "market_stress",
+      "alert_threshold"
+    ],
+    [
+      "market_stress",
+      "review_latency"
+    ],
+    [
+      "regime_holiday",
+      "fraud_loss"
+    ],
+    [
+      "review_latency",
+      "analyst_load"
+    ]
+  ],
+  "confounded": [
+    [
+      "false_positive_rate",
+      "review_latency"
+    ]
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "variables": [
+    {
+      "name": "promo_spend",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "supplier_lead_time",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "weekend_flag",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "foot_traffic",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "stockout_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "barista_count",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "customer_satisfaction",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "regional_buzz",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "promo_spend",
+      "terms": [
+        {
+          "parent": "regional_buzz",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "foot_traffic",
+      "terms": [
+        {
+          "parent": "regional_buzz",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "weekend_flag",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "supplier_lead_time",
+      "terms": [
+        {
+          "parent": "stockout_rate",
+          "coeff": 1.2,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "stockout_rate",
+      "terms": [
+        {
+          "parent": "foot_traffic",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "weekend_flag",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "barista_count",
+      "terms": [
+        {
+          "parent": "promo_spend",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "customer_satisfaction",
+      "terms": [
+        {
+          "parent": "promo_spend",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "stockout_rate",
+          "coeff": -0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "weekend_flag",
+      "regime_terms": [
+        {
+          "parent": "promo_spend",
+          "coeff": -1.2,
+          "lag": 0
+        },
+        {
+          "parent": "stockout_rate",
+          "coeff": -0.9,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

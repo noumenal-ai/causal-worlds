@@ -1,0 +1,119 @@
+{
+  "variables": [
+    {
+      "name": "service_frequency",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "stop_dwell_time",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ridership",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "bus_bunching",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "on_time_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "rush_hour",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "corridor_demand",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "ridership",
+      "terms": [
+        {
+          "parent": "corridor_demand",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "stop_dwell_time",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "bus_bunching",
+      "terms": [
+        {
+          "parent": "corridor_demand",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "service_frequency",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "stop_dwell_time",
+      "terms": [
+        {
+          "parent": "bus_bunching",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "on_time_rate",
+      "terms": [
+        {
+          "parent": "service_frequency",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "bus_bunching",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "rush_hour",
+      "regime_terms": [
+        {
+          "parent": "service_frequency",
+          "coeff": -1.1,
+          "lag": 0
+        },
+        {
+          "parent": "bus_bunching",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "variables": [
+    {
+      "name": "maintenance_hours",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "line_speed",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "throughput",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "defect_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "on_time_delivery",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "shift_pressure",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "supplier_quality",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "maintenance_hours",
+      "terms": [
+        {
+          "parent": "supplier_quality",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "defect_rate",
+      "terms": [
+        {
+          "parent": "supplier_quality",
+          "coeff": -1.4,
+          "lag": 0
+        },
+        {
+          "parent": "line_speed",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "throughput",
+      "terms": [
+        {
+          "parent": "on_time_delivery",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "line_speed",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "on_time_delivery",
+      "terms": [
+        {
+          "parent": "maintenance_hours",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "line_speed",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_pressure",
+      "regime_terms": [
+        {
+          "parent": "maintenance_hours",
+          "coeff": -1.1,
+          "lag": 0
+        },
+        {
+          "parent": "line_speed",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

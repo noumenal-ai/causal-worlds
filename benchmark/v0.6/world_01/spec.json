@@ -1,0 +1,158 @@
+{
+  "variables": [
+    {
+      "name": "triage_nurses",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "patient_inflow",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "beds_open",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "wait_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "boarding_pressure",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "los_hours",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "surge_protocol",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "acuity_index",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "acuity_index",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "patient_inflow",
+      "terms": [
+        {
+          "parent": "acuity_index",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "boarding_pressure",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "surge_protocol",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "triage_nurses",
+      "terms": [
+        {
+          "parent": "boarding_pressure",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "beds_open",
+      "terms": [
+        {
+          "parent": "wait_time",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "acuity_index",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "wait_time",
+      "terms": [
+        {
+          "parent": "triage_nurses",
+          "coeff": -1.4,
+          "lag": 0
+        },
+        {
+          "parent": "boarding_pressure",
+          "coeff": 1.0,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "los_hours",
+      "terms": [
+        {
+          "parent": "beds_open",
+          "coeff": -1.2,
+          "lag": 0
+        },
+        {
+          "parent": "triage_nurses",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "surge_protocol",
+      "regime_terms": [
+        {
+          "parent": "beds_open",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "triage_nurses",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

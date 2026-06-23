@@ -1,0 +1,163 @@
+{
+  "variables": [
+    {
+      "name": "maintenance_hours",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "wafer_starts",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "chamber_pressure",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "particle_count",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "cycle_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "yield_pct",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "demand_surge",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "process_drift",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "maintenance_hours",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "demand_surge",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "process_drift",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "chamber_pressure",
+      "terms": [
+        {
+          "parent": "process_drift",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "maintenance_hours",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "particle_count",
+      "terms": [
+        {
+          "parent": "process_drift",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "wafer_starts",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "wafer_starts",
+      "terms": [
+        {
+          "parent": "demand_surge",
+          "coeff": 1.2,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "cycle_time",
+      "terms": [
+        {
+          "parent": "yield_pct",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "demand_surge",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "yield_pct",
+      "terms": [
+        {
+          "parent": "maintenance_hours",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "particle_count",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "demand_surge",
+      "regime_terms": [
+        {
+          "parent": "maintenance_hours",
+          "coeff": -1.1,
+          "lag": 0
+        },
+        {
+          "parent": "particle_count",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

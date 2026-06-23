@@ -1,0 +1,41 @@
+{
+  "schema_version": "1",
+  "package_version": "0.21.0",
+  "prompt": "A semiconductor fab: tool maintenance, wafer starts, yield, and cycle time.",
+  "created_at": "2026-06-23T06:57:20.145772+00:00",
+  "honesty": "Fictional world for benchmarking causal discovery; not a model of any real system.",
+  "seed": 7,
+  "n_rows": 2000,
+  "attempts": 1,
+  "author_model": "claude-opus-4-8",
+  "judge_model": "gemini-2.5-flash",
+  "complexity": "adversarial",
+  "grader": "interventional-ci",
+  "grader_version": "1",
+  "difficulty": 0.5454545454545454,
+  "faithfulness": 1.0,
+  "structural_difficulty": {
+    "score": 2.0,
+    "hidden_confounders": 1,
+    "confounded_pairs": 1,
+    "sign_flips": 1,
+    "density": 0.19047619047619047
+  },
+  "grade": {
+    "directed_shd": 1,
+    "skeleton_shd": 1,
+    "f1": 0.9333333333333333,
+    "n_truth": 8,
+    "n_recovered": 7,
+    "confounded_reported": 0
+  },
+  "variables": [
+    "maintenance_hours",
+    "wafer_starts",
+    "chamber_pressure",
+    "particle_count",
+    "cycle_time",
+    "yield_pct",
+    "demand_surge"
+  ]
+}

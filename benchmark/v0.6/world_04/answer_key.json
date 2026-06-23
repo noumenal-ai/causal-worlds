@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "line_speed",
+      "defect_rate"
+    ],
+    [
+      "line_speed",
+      "on_time_delivery"
+    ],
+    [
+      "line_speed",
+      "throughput"
+    ],
+    [
+      "maintenance_hours",
+      "on_time_delivery"
+    ],
+    [
+      "on_time_delivery",
+      "throughput"
+    ],
+    [
+      "shift_pressure",
+      "on_time_delivery"
+    ]
+  ],
+  "confounded": [
+    [
+      "defect_rate",
+      "maintenance_hours"
+    ]
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "no_show_rate",
+      "wait_time"
+    ],
+    [
+      "overbooking",
+      "no_show_rate"
+    ],
+    [
+      "overbooking",
+      "overtime_hours"
+    ],
+    [
+      "reminder_calls",
+      "room_utilization"
+    ],
+    [
+      "room_utilization",
+      "wait_time"
+    ],
+    [
+      "staff_morale",
+      "overtime_hours"
+    ],
+    [
+      "wait_time",
+      "overtime_hours"
+    ]
+  ],
+  "confounded": [
+    [
+      "no_show_rate",
+      "room_utilization"
+    ]
+  ]
+}

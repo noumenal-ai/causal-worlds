@@ -1,0 +1,42 @@
+{
+  "edges": [
+    [
+      "grid_curtailment",
+      "power_output"
+    ],
+    [
+      "grid_regime",
+      "power_output"
+    ],
+    [
+      "maintenance_hours",
+      "turbine_downtime"
+    ],
+    [
+      "turbine_downtime",
+      "blade_wear"
+    ],
+    [
+      "turbine_downtime",
+      "power_output"
+    ],
+    [
+      "vibration_index",
+      "maintenance_hours"
+    ]
+  ],
+  "confounded": [
+    [
+      "blade_wear",
+      "power_output"
+    ],
+    [
+      "blade_wear",
+      "vibration_index"
+    ],
+    [
+      "power_output",
+      "vibration_index"
+    ]
+  ]
+}

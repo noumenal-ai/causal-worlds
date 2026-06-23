@@ -1,0 +1,42 @@
+{
+  "edges": [
+    [
+      "demand_surge",
+      "cycle_time"
+    ],
+    [
+      "demand_surge",
+      "wafer_starts"
+    ],
+    [
+      "demand_surge",
+      "yield_pct"
+    ],
+    [
+      "maintenance_hours",
+      "chamber_pressure"
+    ],
+    [
+      "maintenance_hours",
+      "yield_pct"
+    ],
+    [
+      "particle_count",
+      "yield_pct"
+    ],
+    [
+      "wafer_starts",
+      "particle_count"
+    ],
+    [
+      "yield_pct",
+      "cycle_time"
+    ]
+  ],
+  "confounded": [
+    [
+      "chamber_pressure",
+      "particle_count"
+    ]
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "batch_size",
+      "dye_concentration"
+    ],
+    [
+      "batch_size",
+      "rework_rate"
+    ],
+    [
+      "dye_concentration",
+      "color_defects"
+    ],
+    [
+      "dye_concentration",
+      "rework_rate"
+    ],
+    [
+      "rework_rate",
+      "color_defects"
+    ],
+    [
+      "shift_changeover",
+      "color_defects"
+    ]
+  ],
+  "confounded": [
+    [
+      "dye_concentration",
+      "water_temp"
+    ]
+  ]
+}

@@ -46,7 +46,7 @@ The base install (engine, grading, built-in worlds, CLI) needs only `typer`, `py
 causal-worlds worlds                     # list built-in worlds: coffee, ecommerce
 causal-worlds gate coffee                # run the validity gates -> admitted=True
 causal-worlds grade coffee               # grade the reference discoverer -> directed_shd=0 ...
-causal-worlds score benchmark/v0.5/world_01   # grade the reference on a shipped benchmark world
+causal-worlds score benchmark/v0.6/world_01   # grade the reference on a shipped benchmark world
 ```
 
 New to it? Walk through the **[getting-started guide](docs/getting-started.md)** or run the
@@ -125,21 +125,21 @@ print(world.report.difficulty, world.report.grade)
 
 ## What the crossover shows (and what it doesn't)
 
-Across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each). The comparison is
+Across the 26-world hardened [`benchmark/v0.6`](benchmark/v0.6/) set (3 seeds each). The comparison is
 **information-fair**: the `+do` methods get the *same interventional budget* (pooled observational +
 per-variable `do()` environments) as the latent-aware reference — so we compare *methods*, not data
-access ([full table + bootstrap CIs](evals/baseline-crossover/v0.5/)):
+access ([full table + bootstrap CIs](evals/baseline-crossover/v0.6/)):
 
 | method | data | latent-aware? | mean skeleton-SHD ↓ | confounded pair kept as causal ↓ |
 |---|---|---|---|---|
-| **interventional-ci** (reference) | interventional | yes | **1.44** | **0** |
-| GIES | interventional | no | 4.62 | 17 |
-| PC | observational | no | 2.72 | 14.3 |
-| **PC + interventions** | interventional | no | 3.31 | **15.0** |
-| FCI | observational | partly | 2.68 | 9.7 |
-| FCI + interventions | interventional | partly | 3.29 | 6.7 |
-| DAGMA | observational | no | 5.73 | 16.0 |
-| DirectLiNGAM | observational | no | 5.64 | 14.7 |
+| **interventional-ci** (reference) | interventional | yes | **1.31** | **0** |
+| GIES | interventional | no | 5.71 | 30 |
+| PC | observational | no | 3.18 | 29 |
+| **PC + interventions** | interventional | no | 4.71 | **30** |
+| FCI | observational | partly | 3.17 | 21.7 |
+| FCI + interventions | interventional | partly | 4.73 | 21 |
+| DAGMA | observational | no | 5.23 | 27 |
+| DirectLiNGAM | observational | no | 5.76 | 27 |
 
 (DAGMA and DirectLiNGAM run at default hyperparameters, and LiNGAM's non-Gaussian assumption is
 violated by these linear-Gaussian worlds, so their *skeleton* accuracy is not their best — but the
@@ -147,12 +147,12 @@ relevant, robust verdict is **confounded-kept**, and like every causal-sufficien
 
 The honest reading: the dividing line is **latent-awareness, not interventions**. The decisive row is
 **PC + interventions** — given the *same* interventional budget as the reference, it still keeps the
-hidden-confounded pair as a *causal* edge in ~15 worlds (no better than observational PC's 14.3);
-GIES likewise (17). Only the latent-aware interventional rule reaches **0**. The interventional
-advantage is robust: ΔF1 = F1(reference) − F1(method) is **+0.29, 95% CI [0.22, 0.35]** for
+hidden-confounded pair as a *causal* edge in **30** worlds (no better than observational PC's 29);
+GIES likewise (30). Only the latent-aware interventional rule reaches **0**. The interventional
+advantage is robust: ΔF1 = F1(reference) − F1(method) is **+0.37, 95% CI [0.33, 0.42]** for
 `pc+do` (every method's CI excludes 0). So this is an **identifiability result** (you cannot tell
 confounding from causation without *both* interventions *and* a latent-aware method), not "our method
-beats the toolbox."
+beats the toolbox." (The earlier, easier [`v0.5`](benchmark/v0.5/) set is kept for comparison.)
 
 **Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) ~~the worlds are admitted by
 the reference grader itself~~ **Fixed in v0.15**: admission (gate T3) is now **grader-independent** —
@@ -167,14 +167,15 @@ varsortability to 0.54 and R²-sortability 0.73 → 0.60; both trivial sorting b
 yet fully closed. (3) Difficulty vs skeleton-SHD error is **descriptive, not a validated predictor**:
 with bootstrap CIs (n=35), the observational methods show r≈0.40 (PC [0.07, 0.68], FCI [0.08, 0.68] —
 just excluding 0) while the latent-aware reference is flat (r≈0.24, [−0.06, 0.51], includes 0).
-(4) **The shipped `benchmark/v0.5` is still name-guessable — being fixed.** A name-only LLM baseline
-scores [F1 0.71](evals/name-only-baseline/) vs a 0.20 chance floor (names *and* roles leak). **v0.19**
-hardens the machinery for the next generation: T4 now admits only worlds with **difficulty ≥ 0.5**
-(named-prior F1 < 0.5, down from the old 0.9 bar) plus a **blind control** (the name+role-anonymized
-prior must sit near chance), and an **`adversarial` author tier** writes worlds where the obvious
-name-based guess is *wrong* (phantom edges, reversed edges, regime sign-flips — keeping every true
-edge detectable). The `v0.5` set predates this; regenerating it under the strict gate is the next
-scaled run.
+(4) **Anti-cliché: name leakage fixed, role leakage remains (measured).** The `adversarial` author +
+strict T4 gate (v0.19) regenerated the set as [`benchmark/v0.6`](benchmark/v0.6/). On the
+[3-tier certificate](evals/name-only-baseline/v0.6/), the **named** name-only prior fell from v0.5's
+**0.71** to **0.38** (chance 0.18) — and the **name+role-blind** prior collapses to **0.01**, proving
+the structure itself is *not* guessable once semantics are stripped. Strikingly, the **name-blind**
+prior (0.46) is *higher* than named — the adversarial names now actively **mislead**. The remaining
+leak is therefore **role labels** (controllable→outcome conventions): the gate checks the named and
+fully-blind priors but not the roles-only prior. Adding a roles-only gate (or randomizing role hints)
+is the next step (#13).
 
 ## What you get per world
 
@@ -201,7 +202,8 @@ Depth: [`docs/scope.md`](docs/scope.md) · [`docs/hld.md`](docs/hld.md) · [`doc
 ## Roadmap
 
 Shipped: NL authoring, independent judge + anti-cliché gate, artifact persistence, the baseline
-crossover, a structural-difficulty axis, a 35-world benchmark, **temporal worlds** (lagged edges +
+crossover, a structural-difficulty axis, a **26-world hardened benchmark** (`v0.6`; name-only prior
+F1 0.38 vs 0.71 on the old `v0.5`), **temporal worlds** (lagged edges +
 autoregression — see the built-in `supply`), and **time-series grading** (PCMCI+, LPCMCI, VARLiNGAM,
 Granger — `grade_temporal_spec`), **authoring temporal worlds** (an LLM-authored lagged world,
 admitted through a PCMCI+ temporal gate), and **conversational elicitation** (`causal-worlds elicit`

@@ -1,0 +1,132 @@
+{
+  "variables": [
+    {
+      "name": "light_hours",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "nutrient_dose",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "growth_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "energy_cost",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "canopy_temp",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "harvest_season",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "grid_strain",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "cultivar_vigor",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "light_hours",
+      "terms": [
+        {
+          "parent": "grid_strain",
+          "coeff": -1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "nutrient_dose",
+      "terms": [
+        {
+          "parent": "cultivar_vigor",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "energy_cost",
+      "terms": [
+        {
+          "parent": "cultivar_vigor",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "canopy_temp",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "canopy_temp",
+      "terms": [
+        {
+          "parent": "light_hours",
+          "coeff": 1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "growth_rate",
+      "terms": [
+        {
+          "parent": "nutrient_dose",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "canopy_temp",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "harvest_season",
+      "regime_terms": [
+        {
+          "parent": "nutrient_dose",
+          "coeff": -1.5,
+          "lag": 0
+        },
+        {
+          "parent": "canopy_temp",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

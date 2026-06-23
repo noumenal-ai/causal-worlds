@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "beds_open",
+      "los_hours"
+    ],
+    [
+      "boarding_pressure",
+      "triage_nurses"
+    ],
+    [
+      "boarding_pressure",
+      "wait_time"
+    ],
+    [
+      "surge_protocol",
+      "los_hours"
+    ],
+    [
+      "triage_nurses",
+      "los_hours"
+    ],
+    [
+      "triage_nurses",
+      "wait_time"
+    ],
+    [
+      "wait_time",
+      "beds_open"
+    ]
+  ],
+  "confounded": [
+    [
+      "beds_open",
+      "patient_inflow"
+    ]
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "variables": [
+    {
+      "name": "rebalancing_trucks",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "surge_price",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "dock_availability",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "ride_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rider_churn",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "weather_index",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "peak_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "city_event_buzz",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "ride_demand",
+      "terms": [
+        {
+          "parent": "city_event_buzz",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "weather_index",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "surge_price",
+      "terms": [
+        {
+          "parent": "city_event_buzz",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rebalancing_trucks",
+      "terms": [
+        {
+          "parent": "dock_availability",
+          "coeff": -1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "dock_availability",
+      "terms": [
+        {
+          "parent": "weather_index",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rider_churn",
+      "terms": [
+        {
+          "parent": "surge_price",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "rebalancing_trucks",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_regime",
+      "regime_terms": [
+        {
+          "parent": "surge_price",
+          "coeff": -1.2,
+          "lag": 0
+        },
+        {
+          "parent": "rebalancing_trucks",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "variables": [
+    {
+      "name": "ticket_inflow",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "agent_headcount",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "automation_coverage",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "first_response_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "csat_score",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "churn_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "peak_season",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "vendor_platform_health",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "ticket_inflow",
+      "terms": [
+        {
+          "parent": "vendor_platform_health",
+          "coeff": 1.6,
+          "lag": 0
+        },
+        {
+          "parent": "peak_season",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "automation_coverage",
+      "terms": [
+        {
+          "parent": "vendor_platform_health",
+          "coeff": 1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "agent_headcount",
+      "terms": [
+        {
+          "parent": "peak_season",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "first_response_time",
+      "terms": [
+        {
+          "parent": "ticket_inflow",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "agent_headcount",
+          "coeff": -0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "csat_score",
+      "terms": [
+        {
+          "parent": "churn_rate",
+          "coeff": -1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "churn_rate",
+      "terms": [
+        {
+          "parent": "first_response_time",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "automation_coverage",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_season",
+      "regime_terms": [
+        {
+          "parent": "first_response_time",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "automation_coverage",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "labor_hours",
+      "mispick_rate"
+    ],
+    [
+      "mispick_rate",
+      "pick_throughput"
+    ],
+    [
+      "peak_season",
+      "mispick_rate"
+    ],
+    [
+      "slotting_quality",
+      "labor_hours"
+    ],
+    [
+      "slotting_quality",
+      "mispick_rate"
+    ],
+    [
+      "slotting_quality",
+      "pick_throughput"
+    ]
+  ],
+  "confounded": [
+    [
+      "labor_hours",
+      "shift_pressure"
+    ]
+  ]
+}

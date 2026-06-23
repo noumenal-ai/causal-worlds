@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "departure_delay",
+      "turnaround_time"
+    ],
+    [
+      "gate_proximity",
+      "departure_delay"
+    ],
+    [
+      "ground_crew_size",
+      "departure_delay"
+    ],
+    [
+      "ground_crew_size",
+      "turnaround_time"
+    ],
+    [
+      "peak_hour",
+      "departure_delay"
+    ],
+    [
+      "weather_severity",
+      "departure_delay"
+    ],
+    [
+      "weather_severity",
+      "fuel_burn"
+    ]
+  ],
+  "confounded": [
+    [
+      "fuel_burn",
+      "gate_proximity"
+    ]
+  ]
+}

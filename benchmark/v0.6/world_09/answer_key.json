@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "agents_scheduled",
+      "abandonment_rate"
+    ],
+    [
+      "call_volume",
+      "abandonment_rate"
+    ],
+    [
+      "call_volume",
+      "service_level"
+    ],
+    [
+      "marketing_push",
+      "agents_scheduled"
+    ],
+    [
+      "marketing_push",
+      "call_volume"
+    ],
+    [
+      "peak_hour_flag",
+      "abandonment_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "avg_handle_time",
+      "call_volume"
+    ]
+  ]
+}

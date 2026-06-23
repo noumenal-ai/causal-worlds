@@ -1,0 +1,159 @@
+{
+  "variables": [
+    {
+      "name": "reviewer_staffing",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "content_inflow",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "backlog_size",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "review_error_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "auto_filter_strictness",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "appeal_volume",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "platform_event_surge",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "policy_complexity",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "platform_event_surge",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "policy_complexity",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "content_inflow",
+      "terms": [
+        {
+          "parent": "platform_event_surge",
+          "coeff": 1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "auto_filter_strictness",
+      "terms": [
+        {
+          "parent": "platform_event_surge",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "review_error_rate",
+      "terms": [
+        {
+          "parent": "policy_complexity",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "auto_filter_strictness",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "platform_event_surge",
+      "regime_terms": [
+        {
+          "parent": "policy_complexity",
+          "coeff": 1.3,
+          "lag": 0
+        },
+        {
+          "parent": "auto_filter_strictness",
+          "coeff": -0.8,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "backlog_size",
+      "terms": [
+        {
+          "parent": "review_error_rate",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "content_inflow",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "reviewer_staffing",
+      "terms": [
+        {
+          "parent": "backlog_size",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "appeal_volume",
+      "terms": [
+        {
+          "parent": "policy_complexity",
+          "coeff": 1.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "dock_availability",
+      "rebalancing_trucks"
+    ],
+    [
+      "peak_regime",
+      "rider_churn"
+    ],
+    [
+      "rebalancing_trucks",
+      "rider_churn"
+    ],
+    [
+      "surge_price",
+      "rider_churn"
+    ],
+    [
+      "weather_index",
+      "dock_availability"
+    ],
+    [
+      "weather_index",
+      "ride_demand"
+    ]
+  ],
+  "confounded": [
+    [
+      "ride_demand",
+      "surge_price"
+    ]
+  ]
+}

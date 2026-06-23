@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "crane_allocation",
+      "demurrage_cost"
+    ],
+    [
+      "demurrage_cost",
+      "dwell_time"
+    ],
+    [
+      "gate_appointments",
+      "dwell_time"
+    ],
+    [
+      "peak_season",
+      "demurrage_cost"
+    ],
+    [
+      "peak_season",
+      "gate_appointments"
+    ],
+    [
+      "weather_disruption",
+      "yard_congestion"
+    ],
+    [
+      "yard_congestion",
+      "demurrage_cost"
+    ]
+  ],
+  "confounded": [
+    [
+      "crane_allocation",
+      "yard_congestion"
+    ]
+  ]
+}

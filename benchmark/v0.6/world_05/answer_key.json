@@ -1,0 +1,42 @@
+{
+  "edges": [
+    [
+      "agent_headcount",
+      "first_response_time"
+    ],
+    [
+      "automation_coverage",
+      "churn_rate"
+    ],
+    [
+      "churn_rate",
+      "csat_score"
+    ],
+    [
+      "first_response_time",
+      "churn_rate"
+    ],
+    [
+      "peak_season",
+      "agent_headcount"
+    ],
+    [
+      "peak_season",
+      "churn_rate"
+    ],
+    [
+      "peak_season",
+      "ticket_inflow"
+    ],
+    [
+      "ticket_inflow",
+      "first_response_time"
+    ]
+  ],
+  "confounded": [
+    [
+      "automation_coverage",
+      "ticket_inflow"
+    ]
+  ]
+}

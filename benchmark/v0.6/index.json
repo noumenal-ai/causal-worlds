@@ -1,0 +1,308 @@
+[
+  {
+    "slug": "world_00",
+    "admitted": true,
+    "prompt": "A regional coffee chain with weekend demand swings and variable supplier lead times.",
+    "attempts": 1,
+    "difficulty": 0.625,
+    "faithfulness": 0.8,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9333333333333333
+  },
+  {
+    "slug": "world_01",
+    "admitted": true,
+    "prompt": "A hospital emergency department with triage staffing, inflow, beds, and wait times.",
+    "attempts": 2,
+    "difficulty": 0.7777777777777778,
+    "faithfulness": 0.8,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  },
+  {
+    "slug": "world_02",
+    "admitted": true,
+    "prompt": "A ride-hailing marketplace with surge pricing, driver supply, demand, and cancellations.",
+    "attempts": 2,
+    "difficulty": 0.6190476190476191,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9473684210526316
+  },
+  {
+    "admitted": false,
+    "prompt": "A solar microgrid with battery storage, dynamic tariffs, weather, and household load.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.71 >= 0.5)"
+  },
+  {
+    "slug": "world_04",
+    "admitted": true,
+    "prompt": "A contract manufacturing line: maintenance, throughput, defect rate, and on-time delivery.",
+    "attempts": 2,
+    "difficulty": 0.75,
+    "faithfulness": 0.9,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "slug": "world_05",
+    "admitted": true,
+    "prompt": "A SaaS support desk: ticket inflow, staffing, automation coverage, and churn.",
+    "attempts": 2,
+    "difficulty": 0.5238095238095237,
+    "faithfulness": 0.95,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9333333333333333
+  },
+  {
+    "slug": "world_06",
+    "admitted": true,
+    "prompt": "A last-mile delivery network: courier dispatch, traffic, package volume, and SLA.",
+    "attempts": 2,
+    "difficulty": 0.5714285714285714,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "admitted": false,
+    "prompt": "A boutique hotel with dynamic room pricing, seasonal events, occupancy, and reviews.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.59 >= 0.5)"
+  },
+  {
+    "slug": "world_08",
+    "admitted": true,
+    "prompt": "A grocery cold chain: refrigeration setpoints, energy cost, spoilage, and stockouts.",
+    "attempts": 1,
+    "difficulty": 0.5714285714285714,
+    "faithfulness": 0.7,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  },
+  {
+    "slug": "world_09",
+    "admitted": true,
+    "prompt": "A call-center workforce plan: scheduling, call volume, handle time, and abandonment.",
+    "attempts": 1,
+    "difficulty": 0.6666666666666667,
+    "faithfulness": 0.8,
+    "structural_score": 2.0,
+    "directed_shd": 3,
+    "f1": 0.7692307692307692
+  },
+  {
+    "slug": "world_10",
+    "admitted": true,
+    "prompt": "A bike-share network: rebalancing, dynamic pricing, weather, docks, and churn.",
+    "attempts": 1,
+    "difficulty": 0.625,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "admitted": false,
+    "prompt": "A wastewater treatment plant: aeration control, inflow load, energy use, and effluent quality.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.53 >= 0.5)"
+  },
+  {
+    "slug": "world_12",
+    "admitted": true,
+    "prompt": "An outpatient clinic with appointment scheduling, no-shows, room utilization, and overtime.",
+    "attempts": 1,
+    "difficulty": 0.8823529411764706,
+    "faithfulness": 0.6,
+    "structural_score": 2.0,
+    "directed_shd": 3,
+    "f1": 0.7692307692307692
+  },
+  {
+    "slug": "world_13",
+    "admitted": true,
+    "prompt": "A pharmacy inventory operation: reorder points, demand, stockouts, and expiry write-offs.",
+    "attempts": 4,
+    "difficulty": 0.625,
+    "faithfulness": 1.0,
+    "structural_score": 4.0,
+    "directed_shd": 2,
+    "f1": 0.875
+  },
+  {
+    "slug": "world_14",
+    "admitted": true,
+    "prompt": "An airport ground-handling operation: gate assignment, turnaround, delays, and fuel use.",
+    "attempts": 1,
+    "difficulty": 0.6000000000000001,
+    "faithfulness": 0.65,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  },
+  {
+    "admitted": false,
+    "prompt": "An EV-charging network: pricing, session demand, queueing, and grid-draw penalties.",
+    "reason": "not admitted after 4 attempt(s): T4 clich\u00e9: names+roles recover it (prior F1 0.63 >= 0.5)"
+  },
+  {
+    "slug": "world_16",
+    "admitted": true,
+    "prompt": "A transit bus line: frequency, ridership, bunching, and on-time performance.",
+    "attempts": 2,
+    "difficulty": 0.5555555555555556,
+    "faithfulness": 0.9,
+    "structural_score": 2.0,
+    "directed_shd": 2,
+    "f1": 0.8333333333333334
+  },
+  {
+    "slug": "world_17",
+    "admitted": true,
+    "prompt": "A district heating system: supply temperature, demand, pump energy, and complaints.",
+    "attempts": 2,
+    "difficulty": 0.5714285714285714,
+    "faithfulness": 0.75,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9333333333333333
+  },
+  {
+    "slug": "world_18",
+    "admitted": true,
+    "prompt": "A wind farm: maintenance scheduling, downtime, output, and curtailment.",
+    "attempts": 1,
+    "difficulty": 0.5789473684210527,
+    "faithfulness": 1.0,
+    "structural_score": 4.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "slug": "world_19",
+    "admitted": true,
+    "prompt": "A data-center cooling operation: setpoints, IT load, PUE, and thermal alarms.",
+    "attempts": 1,
+    "difficulty": 0.6923076923076923,
+    "faithfulness": 0.6,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "slug": "world_20",
+    "admitted": true,
+    "prompt": "A semiconductor fab: tool maintenance, wafer starts, yield, and cycle time.",
+    "attempts": 1,
+    "difficulty": 0.5454545454545454,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9333333333333333
+  },
+  {
+    "slug": "world_21",
+    "admitted": true,
+    "prompt": "A craft brewery: batch scheduling, fermentation temperature, throughput, and spoilage.",
+    "attempts": 1,
+    "difficulty": 0.6521739130434783,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9411764705882353
+  },
+  {
+    "slug": "world_22",
+    "admitted": true,
+    "prompt": "A 3D-print farm: queue policy, printer uptime, throughput, and reject rate.",
+    "attempts": 3,
+    "difficulty": 0.5555555555555556,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "slug": "world_23",
+    "admitted": true,
+    "prompt": "A textile dyeing line: batch size, water temperature, color defects, and rework.",
+    "attempts": 1,
+    "difficulty": 0.5714285714285714,
+    "faithfulness": 0.8,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "slug": "world_24",
+    "admitted": true,
+    "prompt": "A content-moderation queue: reviewer staffing, inflow, backlog, and error rate.",
+    "attempts": 1,
+    "difficulty": 0.7142857142857143,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  },
+  {
+    "slug": "world_25",
+    "admitted": true,
+    "prompt": "A fraud-review pipeline: alert thresholds, analyst load, false positives, and losses.",
+    "attempts": 1,
+    "difficulty": 0.6666666666666667,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  },
+  {
+    "slug": "world_26",
+    "admitted": true,
+    "prompt": "A vertical farm: lighting schedule, nutrient dosing, growth rate, and energy cost.",
+    "attempts": 2,
+    "difficulty": 0.5384615384615385,
+    "faithfulness": 1.0,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.9090909090909091
+  },
+  {
+    "slug": "world_27",
+    "admitted": true,
+    "prompt": "A dairy herd operation: feed mix, milking frequency, yield, and health incidents.",
+    "attempts": 1,
+    "difficulty": 0.75,
+    "faithfulness": 0.6,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.888888888888889
+  },
+  {
+    "slug": "world_28",
+    "admitted": true,
+    "prompt": "A warehouse pick-pack operation: slotting, labor, throughput, and mispicks.",
+    "attempts": 1,
+    "difficulty": 0.6923076923076923,
+    "faithfulness": 0.95,
+    "structural_score": 2.0,
+    "directed_shd": 3,
+    "f1": 0.7692307692307692
+  },
+  {
+    "slug": "world_29",
+    "admitted": true,
+    "prompt": "A port container yard: crane scheduling, dwell time, congestion, and demurrage.",
+    "attempts": 1,
+    "difficulty": 0.6666666666666667,
+    "faithfulness": 0.7,
+    "structural_score": 2.0,
+    "directed_shd": 1,
+    "f1": 0.923076923076923
+  }
+]

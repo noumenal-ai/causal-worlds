@@ -1,0 +1,30 @@
+{
+  "edges": [
+    [
+      "feed_energy_mix",
+      "milk_yield"
+    ],
+    [
+      "heat_stress_regime",
+      "milk_yield"
+    ],
+    [
+      "milk_yield",
+      "milking_frequency"
+    ],
+    [
+      "parlor_temp",
+      "health_incidents"
+    ],
+    [
+      "parlor_temp",
+      "milk_yield"
+    ]
+  ],
+  "confounded": [
+    [
+      "health_incidents",
+      "somatic_cell_count"
+    ]
+  ]
+}

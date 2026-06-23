@@ -1,0 +1,42 @@
+{
+  "edges": [
+    [
+      "foot_traffic",
+      "stockout_rate"
+    ],
+    [
+      "promo_spend",
+      "barista_count"
+    ],
+    [
+      "promo_spend",
+      "customer_satisfaction"
+    ],
+    [
+      "stockout_rate",
+      "customer_satisfaction"
+    ],
+    [
+      "stockout_rate",
+      "supplier_lead_time"
+    ],
+    [
+      "weekend_flag",
+      "customer_satisfaction"
+    ],
+    [
+      "weekend_flag",
+      "foot_traffic"
+    ],
+    [
+      "weekend_flag",
+      "stockout_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "foot_traffic",
+      "promo_spend"
+    ]
+  ]
+}

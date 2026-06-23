@@ -1,0 +1,155 @@
+{
+  "variables": [
+    {
+      "name": "gate_proximity",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "ground_crew_size",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "turnaround_time",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "departure_delay",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "fuel_burn",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "weather_severity",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "peak_hour",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "apron_congestion",
+      "role": "observable",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "apron_congestion",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "weather_severity",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "peak_hour",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "gate_proximity",
+      "terms": [
+        {
+          "parent": "apron_congestion",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "fuel_burn",
+      "terms": [
+        {
+          "parent": "apron_congestion",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "weather_severity",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "turnaround_time",
+      "terms": [
+        {
+          "parent": "departure_delay",
+          "coeff": 1.1,
+          "lag": 0
+        },
+        {
+          "parent": "ground_crew_size",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "departure_delay",
+      "terms": [
+        {
+          "parent": "gate_proximity",
+          "coeff": -0.8,
+          "lag": 0
+        },
+        {
+          "parent": "weather_severity",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "ground_crew_size",
+          "coeff": -0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_hour",
+      "regime_terms": [
+        {
+          "parent": "gate_proximity",
+          "coeff": 0.9,
+          "lag": 0
+        },
+        {
+          "parent": "weather_severity",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "ground_crew_size",
+          "coeff": -0.6,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

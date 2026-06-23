@@ -1,0 +1,174 @@
+{
+  "variables": [
+    {
+      "name": "surge_multiplier",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "driver_supply",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rider_demand",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "cancellation_rate",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "eta_minutes",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "completed_trips",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "peak_event",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "city_sentiment",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "city_sentiment",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "peak_event",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "rider_demand",
+      "terms": [
+        {
+          "parent": "city_sentiment",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "peak_event",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "cancellation_rate",
+      "terms": [
+        {
+          "parent": "city_sentiment",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "driver_supply",
+      "terms": [
+        {
+          "parent": "cancellation_rate",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "peak_event",
+          "coeff": 0.9,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "surge_multiplier",
+      "terms": [
+        {
+          "parent": "driver_supply",
+          "coeff": -1.1,
+          "lag": 0
+        },
+        {
+          "parent": "rider_demand",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "eta_minutes",
+      "terms": [
+        {
+          "parent": "surge_multiplier",
+          "coeff": 1.0,
+          "lag": 0
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "peak_event",
+      "regime_terms": [
+        {
+          "parent": "surge_multiplier",
+          "coeff": -1.2,
+          "lag": 0
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": -0.7,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "completed_trips",
+      "terms": [
+        {
+          "parent": "eta_minutes",
+          "coeff": -1.0,
+          "lag": 0
+        },
+        {
+          "parent": "driver_supply",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

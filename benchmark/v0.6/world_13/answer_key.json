@@ -1,0 +1,50 @@
+{
+  "edges": [
+    [
+      "flu_season",
+      "audit_flag"
+    ],
+    [
+      "flu_season",
+      "expiry_writeoffs"
+    ],
+    [
+      "reorder_point",
+      "expiry_writeoffs"
+    ],
+    [
+      "shelf_demand",
+      "stockout_rate"
+    ],
+    [
+      "stockout_rate",
+      "reorder_point"
+    ],
+    [
+      "supplier_delay",
+      "reorder_point"
+    ],
+    [
+      "supplier_delay",
+      "shelf_demand"
+    ],
+    [
+      "supplier_delay",
+      "stockout_rate"
+    ]
+  ],
+  "confounded": [
+    [
+      "audit_flag",
+      "expiry_writeoffs"
+    ],
+    [
+      "audit_flag",
+      "shelf_demand"
+    ],
+    [
+      "expiry_writeoffs",
+      "shelf_demand"
+    ]
+  ]
+}

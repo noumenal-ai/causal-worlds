@@ -3,6 +3,34 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.22.0] — 2026-06-23
+
+**`benchmark/v0.6` — the hardened set, and the #12 anti-cliché fix proven at scale.**
+
+Regenerated the benchmark with the `adversarial` author tier under the strict T4 gate (v0.19), capped
+at 30 prompts (`evals/scale/generate_hardened.py`). **26/30 admitted**, mean name-guessability
+difficulty **0.64** (was ~0.29 on v0.5), faithfulness 0.87, grader SHD ~1 — at ~1.5 author attempts.
+
+### Validated (measured, not asserted)
+- **Name leakage fixed.** The named name-only prior fell **0.71 → 0.38** (chance 0.18). The
+  **name+role-blind** prior collapses to **0.01** — the structure is not guessable once semantics are
+  stripped. The **name-blind** prior (0.46) is *higher* than named, so the adversarial names now
+  actively **mislead** — names became a liability for a prior-only guesser.
+- **Identifiability finding stronger.** On v0.6 the reference `interventional-ci` holds at
+  confounded-kept **0** (F1 0.90) while every causal-sufficiency method keeps more traps (pc 29,
+  gies 30, dagma 27, `pc+do` 30 at equal interventional budget). ΔF1 +0.37 [0.33, 0.42] for `pc+do`.
+
+### Honest residual
+- **Role labels still leak** (name-blind prior 0.46 ≫ chance): role conventions (controllable→outcome)
+  remain guessable. The gate checks the named and fully-blind priors but not the roles-only prior —
+  a roles-only gate (or randomized role hints) is the next step (#13).
+
+### Notes
+- `v0.5` is kept for comparison. README crossover table + anti-cliché caveat now report v0.6. The
+  package code is unchanged since v0.21 (this is a benchmark + docs release). 128 tests, 95% coverage.
+
+[0.22.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.22.0
+
 ## [0.21.0] — 2026-06-23
 
 **Stage-2 control — the optimal-policy answer-key (the dual-track scope, realized).**

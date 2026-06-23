@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "auto_filter_strictness",
+      "review_error_rate"
+    ],
+    [
+      "backlog_size",
+      "reviewer_staffing"
+    ],
+    [
+      "content_inflow",
+      "backlog_size"
+    ],
+    [
+      "platform_event_surge",
+      "auto_filter_strictness"
+    ],
+    [
+      "platform_event_surge",
+      "content_inflow"
+    ],
+    [
+      "platform_event_surge",
+      "review_error_rate"
+    ],
+    [
+      "review_error_rate",
+      "backlog_size"
+    ]
+  ],
+  "confounded": [
+    [
+      "appeal_volume",
+      "review_error_rate"
+    ]
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "edges": [
+    [
+      "batch_quality",
+      "throughput"
+    ],
+    [
+      "batch_size",
+      "spoilage_rate"
+    ],
+    [
+      "batch_size",
+      "tank_pressure"
+    ],
+    [
+      "demand_surge",
+      "batch_quality"
+    ],
+    [
+      "demand_surge",
+      "batch_size"
+    ],
+    [
+      "demand_surge",
+      "fermentation_temp"
+    ],
+    [
+      "fermentation_temp",
+      "batch_quality"
+    ],
+    [
+      "fermentation_temp",
+      "tank_pressure"
+    ],
+    [
+      "tank_pressure",
+      "throughput"
+    ]
+  ],
+  "confounded": [
+    [
+      "batch_quality",
+      "spoilage_rate"
+    ]
+  ]
+}

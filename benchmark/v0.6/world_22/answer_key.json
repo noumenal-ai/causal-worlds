@@ -1,0 +1,34 @@
+{
+  "edges": [
+    [
+      "ambient_humidity",
+      "printer_uptime"
+    ],
+    [
+      "nozzle_temp",
+      "reject_rate"
+    ],
+    [
+      "nozzle_temp",
+      "throughput"
+    ],
+    [
+      "queue_policy",
+      "throughput"
+    ],
+    [
+      "shift_mode",
+      "reject_rate"
+    ],
+    [
+      "throughput",
+      "printer_uptime"
+    ]
+  ],
+  "confounded": [
+    [
+      "reject_rate",
+      "throughput"
+    ]
+  ]
+}

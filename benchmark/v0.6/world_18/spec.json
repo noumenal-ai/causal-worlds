@@ -1,0 +1,163 @@
+{
+  "variables": [
+    {
+      "name": "grid_curtailment",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "wind_resource",
+      "role": "observable",
+      "hidden": true
+    },
+    {
+      "name": "maintenance_hours",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "turbine_downtime",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "vibration_index",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "power_output",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "grid_regime",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "blade_wear",
+      "role": "observable",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "wind_resource",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "grid_curtailment",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "grid_regime",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "vibration_index",
+      "terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.4,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "blade_wear",
+      "terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "turbine_downtime",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "maintenance_hours",
+      "terms": [
+        {
+          "parent": "vibration_index",
+          "coeff": 1.1,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "turbine_downtime",
+      "terms": [
+        {
+          "parent": "maintenance_hours",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "power_output",
+      "terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.6,
+          "lag": 0
+        },
+        {
+          "parent": "turbine_downtime",
+          "coeff": -0.9,
+          "lag": 0
+        },
+        {
+          "parent": "grid_curtailment",
+          "coeff": -1.2,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "grid_regime",
+      "regime_terms": [
+        {
+          "parent": "wind_resource",
+          "coeff": 1.6,
+          "lag": 0
+        },
+        {
+          "parent": "turbine_downtime",
+          "coeff": -0.9,
+          "lag": 0
+        },
+        {
+          "parent": "grid_curtailment",
+          "coeff": 1.2,
+          "lag": 0
+        }
+      ]
+    }
+  ]
+}

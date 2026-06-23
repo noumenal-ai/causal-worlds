@@ -1,0 +1,38 @@
+{
+  "edges": [
+    [
+      "cooling_setpoint",
+      "spoilage_rate"
+    ],
+    [
+      "cooling_setpoint",
+      "stockout_rate"
+    ],
+    [
+      "door_open_freq",
+      "energy_cost"
+    ],
+    [
+      "peak_season",
+      "shelf_demand"
+    ],
+    [
+      "peak_season",
+      "spoilage_rate"
+    ],
+    [
+      "shelf_demand",
+      "door_open_freq"
+    ],
+    [
+      "stockout_rate",
+      "shelf_demand"
+    ]
+  ],
+  "confounded": [
+    [
+      "energy_cost",
+      "spoilage_rate"
+    ]
+  ]
+}

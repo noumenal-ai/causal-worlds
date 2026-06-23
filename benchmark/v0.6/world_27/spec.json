@@ -1,0 +1,147 @@
+{
+  "variables": [
+    {
+      "name": "feed_energy_mix",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "milking_frequency",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "parlor_temp",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "milk_yield",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "health_incidents",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "somatic_cell_count",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "herd_stress_load",
+      "role": "disturbance",
+      "hidden": true
+    },
+    {
+      "name": "heat_stress_regime",
+      "role": "disturbance",
+      "hidden": false
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "milk_yield",
+      "terms": [
+        {
+          "parent": "feed_energy_mix",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "parlor_temp",
+          "coeff": -0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "heat_stress_regime",
+      "regime_terms": [
+        {
+          "parent": "feed_energy_mix",
+          "coeff": -1.1,
+          "lag": 0
+        },
+        {
+          "parent": "parlor_temp",
+          "coeff": -0.6,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "milking_frequency",
+      "terms": [
+        {
+          "parent": "milk_yield",
+          "coeff": 1.2,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "health_incidents",
+      "terms": [
+        {
+          "parent": "herd_stress_load",
+          "coeff": 1.5,
+          "lag": 0
+        },
+        {
+          "parent": "parlor_temp",
+          "coeff": 0.5,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "somatic_cell_count",
+      "terms": [
+        {
+          "parent": "herd_stress_load",
+          "coeff": 1.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "parlor_temp",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "feed_energy_mix",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "herd_stress_load",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "heat_stress_regime",
+      "terms": [],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

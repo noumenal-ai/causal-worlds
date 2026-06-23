@@ -1,0 +1,119 @@
+{
+  "variables": [
+    {
+      "name": "batch_size",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "water_temp",
+      "role": "controllable",
+      "hidden": false
+    },
+    {
+      "name": "dye_concentration",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "color_defects",
+      "role": "observable",
+      "hidden": false
+    },
+    {
+      "name": "rework_rate",
+      "role": "outcome",
+      "hidden": false
+    },
+    {
+      "name": "shift_changeover",
+      "role": "disturbance",
+      "hidden": false
+    },
+    {
+      "name": "supply_pressure",
+      "role": "disturbance",
+      "hidden": true
+    }
+  ],
+  "mechanisms": [
+    {
+      "target": "dye_concentration",
+      "terms": [
+        {
+          "parent": "supply_pressure",
+          "coeff": 1.4,
+          "lag": 0
+        },
+        {
+          "parent": "batch_size",
+          "coeff": 0.6,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "water_temp",
+      "terms": [
+        {
+          "parent": "supply_pressure",
+          "coeff": 1.3,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    },
+    {
+      "target": "color_defects",
+      "terms": [
+        {
+          "parent": "rework_rate",
+          "coeff": 1.2,
+          "lag": 0
+        },
+        {
+          "parent": "dye_concentration",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": "shift_changeover",
+      "regime_terms": [
+        {
+          "parent": "rework_rate",
+          "coeff": -1.2,
+          "lag": 0
+        },
+        {
+          "parent": "dye_concentration",
+          "coeff": 0.7,
+          "lag": 0
+        }
+      ]
+    },
+    {
+      "target": "rework_rate",
+      "terms": [
+        {
+          "parent": "batch_size",
+          "coeff": 0.9,
+          "lag": 0
+        },
+        {
+          "parent": "dye_concentration",
+          "coeff": 0.8,
+          "lag": 0
+        }
+      ],
+      "noise_scale": 0.3,
+      "regime": null,
+      "regime_terms": null
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "edges": [
+    [
+      "cold_snap",
+      "complaints"
+    ],
+    [
+      "cold_snap",
+      "heat_demand"
+    ],
+    [
+      "cold_snap",
+      "pump_energy"
+    ],
+    [
+      "cold_snap",
+      "supply_temp"
+    ],
+    [
+      "pump_energy",
+      "complaints"
+    ],
+    [
+      "return_temp",
+      "heat_demand"
+    ],
+    [
+      "supply_temp",
+      "complaints"
+    ],
+    [
+      "supply_temp",
+      "return_temp"
+    ]
+  ],
+  "confounded": [
+    [
+      "pump_energy",
+      "supply_temp"
+    ]
+  ]
+}
