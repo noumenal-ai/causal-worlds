@@ -3,6 +3,24 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] — 2026-06-23
+
+**Synthetic-DAG control — and it caught a real flaw.**
+
+### Added
+- **`controls`**: `varsortability(data, edges, names)` (Reisach et al. — how much a world leaks its
+  causal order through marginal variance) and `SortnregressDiscoverer` (the trivial sort-by-variance
+  baseline). Plus `evals/varsortability`.
+
+### Finding (honest, action item)
+- On `benchmark/v0.5`, mean **varsortability 0.94** and the trivial **sortnregress baseline scores
+  F1 0.74** — better than PC/FCI. The worlds currently **leak the causal order via marginal variance**
+  (the additive-noise giveaway). The fix — **variance standardization** of emitted data — is the next
+  release (#9); it should drop varsortability to ~0.5 and collapse sortnregress while leaving the
+  scale-invariant methods (PC/FCI) and the interventional grader unaffected.
+
+[0.12.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.12.0
+
 ## [0.11.1] — 2026-06-23
 
 ### Fixed

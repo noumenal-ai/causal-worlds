@@ -114,12 +114,14 @@ sufficiency, it still reports the hidden-confounded pair as a *causal* edge in m
 read as an **identifiability result** (you cannot tell confounding from causation without both
 interventions *and* a latent-aware method), not "our method beats the toolbox."
 
-**Caveats we're not hiding** (see [`evals/`](evals/) and the issues): the worlds are currently
-*admitted by the reference grader itself* (gate T3), so admission and the headline are not yet fully
-decoupled — fixing that, plus a varsortability/variance-standardization control and a name-only
-LLM baseline, is the next milestone. Structural difficulty correlates with observational error
-(r≈0.8) — partly mechanically — and, more tellingly, with the *interventional advantage* (ΔF1, r≈0.36,
-n=35, no CIs yet); treat it as a descriptive axis, not a validated predictor.
+**Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) the worlds are currently
+*admitted by the reference grader itself* (gate T3), so admission and the headline aren't yet fully
+decoupled. (2) We *measured* a real flaw — the worlds leak the causal order through marginal variance
+([varsortability](evals/varsortability/) 0.94; a trivial sort-by-variance baseline scores F1 0.74),
+the classic synthetic-DAG giveaway; **variance standardization (next release) removes it**. (3)
+Structural difficulty correlates with observational error (r≈0.8, partly mechanically) and with the
+*interventional advantage* (ΔF1, r≈0.36, n=35, no CIs) — a descriptive axis, not a validated predictor.
+Fixing (1) and (2), plus a name-only-at-chance baseline, is the next milestone (#9).
 
 ## What you get per world
 

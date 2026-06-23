@@ -13,6 +13,7 @@ from causal_worlds.baselines import (
 from causal_worlds.bench import grade_bundle, grade_spec, grade_temporal_spec
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
+from causal_worlds.controls import SortnregressDiscoverer, varsortability
 from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
@@ -108,6 +109,7 @@ __all__ = [
     "Sample",
     "ScmSubstrate",
     "Settings",
+    "SortnregressDiscoverer",
     "SpecError",
     "StructuralDifficulty",
     "Substrate",
@@ -144,4 +146,5 @@ __all__ = [
     "temporal_f1",
     "temporal_score",
     "validate",
+    "varsortability",
 ]
