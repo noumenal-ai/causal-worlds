@@ -65,12 +65,14 @@ PROMPTS = [
 
 
 def main():
-    count = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_COUNT
-    out = Path(sys.argv[2]) if len(sys.argv) > 2 else OUT
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    temporal = "--temporal" in sys.argv  # author lagged worlds (DSA's native time-series substrate)
+    count = int(args[0]) if args else DEFAULT_COUNT
+    out = Path(args[1]) if len(args) > 1 else OUT
     prompts = PROMPTS[:count]
     judge = build_gemini_judge(DEFAULT_JUDGE_MODEL)
     discoverer = InterventionalCiDiscoverer(n=N)
-    author = build_claude_author(complexity="adversarial")
+    author = build_claude_author(complexity="adversarial", temporal=temporal)
     out.mkdir(parents=True, exist_ok=True)
     index = []
     for i, prompt in enumerate(prompts):
@@ -100,26 +102,28 @@ def main():
         save_bundle(world, out / slug, provenance=provenance)
         sd = structural_difficulty(world.spec)
         r = world.report
+        temporal_f1 = r.temporal_grade.temporal_f1 if r.temporal_grade else None
         index.append({
             "slug": slug,
             "admitted": True,
             "prompt": prompt,
             "attempts": world.attempts,
-            "difficulty": r.difficulty,
+            "difficulty": r.difficulty,  # None for temporal worlds (T4 anti-cliché is skipped)
             "faithfulness": r.faithfulness,
             "structural_score": sd.score,
             "directed_shd": r.grade.directed_shd if r.grade else None,
             "f1": r.grade.f1 if r.grade else None,
+            "temporal_f1": temporal_f1,
         })
-        print(
-            f"{slug} diff {r.difficulty:.2f} struct {sd.score} "
-            f"shd {r.grade.directed_shd if r.grade else '-'} attempts {world.attempts}"
-        )
+        diff_str = f"diff {r.difficulty:.2f}" if r.difficulty is not None else f"tF1 {temporal_f1:.2f}"
+        print(f"{slug} {diff_str} struct {sd.score} attempts {world.attempts}")
 
     (out / "index.json").write_text(json.dumps(index, indent=2))
     admitted = [e for e in index if e["admitted"]]
-    mean_diff = sum(e["difficulty"] for e in admitted) / len(admitted) if admitted else 0.0
-    print(f"\n{len(admitted)}/{len(index)} admitted -> {out} | mean difficulty {mean_diff:.2f}")
+    scores = [e["difficulty"] if e["difficulty"] is not None else e.get("temporal_f1") for e in admitted]
+    scores = [s for s in scores if s is not None]
+    mean_score = sum(scores) / len(scores) if scores else 0.0
+    print(f"\n{len(admitted)}/{len(index)} admitted -> {out} | mean difficulty/tF1 {mean_score:.2f}")
 
 
 def _generate_resilient(prompt, author, judge, discoverer):
