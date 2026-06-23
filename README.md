@@ -1,5 +1,6 @@
 # causal-worlds
 
+[![PyPI](https://img.shields.io/pypi/v/causal-worlds.svg)](https://pypi.org/project/causal-worlds/)
 [![CI](https://github.com/noumenal-ai/causal-worlds/actions/workflows/ci.yml/badge.svg)](https://github.com/noumenal-ai/causal-worlds/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org)
@@ -32,9 +33,9 @@ print(report)   # directed_shd=0  skeleton_shd=0  f1=1.0  confounded_reported=0
 ## Install
 
 ```bash
-uv add causal-worlds            # or: pip install causal-worlds   (once published)
-uv add 'causal-worlds[discover]'  # + the baseline discovery stack (PC/GES/FCI/GIES)
-uv add 'causal-worlds[llm]'       # + natural-language authoring (Claude + Gemini)
+pip install causal-worlds              # or: uv add causal-worlds
+pip install 'causal-worlds[discover]'  # + the baseline discovery stack (PC/GES/FCI/GIES)
+pip install 'causal-worlds[llm]'       # + natural-language authoring (Claude + Gemini)
 ```
 
 The base install (engine, grading, built-in worlds, CLI) needs only `typer`, `pydantic`, `numpy`.
