@@ -3,6 +3,33 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.11.0] — 2026-06-23
+
+**Integrity pass** (from an adversarial self-audit + a 2026 landscape review). No new capability — this
+makes the existing claims honest and the comparison fairer.
+
+### Fixed
+- **Baseline seed-aliasing**: `GiesDiscoverer` now draws an *independent* seed per environment (it had
+  shared one seed across the observational + every intervention env, aliasing their noise — the same
+  bug the reference grader avoids). This was unfairly inflating GIES error: mean skeleton-SHD 6.66 →
+  **2.37** on `benchmark/v0.5`.
+- **Crossover report provenance**: the benchmark name was hardcoded `"v0.2"`; it now records the actual
+  set (`v0.5`).
+
+### Changed (honest reframing)
+- The crossover is now framed as an **identifiability finding, not "defeats the standard toolbox."**
+  GIES gets the same interventional budget as the reference and recovers structure well, yet — assuming
+  causal sufficiency — still reports the hidden-confounded pair as causal (17/35); PC/FCI likewise. The
+  lever is **latent-awareness**, not interventions. README + blog updated.
+- **Difficulty**: report the partly-mechanical structural-vs-observational-error correlation (r≈0.8)
+  *and* the non-tautological structural-vs-interventional-advantage (ΔF1, r≈0.36, n=35, no CIs) — as a
+  descriptive axis, not a validated predictor.
+- Surfaced the **admission-circularity** (worlds are admitted by the reference grader itself) as a
+  known limitation with a planned fix (grader-independent admission + an information-fair crossover +
+  varsortability/variance-standardization control + a name-only-at-chance baseline).
+
+[0.11.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.11.0
+
 ## [0.10.0] — 2026-06-23
 
 **Observability.** See every run as a trace.

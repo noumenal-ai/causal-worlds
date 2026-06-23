@@ -1,6 +1,6 @@
 {
   "eval": "baseline-crossover",
-  "benchmark": "v0.2",
+  "benchmark": "v0.5",
   "grader": "interventional-ci@1",
   "n": 4000,
   "seeds": [
@@ -42,9 +42,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.7929824561403509,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.888888888888889,
           "confounded_kept_mean": 0
         }
       }
@@ -75,9 +75,9 @@
           "confounded_kept_mean": 1.6666666666666667
         },
         "gies": {
-          "skeleton_shd_mean": 5.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7439613526570049,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.9,
           "confounded_kept_mean": 2
         }
       }
@@ -108,9 +108,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 11.333333333333334,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5855379188712522,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -141,9 +141,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 1,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8571428571428571,
+          "directed_f1_mean": 0.9473684210526316,
           "confounded_kept_mean": 1
         }
       }
@@ -174,9 +174,9 @@
           "confounded_kept_mean": 0.3333333333333333
         },
         "gies": {
-          "skeleton_shd_mean": 7.333333333333333,
+          "skeleton_shd_mean": 2.3333333333333335,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6582125603864735,
+          "directed_f1_mean": 0.8671023965141613,
           "confounded_kept_mean": 2
         }
       }
@@ -207,9 +207,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.6666666666666666,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -240,9 +240,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 1.6666666666666667,
+          "skeleton_shd_mean": 1.3333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8311688311688312,
+          "directed_f1_mean": 0.8441558441558442,
           "confounded_kept_mean": 0
         }
       }
@@ -273,9 +273,9 @@
           "confounded_kept_mean": 0.3333333333333333
         },
         "gies": {
-          "skeleton_shd_mean": 8.333333333333334,
+          "skeleton_shd_mean": 7.333333333333333,
           "skeleton_shd_std": 1.247219128924647,
-          "directed_f1_mean": 0.5466666666666666,
+          "directed_f1_mean": 0.6222222222222222,
           "confounded_kept_mean": 1
         }
       }
@@ -306,9 +306,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 7.333333333333333,
-          "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.6222222222222222,
+          "skeleton_shd_mean": 0.3333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.9743589743589743,
           "confounded_kept_mean": 0
         }
       }
@@ -339,9 +339,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 7,
+          "skeleton_shd_mean": 4,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.5797101449275363,
+          "directed_f1_mean": 0.7000000000000001,
           "confounded_kept_mean": 0
         }
       }
@@ -372,9 +372,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.666666666666667,
-          "skeleton_shd_std": 1.699673171197595,
-          "directed_f1_mean": 0.7587301587301587,
+          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7242028985507246,
           "confounded_kept_mean": 1
         }
       }
@@ -405,9 +405,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 10,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.5833333333333334,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -438,9 +438,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7536231884057971,
+          "skeleton_shd_mean": 3.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7388167388167389,
           "confounded_kept_mean": 0
         }
       }
@@ -471,9 +471,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 7.333333333333333,
-          "skeleton_shd_std": 1.247219128924647,
-          "directed_f1_mean": 0.6584541062801933,
+          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6561403508771929,
           "confounded_kept_mean": 1
         }
       }
@@ -504,9 +504,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4,
+          "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7777777777777778,
+          "directed_f1_mean": 0.8235294117647058,
           "confounded_kept_mean": 0
         }
       }
@@ -537,9 +537,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7717391304347826,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -570,9 +570,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 6.666666666666667,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6965305226174792,
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7272727272727274,
           "confounded_kept_mean": 1
         }
       }
@@ -603,9 +603,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 10,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.5462074157726332,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -636,9 +636,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 10.333333333333334,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6354679802955665,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.8153717627401839,
           "confounded_kept_mean": 0
         }
       }
@@ -669,9 +669,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 11,
+          "skeleton_shd_mean": 5,
           "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.6293394777265745,
+          "directed_f1_mean": 0.7691197691197691,
           "confounded_kept_mean": 0
         }
       }
@@ -702,9 +702,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 9,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.5714285714285715,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -735,9 +735,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3.6666666666666665,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7992202729044834,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.8300653594771242,
           "confounded_kept_mean": 1
         }
       }
@@ -768,9 +768,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.5849673202614378,
+          "skeleton_shd_mean": 2.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6825396825396826,
           "confounded_kept_mean": 0
         }
       }
@@ -801,9 +801,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 6,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.6680426556587546,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -834,9 +834,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 7.666666666666667,
+          "skeleton_shd_mean": 2.6666666666666665,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7231040564373897,
+          "directed_f1_mean": 0.8827404479578393,
           "confounded_kept_mean": 1
         }
       }
@@ -867,9 +867,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 7.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7661290322580645,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.8536155202821869,
           "confounded_kept_mean": 1
         }
       }
@@ -900,9 +900,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 8.333333333333334,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6577777777777777,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -933,9 +933,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 7.666666666666667,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5722943722943723,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.8254357298474946,
           "confounded_kept_mean": 1
         }
       }
@@ -966,9 +966,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 7.666666666666667,
+          "skeleton_shd_mean": 4.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5674942341609008,
+          "directed_f1_mean": 0.8222222222222222,
           "confounded_kept_mean": 1
         }
       }
@@ -999,9 +999,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 6,
-          "skeleton_shd_std": 1.4142135623730951,
-          "directed_f1_mean": 0.6705882352941176,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -1032,9 +1032,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 4,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8,
+          "directed_f1_mean": 0.625,
           "confounded_kept_mean": 1
         }
       }
@@ -1065,9 +1065,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 10,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.571256038647343,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.8571428571428571,
           "confounded_kept_mean": 1
         }
       }
@@ -1098,9 +1098,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 8.333333333333334,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5458089668615984,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         }
       }
@@ -1125,15 +1125,15 @@
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 3.6666666666666665,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7428571428571429,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7142857142857143,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4,
+          "skeleton_shd_mean": 2,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7777777777777778,
+          "directed_f1_mean": 0.8750000000000001,
           "confounded_kept_mean": 0
         }
       }
@@ -1166,7 +1166,7 @@
         "gies": {
           "skeleton_shd_mean": 3.6666666666666665,
           "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.8033126293995859,
+          "directed_f1_mean": 0.650103519668737,
           "confounded_kept_mean": 1
         }
       }
@@ -1197,15 +1197,15 @@
     "fci": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 2.6666666666666665,
-      "mean_directed_f1": 0.7051993189211234,
+      "mean_skeleton_shd": 2.676190476190476,
+      "mean_directed_f1": 0.7043829923905112,
       "total_confounded_kept": 8.333333333333334
     },
     "gies": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 6.6571428571428575,
-      "mean_directed_f1": 0.6792764774110381,
+      "mean_skeleton_shd": 2.3714285714285714,
+      "mean_directed_f1": 0.8543547355849402,
       "total_confounded_kept": 17
     }
   },
@@ -1213,13 +1213,13 @@
     "interventional-ci": 0.168633197941696,
     "pc": 0.24666204109388137,
     "ges": null,
-    "fci": 0.30401151611366645,
-    "gies": -0.17937902152990715
+    "fci": 0.29936133542451515,
+    "gies": 0.20920338120727425
   },
   "verdict": {
-    "decision": "GO (strengthened at scale)",
-    "crossover": "Across 35 worlds the reference interventional-CI grader keeps confounded-kept at 0 (never reports a hidden-confounded pair as causal) with skeleton-SHD 1.47 / F1 0.91, while PC/FCI/GIES keep 8-17 confounded pairs as causal and post skeleton-SHD 2.7-6.7. The thesis replicates and separates more cleanly than at n=12.",
-    "difficulty_vs_error": "At scale, name-difficulty now correlates with constraint-based error (PC +0.25, FCI +0.30); GIES is noisy/negative. See the structural-difficulty eval for the stronger structural signal.",
-    "ges": "GES errored on every world (causal-learn GES is numpy-2 incompatible)."
+    "framing": "IDENTIFIABILITY finding, not 'defeats the standard toolbox'. The dividing line is latent-awareness, not interventions: GIES gets the same interventional budget as the reference and recovers the skeleton well (SHD 2.37) but, assuming causal sufficiency, still reports the hidden-confounded pair as causal in most worlds (17/35); PC/FCI likewise (13/8). Only the latent-aware interventional rule keeps confounded-kept at 0.",
+    "known_circularity": "These worlds are admitted by the reference grader itself (gate T3), so admission and the headline are not yet decoupled. Next milestone: grader-independent admission + an information-fair crossover + varsortability/variance-standardization control + a name-only LLM baseline that should score at chance.",
+    "seed_fix": "Independent per-environment seeds for GIES (was aliasing the obs+do envs to one seed, which had inflated GIES skeleton-SHD to 6.66; now 2.37 \u2014 a fairer comparison).",
+    "ges": "GES errors on every world (causal-learn GES is numpy-2 incompatible)."
   }
 }

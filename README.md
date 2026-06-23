@@ -96,21 +96,30 @@ world = generate(
 print(world.report.difficulty, world.report.grade)
 ```
 
-## Does it actually defeat the standard toolbox?
+## What the crossover shows (and what it doesn't)
 
-Measured across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each):
+Across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each):
 
-| method | mean skeleton-SHD ↓ | directed F1 ↑ | confounded pair kept as causal ↓ |
-|---|---|---|---|
-| **interventional-ci** (reference) | **1.47** | **0.91** | **0** |
-| PC | 2.81 | 0.67 | 13 |
-| FCI | 2.67 | 0.71 | 8 |
-| GIES | 6.66 | 0.68 | 17 |
+| method | gets interventions? | latent-aware? | mean skeleton-SHD ↓ | confounded pair kept as causal ↓ |
+|---|---|---|---|---|
+| **interventional-ci** (reference) | yes | yes | **1.47** | **0** |
+| GIES | yes | no | 2.37 | 17 |
+| PC | no | no | 2.81 | 13 |
+| FCI | no | partly | 2.68 | 8 |
 
-Observational/score-based methods keep the hidden-confounded pair as a *causal* edge in most worlds;
-the interventional grader never does. And **structural** difficulty (confounders + regime sign-flips)
-predicts the observational collapse (corr +0.62) where name-guessability does not (+0.14) — so the
-difficulty score is a real instrument. Reproduce: [`evals/`](evals/).
+The honest reading: the dividing line is **latent-awareness**, not interventions alone. GIES gets the
+*same* interventional budget as the reference and recovers the skeleton fine — but, assuming causal
+sufficiency, it still reports the hidden-confounded pair as a *causal* edge in most worlds; PC/FCI
+(observational) likewise. Only the latent-aware interventional rule keeps it at zero. So this is best
+read as an **identifiability result** (you cannot tell confounding from causation without both
+interventions *and* a latent-aware method), not "our method beats the toolbox."
+
+**Caveats we're not hiding** (see [`evals/`](evals/) and the issues): the worlds are currently
+*admitted by the reference grader itself* (gate T3), so admission and the headline are not yet fully
+decoupled — fixing that, plus a varsortability/variance-standardization control and a name-only
+LLM baseline, is the next milestone. Structural difficulty correlates with observational error
+(r≈0.8) — partly mechanically — and, more tellingly, with the *interventional advantage* (ΔF1, r≈0.36,
+n=35, no CIs yet); treat it as a descriptive axis, not a validated predictor.
 
 ## What you get per world
 

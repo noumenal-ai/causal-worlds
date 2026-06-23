@@ -29,6 +29,7 @@ _DO_LOC = 0.5  # GIES interventions: continuous do-value mean
 _DO_SCALE = 1.5  # GIES interventions: continuous do-value spread
 _MAX_BINARY = 2  # a column with <= this many unique values is treated as a binary (regime) var
 _ARROW = 1  # arrowhead endpoint code (causal-learn)
+_SEED_SPACE = 2**32  # draw independent per-environment seeds from [0, this)
 
 
 @dataclass(frozen=True, slots=True)
@@ -174,7 +175,9 @@ class GiesDiscoverer:
 
         names = substrate.variables
         rng = np.random.default_rng(seed)
-        baseline = substrate.sample(self._n, seed=seed)
+        # Each environment gets an INDEPENDENT seed (like the grader's _draw_seed): sharing one seed
+        # across the observational + intervention envs would alias their noise streams.
+        baseline = substrate.sample(self._n, seed=int(rng.integers(_SEED_SPACE)))
         binary = {i for i, col in enumerate(baseline.data.T) if len(np.unique(col)) <= _MAX_BINARY}
         data = [baseline.data]
         targets: list[list[int]] = [[]]
@@ -184,7 +187,8 @@ class GiesDiscoverer:
                 if index in binary
                 else rng.normal(_DO_LOC, _DO_SCALE, self._n)
             )
-            data.append(substrate.sample(self._n, seed=seed, do={name: values}).data)
+            env = substrate.sample(self._n, seed=int(rng.integers(_SEED_SPACE)), do={name: values})
+            data.append(env.data)
             targets.append([index])
         adjacency, _ = gies.fit_bic(data, targets)
         return parse_adjacency(np.asarray(adjacency), names)

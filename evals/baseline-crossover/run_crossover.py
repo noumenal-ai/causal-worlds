@@ -115,7 +115,7 @@ def main():
 
     report = {
         "eval": "baseline-crossover",
-        "benchmark": "v0.2",
+        "benchmark": BENCH.name,
         "grader": f"{GRADER}@{GRADER_VERSION}",
         "n": N,
         "seeds": SEEDS,

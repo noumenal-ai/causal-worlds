@@ -29,24 +29,29 @@ an answer key. The pipeline:
 Because the structure is *declared*, every world is its own answer key. The worlds are fictional, so
 no real-world data is needed and there's nothing to leak.
 
-## The decisive experiment
+## The experiment — and what it actually shows
 
-The headline claim — *"a benchmark that defeats the standard toolbox"* — is only worth anything if
-it's measured. So we ran the standard discoverers (PC, GES, FCI, GIES via `causal-learn`/`gies`)
-against the reference interventional grader on every world, three seeds each. On the scaled 35-world
-set:
+We ran the standard discoverers (PC, GES, FCI, GIES) against the reference interventional grader on
+every world, three seeds each, on the 35-world set:
 
-| method | mean skeleton-SHD ↓ | directed F1 ↑ | confounded-pair kept as causal ↓ (of 35) |
-|---|---|---|---|
-| **interventional-ci (reference)** | **1.47** | **0.91** | **0** |
-| PC | 2.81 | 0.67 | 13 |
-| FCI | 2.67 | 0.71 | 8 |
-| GIES | 6.66 | 0.68 | 17 |
+| method | interventions? | latent-aware? | skeleton-SHD ↓ | confounded pair kept as causal ↓ (of 35) |
+|---|---|---|---|---|
+| **interventional-ci (reference)** | yes | yes | **1.47** | **0** |
+| GIES | yes | no | 2.37 | 17 |
+| PC | no | no | 2.81 | 13 |
+| FCI | no | partly | 2.68 | 8 |
 
-The standard methods **keep the hidden-confounded pair as a causal edge in most worlds**; the
-interventional grader **never** does (0 across all 35). The trap — a hidden common cause with no direct
-edge — is exactly what observational and score-based methods can't escape, because they assume causal
-sufficiency. Interventions break the tie.
+It's tempting to call this "defeating the standard toolbox," but the honest reading is narrower and
+more interesting. **GIES gets the same interventional data as the reference** and recovers the skeleton
+about as well — yet it still reports the hidden-confounded pair as a *causal* edge in most worlds,
+because it assumes causal sufficiency (no hidden confounders). PC/FCI, on observational data, do the
+same. Only the latent-aware interventional rule keeps confounded-kept at zero. So the dividing line is
+**latent-awareness**, not interventions per se — and the result is best stated as an *identifiability*
+finding: you need both interventions and a latent-aware method to tell confounding from causation.
+
+(One caveat we keep in the open: these worlds are currently admitted by the reference grader itself, so
+the benchmark and the headline aren't yet fully decoupled. Closing that loop — plus standard
+synthetic-DAG controls — is the next milestone.)
 
 ## The difficulty story (a useful wrong turn)
 

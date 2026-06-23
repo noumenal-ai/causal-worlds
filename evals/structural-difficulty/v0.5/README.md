@@ -4,8 +4,8 @@ v0.3 found name-guessability difficulty doesn't predict discovery error. This re
 
 | correlation | name-guessability | structural |
 |---|---|---|
-| vs observational skeleton-SHD | +0.14 | +0.62 |
-| vs interventional advantage (ΔF1) | +0.05 | +0.05 |
+| vs observational skeleton-SHD | +0.28 | +0.82 |
+| vs interventional advantage (ΔF1) | +0.16 | +0.36 |
 
 *Interventional advantage* = reference F1 − mean observational F1 per world: how much the `do()`-based grader gains over the observational toolbox.
 
