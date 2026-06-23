@@ -12,6 +12,8 @@ from causal_worlds.artifact import LoadedBundle, Provenance, load_bundle, save_b
 from causal_worlds.baselines import (
     BASELINES,
     BaselineResult,
+    DagmaDiscoverer,
+    DirectLingamDiscoverer,
     FciDiscoverer,
     GesDiscoverer,
     GiesDiscoverer,
@@ -103,7 +105,9 @@ __all__ = [
     "ClaudeElicitor",
     "Container",
     "CyclicGraphError",
+    "DagmaDiscoverer",
     "DanglingReferenceError",
+    "DirectLingamDiscoverer",
     "Discoverer",
     "DuplicateMechanismError",
     "Edges",

@@ -99,7 +99,7 @@ from causal_worlds.judge import build_gemini_judge
 
 world = generate(
     "a hospital ED with triage staffing and bed pressure",
-    author=build_claude_author(complexity="hard"),   # easy | standard | hard
+    author=build_claude_author(complexity="hard"),   # easy | standard | hard | adversarial
     judge=build_gemini_judge(),                       # independent model family
 )
 print(world.report.difficulty, world.report.grade)
@@ -120,6 +120,12 @@ access ([full table + bootstrap CIs](evals/baseline-crossover/v0.5/)):
 | **PC + interventions** | interventional | no | 3.31 | **15.0** |
 | FCI | observational | partly | 2.68 | 9.7 |
 | FCI + interventions | interventional | partly | 3.29 | 6.7 |
+| DAGMA | observational | no | 5.73 | 16.0 |
+| DirectLiNGAM | observational | no | 5.64 | 14.7 |
+
+(DAGMA and DirectLiNGAM run at default hyperparameters, and LiNGAM's non-Gaussian assumption is
+violated by these linear-Gaussian worlds, so their *skeleton* accuracy is not their best — but the
+relevant, robust verdict is **confounded-kept**, and like every causal-sufficiency method they keep it.)
 
 The honest reading: the dividing line is **latent-awareness, not interventions**. The decisive row is
 **PC + interventions** — given the *same* interventional budget as the reference, it still keeps the

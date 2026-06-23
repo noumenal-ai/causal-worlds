@@ -31,7 +31,7 @@ Issues = "https://github.com/noumenal-ai/causal-worlds/issues"
 
 [project.optional-dependencies]
 # The discovery/grader stack (heavy: scipy/sklearn). Installed when the `discover` feature is used.
-discover = ["causal-learn>=0.1.4", "gies>=0.0.1"]
+discover = ["causal-learn>=0.1.4", "gies>=0.0.1", "dagma>=1.1", "lingam>=1.8"]
 # LLM structured output (author + judge) with validation + bounded retry, provider-agnostic.
 # instructor wraps the provider SDKs; anthropic = Claude author, google-genai = Gemini judge.
 # instructor[google-genai] pulls the genai SDK + jsonref (needed for Gemini structured output).
@@ -117,6 +117,7 @@ module = [
     "google.*",
     "causallearn.*",
     "gies.*",
+    "dagma.*",
     "tigramite.*",
     "lingam.*",
     "statsmodels.*",

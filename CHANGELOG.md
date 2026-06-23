@@ -3,6 +3,31 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.20.0] — 2026-06-23
+
+**Broaden the baselines — DAGMA + DirectLiNGAM (more witnesses for the identifiability finding).**
+
+### Added
+- **`DagmaDiscoverer`** (Bello et al., NeurIPS 2022 — continuous-optimization, observational) and
+  **`DirectLingamDiscoverer`** (Shimizu et al.) behind the `Discoverer` Protocol, registered in
+  `BASELINES`. Added `dagma` + `lingam` to the `discover` extra. `parse_weighted_adjacency` parses
+  their thresholded coefficient matrices (pure, unit-tested).
+- Both run in the crossover's observational track (now 8 methods).
+
+### Finding
+- Both are causal-sufficiency methods and, as predicted, **keep the hidden-confounded pair**
+  (DAGMA 16.0, DirectLiNGAM 14.7 of 35) — two more independent witnesses that the dividing line is
+  **latent-awareness**, not the specific method. Only the latent-aware `interventional-ci` reaches 0.
+- Honest caveat: both run at default hyperparameters, and LiNGAM's non-Gaussian assumption is
+  violated by these linear-Gaussian worlds, so their *skeleton* accuracy (DAGMA F1 0.22, LiNGAM 0.38)
+  is not their best — the robust, relevant verdict is confounded-kept, reported as the headline.
+
+### Notes
+- 121 tests, 95% coverage. Strengthens the crossover for review; DCDI/SCORE/NoGAM/AVICI/Rhino remain
+  future adds (heavier packaging).
+
+[0.20.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.20.0
+
 ## [0.19.0] — 2026-06-23
 
 **Anti-cliché hardening (#12) — strict gate, blind control, adversarial author tier.**

@@ -10,6 +10,7 @@ from causal_worlds.baselines import (
     PcDiscoverer,
     parse_adjacency,
     parse_endpoint_matrix,
+    parse_weighted_adjacency,
     pooled_interventional_sample,
 )
 from causal_worlds.protocols import Discoverer
@@ -52,8 +53,17 @@ def test_empty_graph_parses_to_nothing():
     assert result.skeleton == frozenset()
 
 
+def test_parse_weighted_adjacency_thresholds_and_orients():
+    # w[i][j] is the i->j weight; |0.5| > 0.3 keeps a->b, |0.1| < 0.3 drops b->c.
+    w = np.array([[0.0, 0.5, 0.0], [0.0, 0.0, 0.1], [0.0, 0.0, 0.0]])
+    result = parse_weighted_adjacency(w, _NAMES, threshold=0.3)
+    assert result.edges == frozenset({("a", "b")})
+    assert result.bidirected == frozenset()  # sufficiency methods declare no confounding
+    assert result.skeleton == frozenset({frozenset({"a", "b"})})
+
+
 def test_baselines_satisfy_the_discoverer_protocol():
-    assert set(BASELINES) == {"pc", "ges", "fci", "gies"}
+    assert set(BASELINES) == {"pc", "ges", "fci", "gies", "dagma", "directlingam"}
     for cls in BASELINES.values():
         assert isinstance(cls(), Discoverer)
     assert isinstance(PcDiscoverer(), Discoverer)

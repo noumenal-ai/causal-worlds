@@ -28,7 +28,14 @@ from statistics import correlation, mean, pstdev
 import numpy as np
 
 from causal_worlds.artifact import load_bundle
-from causal_worlds.baselines import FciDiscoverer, GesDiscoverer, GiesDiscoverer, PcDiscoverer
+from causal_worlds.baselines import (
+    DagmaDiscoverer,
+    DirectLingamDiscoverer,
+    FciDiscoverer,
+    GesDiscoverer,
+    GiesDiscoverer,
+    PcDiscoverer,
+)
 from causal_worlds.discover import GRADER, GRADER_VERSION, InterventionalCiDiscoverer
 from causal_worlds.evaluation import score
 from causal_worlds.sample import build_substrate
@@ -48,6 +55,8 @@ METHODS: dict[str, tuple[str, type | None, str]] = {
     "pc": ("clearn", PcDiscoverer, "observational"),
     "ges": ("clearn", GesDiscoverer, "observational"),
     "fci": ("clearn", FciDiscoverer, "observational"),
+    "dagma": ("adjacency", DagmaDiscoverer, "observational"),
+    "directlingam": ("adjacency", DirectLingamDiscoverer, "observational"),
     "gies": ("gies", GiesDiscoverer, "interventional"),
     "pc+do": ("clearn-do", PcDiscoverer, "interventional"),
     "fci+do": ("clearn-do", FciDiscoverer, "interventional"),
@@ -185,7 +194,9 @@ def main():
 def _aggregate(per_world):
     agg = {}
     for m in METHODS:
-        rows = [w["methods"][m] for w in per_world.values() if "skeleton_shd_mean" in w["methods"][m]]
+        rows = [
+            w["methods"][m] for w in per_world.values() if "skeleton_shd_mean" in w["methods"][m]
+        ]
         errored = sum(1 for w in per_world.values() if "errored" in w["methods"][m])
         agg[m] = {
             "data": METHODS[m][2],

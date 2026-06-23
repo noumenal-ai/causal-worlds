@@ -30,6 +30,8 @@ _DO_SCALE = 1.5  # GIES interventions: continuous do-value spread
 _MAX_BINARY = 2  # a column with <= this many unique values is treated as a binary (regime) var
 _ARROW = 1  # arrowhead endpoint code (causal-learn)
 _SEED_SPACE = 2**32  # draw independent per-environment seeds from [0, this)
+_WEIGHT_EPS = 0.3  # |weighted-adjacency entry| above this counts as an edge (DAGMA / LiNGAM)
+_DAGMA_L1 = 0.02  # DAGMA sparsity penalty
 
 
 def _intervention_environments(
@@ -136,6 +138,25 @@ def parse_adjacency(adjacency: FloatArray, names: tuple[str, ...]) -> BaselineRe
     return BaselineResult(frozenset(edges), frozenset(), frozenset(skeleton))
 
 
+def parse_weighted_adjacency(
+    matrix: FloatArray, names: tuple[str, ...], threshold: float
+) -> BaselineResult:
+    """Parse a weighted adjacency where ``matrix[i][j]`` is the ``i -> j`` weight (pure).
+
+    For continuous-optimization / coefficient-estimating methods (DAGMA, LiNGAM); an entry above
+    ``threshold`` in magnitude is a directed edge. These assume causal sufficiency, so they declare
+    no bidirected (confounded) edges.
+    """
+    edges: set[tuple[str, str]] = set()
+    skeleton: set[frozenset[str]] = set()
+    for i in range(len(names)):
+        for j in range(len(names)):
+            if i != j and abs(float(matrix[i][j])) > threshold:
+                edges.add((names[i], names[j]))
+                skeleton.add(frozenset((names[i], names[j])))
+    return BaselineResult(frozenset(edges), frozenset(), frozenset(skeleton))
+
+
 class _CausalLearnDiscoverer:
     """Shared base for the ``causal-learn`` methods (PC/GES/FCI).
 
@@ -227,10 +248,67 @@ class GiesDiscoverer:
         return parse_adjacency(np.asarray(adjacency), substrate.variables)
 
 
+class DagmaDiscoverer:
+    """DAGMA (Bello et al., NeurIPS 2022) — continuous-optimization, observational, sufficiency.
+
+    A modern NOTEARS-successor that learns a weighted adjacency by acyclicity-constrained
+    optimization. Like the other sufficiency methods it has no latent-variable model, so it should
+    keep a hidden-confounded pair as a causal edge.
+    """
+
+    def __init__(self, n: int = _N, threshold: float = _WEIGHT_EPS) -> None:
+        """Store the sample size and the edge-weight threshold."""
+        self._n = n
+        self._threshold = threshold
+
+    def recover(self, substrate: Substrate, *, seed: int) -> Edges:  # pragma: no cover - live run
+        """Return directed causal claims (Discoverer Protocol)."""
+        return self.detail(substrate, seed=seed).edges
+
+    def detail(self, substrate: Substrate, *, seed: int) -> BaselineResult:  # pragma: no cover
+        """Fit DAGMA on an observational sample and threshold its weighted adjacency."""
+        from dagma.linear import DagmaLinear  # noqa: PLC0415
+
+        sample = substrate.sample(self._n, seed=seed)
+        weights = DagmaLinear(loss_type="l2").fit(sample.data, lambda1=_DAGMA_L1)
+        return parse_weighted_adjacency(np.asarray(weights), substrate.variables, self._threshold)
+
+
+class DirectLingamDiscoverer:
+    """DirectLiNGAM (Shimizu et al.) — observational; assumes sufficiency AND non-Gaussian noise.
+
+    Included as a second sufficiency baseline. Our worlds are linear-*Gaussian*, which violates
+    LiNGAM's non-Gaussianity assumption, so its skeleton accuracy is expected to suffer — yet,
+    lacking a latent model, it still cannot tell a hidden-confounded pair from a causal edge.
+    """
+
+    def __init__(self, n: int = _N, threshold: float = _WEIGHT_EPS) -> None:
+        """Store the sample size and the edge-weight threshold."""
+        self._n = n
+        self._threshold = threshold
+
+    def recover(self, substrate: Substrate, *, seed: int) -> Edges:  # pragma: no cover - live run
+        """Return directed causal claims (Discoverer Protocol)."""
+        return self.detail(substrate, seed=seed).edges
+
+    def detail(self, substrate: Substrate, *, seed: int) -> BaselineResult:  # pragma: no cover
+        """Fit DirectLiNGAM and parse its coefficient matrix (transposed: it stores ``j -> i``)."""
+        from lingam import DirectLiNGAM  # noqa: PLC0415
+
+        sample = substrate.sample(self._n, seed=seed)
+        model = DirectLiNGAM(random_state=seed)
+        model.fit(sample.data)
+        # adjacency_matrix_[i][j] is the effect of j on i; transpose so [i][j] means i -> j.
+        coefficients = np.asarray(model.adjacency_matrix_).T
+        return parse_weighted_adjacency(coefficients, substrate.variables, self._threshold)
+
+
 BASELINES: dict[str, type] = {
     "pc": PcDiscoverer,
     "ges": GesDiscoverer,
     "fci": FciDiscoverer,
     "gies": GiesDiscoverer,
+    "dagma": DagmaDiscoverer,
+    "directlingam": DirectLingamDiscoverer,
 }
 """Registry of baseline discoverers by name (each constructs with no required args)."""
