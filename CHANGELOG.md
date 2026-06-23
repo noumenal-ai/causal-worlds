@@ -3,6 +3,36 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.21.0] — 2026-06-23
+
+**Stage-2 control — the optimal-policy answer-key (the dual-track scope, realized).**
+
+The control track grades a *policy* against the *declared optimum*, just as discovery grades a method
+against the declared graph. Because the mechanisms are known, the best the levers can do is a
+deterministic function of them — correct-by-construction, so the "magnitude problem" dissolves
+([scope §1a](docs/scope.md)).
+
+### Added — `control` module
+- **`ControlObjective`** + **`default_objective`** — a linear-quadratic problem: maximise
+  `E[outcome | do(u)] - cost/2·||u||²` over the controllable levers.
+- **`lever_effects`** / **`optimal_policy`** — the answer-key: each lever's total effect on the outcome
+  is the path-sum `(I-B)⁻¹[outcome, lever]` (levers intervened → rows cut), **marginalised over
+  regimes**; the LQ optimum decouples to `u*_i = effect_i / cost`.
+- **`expected_reward`** / **`grade_control`** / **`grade_controller`** — score a policy (or a pluggable
+  `Controller`) by **regret** against the optimum, on the **unstandardized** world (`control_substrate`
+  — iSCM centring would erase the outcome's response, so control uses raw magnitudes).
+- **`Controller` Protocol** — a control test-taker sets levers from the substrate + objective, never
+  seeing the mechanisms.
+
+### Validated
+- On a chain world the path-sum effect, closed-form optimum, and ~0 regret all check out; a
+  do-nothing policy has regret ≈ the optimum's worth.
+- **Thesis seed**: a regime sign-flipped lever has **marginal effect 0** — useless to a regime-blind
+  policy. That's exactly what the next step (regret-under-perturbation, regime-aware vs static) will
+  exploit. 128 tests, 95% coverage.
+
+[0.21.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.21.0
+
 ## [0.20.0] — 2026-06-23
 
 **Broaden the baselines — DAGMA + DirectLiNGAM (more witnesses for the identifiability finding).**

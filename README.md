@@ -71,6 +71,24 @@ print(grade_spec(worlds.get("coffee"), MyDiscoverer()))
 
 Or from the CLI on a persisted world: `causal-worlds score <bundle> --discoverer your_pkg:YourClass`.
 
+## Benchmark a controller (Stage 2 — control)
+
+The same worlds are a **control** benchmark: pick lever values to maximise an objective. Because the
+mechanisms are declared, the best the levers can do is computable — a *by-construction optimal policy*
+([scope §1a](docs/scope.md)) — so a policy is graded by **regret** against it, no external data needed.
+
+```python
+from causal_worlds import default_objective, grade_control, optimal_policy, worlds
+
+spec = worlds.get("coffee")
+objective = default_objective(spec)            # controllables raise the outcome KPI, quadratic cost
+report = grade_control(spec, objective, {"price": 0.0})   # your policy here
+print(report.regret, report.optimal_policy)    # regret vs the declared optimum (0 = optimal play)
+```
+
+A pluggable `Controller` (one method, `control(substrate, objective, *, seed) -> {lever: value}`,
+which may `do()`-experiment on the world but never sees the mechanisms) is graded by `grade_controller`.
+
 ## Author a world from a description (needs `[llm]` + keys)
 
 Set `ANTHROPIC_API_KEY` and `GEMINI_API_KEY` (see [`.env.example`](.env.example); the CLI auto-loads a
@@ -187,10 +205,11 @@ crossover, a structural-difficulty axis, a 35-world benchmark, **temporal worlds
 autoregression — see the built-in `supply`), and **time-series grading** (PCMCI+, LPCMCI, VARLiNGAM,
 Granger — `grade_temporal_spec`), **authoring temporal worlds** (an LLM-authored lagged world,
 admitted through a PCMCI+ temporal gate), and **conversational elicitation** (`causal-worlds elicit`
-— a dialogue that builds a `WorldBrief` before authoring). Next: **tightening the anti-cliché gate**
-(the name-only baseline shows worlds are still guessable — #12), a **control track** (objective +
-optimal-policy answer-key + regret-under-perturbation — [scope §1a](docs/scope.md)), a **temporal
-benchmark *set*** (n>1), **a Gymnasium env**, and **scaling to 100+ worlds**. Tracked as
+— a dialogue that builds a `WorldBrief` before authoring). and the **control track** (Stage 2): a
+**by-construction optimal-policy answer-key** with regret scoring (`grade_control` — see [scope
+§1a](docs/scope.md)). Next: **regret-under-perturbation** (regime-aware vs static — the stay-optimal
+thesis) and a **Gymnasium env**; **tightening the anti-cliché gate** at scale (#12); a **temporal
+benchmark *set*** (n>1); and **scaling to 100+ worlds**. Tracked as
 [issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection

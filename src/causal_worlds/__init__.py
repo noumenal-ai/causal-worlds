@@ -24,6 +24,16 @@ from causal_worlds.bench import grade_bundle, grade_spec, grade_temporal_spec
 from causal_worlds.brief import WorldBrief, is_complete, missing_fields, render
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
+from causal_worlds.control import (
+    ControlObjective,
+    ControlReport,
+    control_substrate,
+    default_objective,
+    grade_control,
+    grade_controller,
+    lever_effects,
+    optimal_policy,
+)
 from causal_worlds.controls import (
     R2SortnregressDiscoverer,
     SortnregressDiscoverer,
@@ -58,6 +68,7 @@ from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
 from causal_worlds.obs import LangfuseTracer, NullTracer, Tracer, build_langfuse_tracer
 from causal_worlds.protocols import (
     Author,
+    Controller,
     Discoverer,
     Edges,
     Elicitor,
@@ -104,6 +115,9 @@ __all__ = [
     "CausalWorldsError",
     "ClaudeElicitor",
     "Container",
+    "ControlObjective",
+    "ControlReport",
+    "Controller",
     "CyclicGraphError",
     "DagmaDiscoverer",
     "DanglingReferenceError",
@@ -164,17 +178,23 @@ __all__ = [
     "build_langfuse_tracer",
     "build_substrate",
     "check_faithfulness",
+    "control_substrate",
+    "default_objective",
     "directed_shd",
     "f1",
     "force_ready",
     "generate",
     "grade_bundle",
+    "grade_control",
+    "grade_controller",
     "grade_spec",
     "grade_temporal_spec",
     "is_complete",
     "is_nontrivial",
+    "lever_effects",
     "load_bundle",
     "missing_fields",
+    "optimal_policy",
     "pooled_interventional_sample",
     "population_covariance",
     "r2sortability",

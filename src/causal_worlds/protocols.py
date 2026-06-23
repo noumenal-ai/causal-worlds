@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
     from causal_worlds.brief import WorldBrief
+    from causal_worlds.control import ControlObjective
     from causal_worlds.sample import FloatArray, Sample
     from causal_worlds.schema import WorldSpec
 
@@ -108,4 +109,19 @@ class Gate(Protocol):
 
     def check(self, substrate: Substrate) -> bool:
         """Return ``True`` if the world passes this gate."""
+        ...
+
+
+@runtime_checkable
+class Controller(Protocol):
+    """A control test-taker — sets lever values to maximise an objective, acting on the world only.
+
+    It sees the (raw) substrate (it may sample and ``do()``-experiment) and the objective, but NOT
+    the spec — the mechanisms are the answer. Graded by regret against the declared optimum.
+    """
+
+    def control(
+        self, substrate: Substrate, objective: ControlObjective, *, seed: int
+    ) -> Mapping[str, float]:
+        """Return the lever values to play for ``objective`` on ``substrate``."""
         ...
