@@ -9,10 +9,10 @@ from pathlib import Path
 
 from causal_worlds.artifact import load_bundle
 from causal_worlds.discover import InterventionalCiDiscoverer
-from causal_worlds.evaluation import Report, score
-from causal_worlds.protocols import Discoverer
+from causal_worlds.evaluation import Report, TemporalReport, score, temporal_score
+from causal_worlds.protocols import Discoverer, TemporalDiscoverer
 from causal_worlds.sample import build_substrate
-from causal_worlds.schema import WorldSpec, answer_key
+from causal_worlds.schema import WorldSpec, answer_key, temporal_answer_key
 
 
 def grade_spec(spec: WorldSpec, discoverer: Discoverer | None = None, *, seed: int = 0) -> Report:
@@ -36,3 +36,20 @@ def grade_bundle(
 ) -> Report:
     """Grade a discoverer on a persisted world bundle (see :func:`grade_spec`)."""
     return grade_spec(load_bundle(bundle_dir).spec, discoverer, seed=seed)
+
+
+def grade_temporal_spec(
+    spec: WorldSpec, discoverer: TemporalDiscoverer, *, seed: int = 0
+) -> TemporalReport:
+    """Grade a time-series discoverer on a (temporal) spec against its lagged answer-key.
+
+    Args:
+        spec: The temporal world to grade against.
+        discoverer: The time-series method under test (recovers ``(src, dst, lag)`` edges).
+        seed: Seeds the discoverer's sampling.
+
+    Returns:
+        The :class:`TemporalReport` (temporal SHD + F1 over lagged edges).
+    """
+    recovered = discoverer.recover_temporal(build_substrate(spec), seed=seed)
+    return temporal_score(recovered, temporal_answer_key(spec))

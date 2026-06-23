@@ -3,6 +3,28 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] — 2026-06-23
+
+**Temporal grading.** Time-series discovery can now be benchmarked against the lagged ground truth.
+
+### Added
+- **Temporal scoring** (`evaluation`): `temporal_score` → `TemporalReport` (temporal SHD + F1 over
+  `(src, dst, lag)` edges, with lag-0 reversals handled).
+- **`TemporalDiscoverer`** protocol + **`grade_temporal_spec`** — grade any TS method against a
+  world's `temporal_answer_key`.
+- **TS baselines** (`temporal_baselines`, the `temporal` extra): PCMCI+ / LPCMCI (tigramite),
+  VARLiNGAM (lingam), Granger (statsmodels) — behind adapters, lazy-imported, with pure tested parsers.
+- **Temporal crossover eval** (`evals/temporal-crossover`) on the `supply` world.
+
+### Findings (n=1, honest)
+- The grading stack is validated: **PCMCI+ recovers `supply`'s lagged structure exactly** (temporal
+  SHD 0, F1 1.0). The hidden-confounder trap is **method-specific** temporally — only VARLiNGAM keeps
+  the spurious `leadtime~cost` edge; PCMCI+/LPCMCI/Granger don't. Unlike the cross-sectional crossover,
+  the TS toolbox does not *uniformly* fail on this single world — a temporal benchmark *set* is needed
+  to characterize it (next).
+
+[0.8.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.8.0
+
 ## [0.7.0] — 2026-06-23
 
 **Temporal worlds (foundation).** Worlds can now carry *time* — lagged edges and autoregression —

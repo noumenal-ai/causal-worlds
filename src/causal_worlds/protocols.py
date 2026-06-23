@@ -20,6 +20,9 @@ if TYPE_CHECKING:
 Edges = frozenset[tuple[str, str]]
 """A set of directed edges ``(src, dst)`` over variable names."""
 
+TemporalEdges = frozenset[tuple[str, str, int]]
+"""Directed temporal edges ``(src, dst, lag)``; lag 0 is contemporaneous, >= 1 is lagged."""
+
 
 @runtime_checkable
 class Author(Protocol):
@@ -65,6 +68,15 @@ class Discoverer(Protocol):
 
     def recover(self, substrate: Substrate, *, seed: int) -> Edges:
         """Recover directed edges, driving its own observational + interventional sampling."""
+        ...
+
+
+@runtime_checkable
+class TemporalDiscoverer(Protocol):
+    """A time-series causal-discovery method — recovers lagged edges from temporal data."""
+
+    def recover_temporal(self, substrate: Substrate, *, seed: int) -> TemporalEdges:
+        """Recover directed lagged edges ``(src, dst, lag)`` from the substrate's time-series."""
         ...
 
 

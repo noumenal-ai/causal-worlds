@@ -36,6 +36,9 @@ discover = ["causal-learn>=0.1.4", "gies>=0.0.1"]
 # instructor wraps the provider SDKs; anthropic = Claude author, google-genai = Gemini judge.
 # instructor[google-genai] pulls the genai SDK + jsonref (needed for Gemini structured output).
 llm = ["instructor[google-genai]>=1.0", "anthropic>=0.40"]
+# Time-series discovery baselines for temporal worlds (PCMCI+/LPCMCI, VARLiNGAM, Granger).
+# tigramite needs joblib (an undeclared runtime dep); statsmodels provides Granger.
+temporal = ["tigramite>=5.2", "joblib>=1.3", "lingam>=1.8", "statsmodels>=0.14"]
 # Observability/eval: Langfuse v3+ is OpenTelemetry-based.
 observability = ["langfuse>=3.0"]
 
@@ -108,7 +111,16 @@ plugins = ["pydantic.mypy"]
 
 # Optional extras (LLM providers + the discovery stack); keyless CI typechecks src without them.
 [[tool.mypy.overrides]]
-module = ["instructor.*", "anthropic.*", "google.*", "causallearn.*", "gies.*"]
+module = [
+    "instructor.*",
+    "anthropic.*",
+    "google.*",
+    "causallearn.*",
+    "gies.*",
+    "tigramite.*",
+    "lingam.*",
+    "statsmodels.*",
+]
 ignore_missing_imports = true
 
 # ----------------------------------------------------------------------------

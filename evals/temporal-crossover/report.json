@@ -1,0 +1,47 @@
+{
+  "eval": "temporal-crossover",
+  "world": "supply",
+  "n": 2000,
+  "seed": 7,
+  "n_truth_lagged_edges": 7,
+  "latent_naive": [
+    "pcmci+",
+    "varlingam",
+    "granger"
+  ],
+  "latent_aware": [
+    "lpcmci"
+  ],
+  "methods": {
+    "pcmci+": {
+      "temporal_shd": 0,
+      "temporal_f1": 1.0,
+      "n_recovered": 7,
+      "confounded_kept_as_causal": false
+    },
+    "lpcmci": {
+      "temporal_shd": 3,
+      "temporal_f1": 0.727,
+      "n_recovered": 4,
+      "confounded_kept_as_causal": false
+    },
+    "varlingam": {
+      "temporal_shd": 7,
+      "temporal_f1": 0.6,
+      "n_recovered": 13,
+      "confounded_kept_as_causal": true
+    },
+    "granger": {
+      "temporal_shd": 18,
+      "temporal_f1": 0.182,
+      "n_recovered": 15,
+      "confounded_kept_as_causal": false
+    }
+  },
+  "verdict": {
+    "grading_validated": "PCMCI+ recovers supply's lagged structure exactly (temporal SHD 0, F1 1.0) \u2014 confirming the lagged answer-key + temporal scoring are correct end-to-end.",
+    "confounder_trap_is_method_specific": "Unlike the cross-sectional crossover (where the whole standard toolbox falls for the hidden confounder), here only VARLiNGAM keeps the spurious leadtime~cost edge; PCMCI+, LPCMCI, and Granger do not. PCMCI+'s momentary-CI approach plus the autoregressive structure evidently screens off the latent here.",
+    "honest_caveat": "This is n=1 (one temporal world). The cross-sectional crossover earned its claim at n=35; the temporal claim needs a temporal benchmark SET. Next (v0.9): teach the author to emit lagged worlds + temporal gates, then scale + re-run this crossover.",
+    "granger_note": "Granger over-recovers spurious lagged links (F1 0.18) \u2014 expected; it tests predictive, not structural, causality."
+  }
+}

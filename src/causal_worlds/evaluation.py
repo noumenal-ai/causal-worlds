@@ -9,7 +9,7 @@ The module is named ``evaluation`` rather than ``eval`` to avoid shadowing the b
 
 from dataclasses import dataclass
 
-from causal_worlds.protocols import Edges
+from causal_worlds.protocols import Edges, TemporalEdges
 from causal_worlds.schema import AnswerKey
 
 
@@ -70,4 +70,54 @@ def score(recovered: Edges, key: AnswerKey) -> Report:
         n_truth=len(key.edges),
         n_recovered=len(recovered),
         confounded_reported=confounded_reported,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class TemporalReport:
+    """The outcome of grading recovered lagged edges against the temporal answer-key."""
+
+    temporal_shd: int
+    temporal_f1: float
+    n_truth: int
+    n_recovered: int
+
+
+def _reversal(edge: tuple[str, str, int]) -> tuple[str, str, int] | None:
+    """The reversed edge — only meaningful at lag 0 (a lagged edge's direction is fixed by time)."""
+    src, dst, lag = edge
+    return (dst, src, lag) if lag == 0 else None
+
+
+def temporal_directed_shd(recovered: TemporalEdges, truth: TemporalEdges) -> int:
+    """Directed SHD over ``(src, dst, lag)`` edges: missing + extra + reversed (lag-0 reversals)."""
+    missing = sum(1 for e in truth if e not in recovered and _reversal(e) not in recovered)
+    extra = sum(1 for e in recovered if e not in truth and _reversal(e) not in truth)
+    flipped = sum(
+        1
+        for e in recovered
+        if e not in truth and _reversal(e) is not None and _reversal(e) in truth
+    )
+    return missing + extra + flipped
+
+
+def temporal_f1(recovered: TemporalEdges, truth: TemporalEdges) -> float:
+    """F1 over exact ``(src, dst, lag)`` triples."""
+    if not truth and not recovered:
+        return 1.0
+    hits = len(recovered & truth)
+    if hits == 0:
+        return 0.0
+    precision = hits / len(recovered)
+    recall = hits / len(truth)
+    return 2 * precision * recall / (precision + recall)
+
+
+def temporal_score(recovered: TemporalEdges, truth: TemporalEdges) -> TemporalReport:
+    """Grade recovered lagged edges against the temporal answer-key."""
+    return TemporalReport(
+        temporal_shd=temporal_directed_shd(recovered, truth),
+        temporal_f1=temporal_f1(recovered, truth),
+        n_truth=len(truth),
+        n_recovered=len(recovered),
     )
