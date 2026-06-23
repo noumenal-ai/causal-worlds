@@ -74,9 +74,10 @@ packages = ["src/causal_worlds"]
 [tool.ruff]
 line-length = 100
 target-version = "py313"
-# Research spikes + eval harnesses are exploratory, NOT held to production lint (docs/engineering.md
-# §Research). Their *reports* (evals/*/report.json, README.md) are the shipped, reproducible evidence.
-extend-exclude = ["spikes", "experiments", "evals", "examples"]
+# Research spikes + eval harnesses + figure scripts are exploratory, NOT held to production lint
+# (docs/engineering.md §Research). Their *outputs* (evals/*/report.json, blog/figures/*.png, README)
+# are the shipped, reproducible evidence — re-run to regenerate.
+extend-exclude = ["spikes", "experiments", "evals", "examples", "blog"]
 
 [tool.ruff.lint]
 select = ["ALL"]
