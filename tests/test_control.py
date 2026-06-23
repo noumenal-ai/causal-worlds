@@ -9,6 +9,8 @@ from causal_worlds.control import (
     grade_controller,
     lever_effects,
     optimal_policy,
+    regime_optimal_policy,
+    regret_under_perturbation,
 )
 from causal_worlds.protocols import Controller, Substrate
 from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
@@ -108,3 +110,31 @@ def test_grade_controller_runs_a_pluggable_controller():
     assert isinstance(_FixedController({"price": 1.0}), Controller)
     report = grade_controller(spec, obj, _FixedController({"price": 1.0}), seed=7)
     assert report.regret == pytest.approx(0.0, abs=0.05)  # it played the optimum
+
+
+def test_regime_aware_optima_differ_by_regime():
+    spec = _sign_flip()
+    obj = default_objective(spec)
+    assert regime_optimal_policy(spec, obj, set())["price"] == pytest.approx(1.0)  # R off: +1
+    assert regime_optimal_policy(spec, obj, {"R"})["price"] == pytest.approx(-1.0)  # R on: -1
+
+
+def test_regime_blind_policy_suffers_under_perturbation():
+    # The stay-optimal thesis: the regime-blind optimum (price=0 here) is fine on average but loses
+    # ~0.5 reward in EACH regime, while a regime-aware controller would score 0 regret.
+    spec = _sign_flip()
+    obj = default_objective(spec)
+    static = optimal_policy(spec, obj)  # {"price": 0.0}
+    report = regret_under_perturbation(spec, obj, static, seed=7)
+    assert report.worst_regret > 0.4
+    assert set(report.per_regime) == {"baseline", "R"}
+    assert all(r > 0.4 for r in report.per_regime.values())
+
+
+def test_regime_aware_policy_has_no_regret_in_its_regime():
+    # Playing the matching per-regime optimum yields ~0 regret under that regime (the upper bound).
+    spec = _sign_flip()
+    obj = default_objective(spec)
+    aware_on = regime_optimal_policy(spec, obj, {"R"})
+    report = regret_under_perturbation(spec, obj, aware_on, seed=7)
+    assert report.per_regime["R"] == pytest.approx(0.0, abs=0.05)

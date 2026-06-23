@@ -208,11 +208,11 @@ autoregression — see the built-in `supply`), and **time-series grading** (PCMC
 Granger — `grade_temporal_spec`), **authoring temporal worlds** (an LLM-authored lagged world,
 admitted through a PCMCI+ temporal gate), and **conversational elicitation** (`causal-worlds elicit`
 — a dialogue that builds a `WorldBrief` before authoring). and the **control track** (Stage 2): a
-**by-construction optimal-policy answer-key** with regret scoring (`grade_control` — see [scope
-§1a](docs/scope.md)). Next: **regret-under-perturbation** (regime-aware vs static — the stay-optimal
-thesis) and a **Gymnasium env**; **tightening the anti-cliché gate** at scale (#12); a **temporal
-benchmark *set*** (n>1); and **scaling to 100+ worlds**. Tracked as
-[issues](https://github.com/noumenal-ai/causal-worlds/issues).
+**by-construction optimal-policy answer-key** with regret scoring *and* **regret-under-perturbation**
+(`regret_under_perturbation` — a regime-blind policy collapses when a sign-flipped regime is active,
+the stay-optimal thesis; see [scope §1a](docs/scope.md)). Next: a **Gymnasium env** wrapping the
+control loop; a **roles-only anti-cliché gate** (#13); **nonlinearity** (#10); a **temporal benchmark
+*set*** (n>1). Tracked as [issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection
 

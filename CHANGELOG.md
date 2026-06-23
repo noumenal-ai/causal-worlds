@@ -3,6 +3,30 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.23.0] — 2026-06-23
+
+**Stage-2 control: regret-under-perturbation — the stay-optimal thesis, measured.**
+
+A perturbation is a **regime shift**. A regime-blind policy can be optimal on average yet collapse
+when a sign-flipped regime is active; a regime-aware controller stays optimal. This is the World
+Models thesis, and the v0.6 worlds (with their regime sign-flips) are built to exhibit it.
+
+### Added
+- **`regime_optimal_policy(spec, objective, regime_on)`** — the optimum when the regime is known
+  (that branch's effects only), and **`regime_configs`** (every regime setting).
+- **`regret_under_perturbation(spec, objective, policy, *, seed) -> PerturbationReport`** — a fixed
+  policy's regret vs the regime-aware optimum under *every* regime shift (worst + mean + per-regime).
+- `expected_reward` gained a `regime=` override (pin regime switches via `do`, excluded from the
+  lever penalty).
+
+### Validated
+- On a sign-flip world the regime-blind optimum is `price=0` (its marginal effect cancels), but the
+  regime-aware optima are `+1` / `−1` — so the blind policy loses **~0.5 reward in *every* regime**
+  (worst-regret 0.5), while playing the matching per-regime optimum has ~0 regret. The stay-optimal
+  gap is real and computable. 131 tests, 95% coverage. Advances #11.
+
+[0.23.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.23.0
+
 ## [0.22.0] — 2026-06-23
 
 **`benchmark/v0.6` — the hardened set, and the #12 anti-cliché fix proven at scale.**

@@ -101,44 +101,106 @@ def _branch_coefficients(
     return coeff
 
 
+def _config_effects(
+    spec: WorldSpec, objective: ControlObjective, regime_on: set[str]
+) -> dict[str, float]:
+    """Total effect of each lever on the outcome for one fixed regime configuration (path-sum)."""
+    names = tuple(v.name for v in spec.variables)
+    index = {name: i for i, name in enumerate(names)}
+    out_i = index[objective.outcome]
+    coeff = _branch_coefficients(spec, regime_on, index, set(objective.levers))
+    influence = np.linalg.inv(np.eye(len(names)) - coeff)
+    return {lever: float(influence[out_i, index[lever]]) for lever in objective.levers}
+
+
+def regime_configs(spec: WorldSpec) -> list[set[str]]:
+    """Every regime switch setting (the ``2^k`` subsets of the regime variables that are 'on')."""
+    regimes = _regime_vars(spec)
+    return [
+        {name for name, flag in zip(regimes, combo, strict=True) if flag}
+        for combo in itertools.product((False, True), repeat=len(regimes))
+    ]
+
+
 def lever_effects(spec: WorldSpec, objective: ControlObjective) -> dict[str, float]:
     """Total effect of each lever on the outcome, marginalised over regimes (the answer-key core).
 
-    For each regime configuration the effect is the path-sum ``(I - B)⁻¹[outcome, lever]`` with the
-    levers intervened (rows cut); we average over the ``2^k`` equally-likely regime switches.
+    Each regime configuration's effect is the path-sum ``(I - B)⁻¹[outcome, lever]`` with the levers
+    intervened (rows cut); we average over the ``2^k`` equally-likely regime switches.
     """
-    names = tuple(v.name for v in spec.variables)
-    index = {name: i for i, name in enumerate(names)}
-    levers = set(objective.levers)
-    regimes = _regime_vars(spec)
-    out_i = index[objective.outcome]
-
-    totals = dict.fromkeys(objective.levers, 0.0)
-    configs = list(itertools.product((False, True), repeat=len(regimes)))
-    for config in configs:
-        on = {name for name, flag in zip(regimes, config, strict=True) if flag}
-        coeff = _branch_coefficients(spec, on, index, levers)
-        influence = np.linalg.inv(np.eye(len(names)) - coeff)
-        for lever in objective.levers:
-            totals[lever] += float(influence[out_i, index[lever]])
-    return {lever: total / len(configs) for lever, total in totals.items()}
+    per = [_config_effects(spec, objective, on) for on in regime_configs(spec)]
+    return {lever: sum(e[lever] for e in per) / len(per) for lever in objective.levers}
 
 
 def optimal_policy(spec: WorldSpec, objective: ControlObjective) -> dict[str, float]:
-    """The reward-maximising lever values (closed-form LQ optimum ``u*_i = effect_i / cost``)."""
+    """The (regime-blind) reward-maximising levers — LQ optimum ``u*_i = effect_i / cost``."""
     effects = lever_effects(spec, objective)
     return {lever: effect / objective.cost for lever, effect in effects.items()}
 
 
+def regime_optimal_policy(
+    spec: WorldSpec, objective: ControlObjective, regime_on: set[str]
+) -> dict[str, float]:
+    """The optimum when the regime is known to be ``regime_on`` (that branch's effects only)."""
+    effects = _config_effects(spec, objective, regime_on)
+    return {lever: effect / objective.cost for lever, effect in effects.items()}
+
+
 def expected_reward(
-    substrate: Substrate, objective: ControlObjective, policy: Mapping[str, float], *, seed: int
+    substrate: Substrate,
+    objective: ControlObjective,
+    policy: Mapping[str, float],
+    *,
+    seed: int,
+    regime: Mapping[str, float] | None = None,
 ) -> float:
-    """Score a policy on the (raw) world: ``mean(outcome | do(policy)) - cost/2 * ||u||²``."""
+    """Score a policy on the (raw) world: ``mean(outcome | do(policy)) - cost/2 * ||u||²``.
+
+    ``regime`` pins regime switches to fixed values (a perturbation) via ``do`` — the lever penalty
+    excludes them, as they are the environment's state, not the policy's cost.
+    """
     do = {lever: float(policy.get(lever, 0.0)) for lever in objective.levers}
+    penalty = 0.5 * objective.cost * sum(value**2 for value in do.values())
+    if regime:
+        do.update({name: float(value) for name, value in regime.items()})
     sample = substrate.sample(_REWARD_N, seed=seed, do=do)
     outcome = sample.data[:, substrate.variables.index(objective.outcome)].mean()
-    penalty = 0.5 * objective.cost * sum(value**2 for value in do.values())
     return float(outcome) - penalty
+
+
+@dataclass(frozen=True, slots=True)
+class PerturbationReport:
+    """How a fixed policy holds up as the regime shifts (the stay-optimal-under-perturbation test).
+
+    ``per_regime`` maps each regime setting to the policy's regret there (vs that regime's optimum);
+    ``worst_regret`` / ``mean_regret`` summarise across regimes. A regime-blind policy can be best
+    on average yet have large worst-case regret when a sign-flipped regime is active.
+    """
+
+    worst_regret: float
+    mean_regret: float
+    per_regime: dict[str, float]
+
+
+def regret_under_perturbation(
+    spec: WorldSpec, objective: ControlObjective, policy: Mapping[str, float], *, seed: int
+) -> PerturbationReport:
+    """Regret of a fixed ``policy`` against the regime-aware optimum, across every regime shift."""
+    substrate = control_substrate(spec)
+    regimes = _regime_vars(spec)
+    per_regime: dict[str, float] = {}
+    for on in regime_configs(spec):
+        pin = {name: (1.0 if name in on else 0.0) for name in regimes}
+        aware = regime_optimal_policy(spec, objective, on)
+        best = expected_reward(substrate, objective, aware, seed=seed, regime=pin)
+        got = expected_reward(substrate, objective, policy, seed=seed, regime=pin)
+        per_regime["+".join(sorted(on)) or "baseline"] = best - got
+    values = list(per_regime.values())
+    return PerturbationReport(
+        worst_regret=max(values, default=0.0),
+        mean_regret=sum(values) / len(values) if values else 0.0,
+        per_regime=per_regime,
+    )
 
 
 def grade_control(
