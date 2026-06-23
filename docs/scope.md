@@ -1,7 +1,8 @@
 # Scope — causal-worlds
 
-> **Status:** v0 draft, early. The "what and why" (and what's explicitly out). Architecture is in
-> [hld.md](hld.md); component detail in [lld.md](lld.md).
+> **Status:** v0 discovery track shipped; **control track now in scope** (§1a, updated 2026-06-23).
+> The "what and why" (and what's explicitly out). Architecture is in [hld.md](hld.md); component
+> detail in [lld.md](lld.md).
 
 ## 1. Problem & goal
 
@@ -24,28 +25,55 @@ hard problem (calibrate to reality) for another (author a world that is simultan
 non-trivial, *anti-cliché*, faithful-to-prose, and whose declared key matches the executable's behavior — with **no
 external signal** to tell us when we failed). The one place fiction is genuinely easier is the **pure-SCM path**,
 where the declared graph *is* the generative process, so the answer-key is **correct by construction** (the data
-cannot contradict the key). That is precisely why v0 (§1a) collapses to that path.
+cannot contradict the key). That is why the discovery track lives on that path — **and the same property extends to
+control**: because the mechanisms are *declared*, the optimal policy and counterfactual outcomes are *functions of
+known quantities*, so a **control answer-key is correct-by-construction too** (§1a). The SCM path serves both.
 
-## 1a. v0 focus — pick ONE payoff [DECIDED 2026-06-22, post-review]
+## 1a. Scope stages — discovery shipped, control next [UPDATED 2026-06-23, supersedes the 2026-06-22 "pick ONE" decision]
 
 This tool could serve four masters (discovery benchmark, control gym, describe-a-world amplifier, internal eval
-harness) with *conflicting* requirements. v0s die trying to serve all of them. **v0 = the causal-discovery
-benchmark, on the pure-SCM path, scoring structure recovery only.** Precisely: **causal-*structure* (directed-graph)
-recovery** — it does **not** score causal *effect magnitudes* or *counterfactuals* (those need principled magnitudes
-→ later). Name it a **structure-recovery benchmark, not a "full causal" one.** Rationale: it is the only payoff where
-the answer-key is the product, the key is correct-by-construction (§2 / #2), and **magnitudes don't bite** (structure
-scoring sees edges, not effect sizes — so the "magnitude-soft" property is fine here and *only* here).
+harness). The 2026-06-22 decision was to ship **one at a time** — and that *sequencing* discipline stands. What
+**no longer stands** is the claim that control is a fundamentally *later, harder* thing blocked by a "magnitude
+problem." It isn't. Both tracks live on the same pure-SCM path and share one correct-by-construction guarantee.
 
-**Explicitly deferred to later milestones (NOT v0):**
-- **Control gym / `do(x)` / counterfactuals** — needs *principled magnitudes* (the optimal policy and counterfactual
-  outcomes are functions of effect sizes); arbitrary magnitudes ⇒ an arbitrary control benchmark. A fixed fictional
-  gym is *internally* valid (its own ground truth) but not externally meaningful — a later, clearly-scoped thing.
-- **Describe-a-world amplifier** (delight-optimized) and the **conversational elicitation UX** (see lld §B2).
+**The reframe (why control is now in scope).** The 2026-06-22 note deferred control because "arbitrary magnitudes ⇒
+an arbitrary control benchmark — internally valid but not externally meaningful." That conflated two different
+bars. **External meaning was never our bar** — not for control, and *not for discovery either*. The discovery
+answer-key is correct relative to the *declared* world, not to reality (§1 — fiction-first, no fidelity
+requirement). The **identical** logic yields a control answer-key: given a declared SCM, a declared **objective**
+(reward over outcome variables), and a declared **action space** (controllable variables + admissible ranges), the
+**optimal policy and the counterfactual outcomes are deterministic functions of the *known* mechanisms** — so they
+are **correct-by-construction**, exactly like the graph. Arbitrary magnitudes no more make a control benchmark
+"arbitrary" than arbitrary edges make the discovery benchmark arbitrary; in both cases the world *is* its own
+ground truth. The magnitude problem dissolves.
+
+**Stage 1 — discovery benchmark (SHIPPED, on PyPI).** Causal-*structure* (directed-graph) recovery on the pure-SCM
+path: author → judge → gate → admit; grade a pluggable discoverer against the by-construction graph answer-key.
+Does **not** score effect magnitudes. This is the proven core (§7, hld §4/§4a).
+
+**Stage 2 — control benchmark (NOW IN SCOPE — the noumenal_agent eval tests *both* tracks).** The same admitted
+worlds, plus three declared additions per world — an **objective**, an **action space**, and a **perturbation
+model** (regime/distribution shifts; we already author regimes) — and two derived answer-keys computed offline from
+the known SCM:
+- a **ground-truth optimal policy** (closed-form for linear-Gaussian + quadratic cost; offline optimization over
+  the known mechanisms otherwise), and
+- a **counterfactual engine** (abduction → action → prediction on the known SCM) for counterfactual replay.
+
+The control **score** is **regret vs. the known optimum** and — the load-bearing one for the World Models thesis —
+**regret *under perturbation*** (does a policy *stay* near-optimal when the regime shifts?). That is precisely what
+noumenal_agent is built to do, so the control track is what makes the private eval test the agent's real
+differentiator, not just its discovery sub-skill. Stage 2 is **real build work** (objective/action-space authoring
+from prose; a tractable optimal-policy solver; the counterfactual engine; new gates) — but it is *engineering on a
+sound foundation*, not a blocked-on-philosophy "later thing."
+
+**Still deferred (genuinely later):**
+- **Describe-a-world amplifier** (delight-optimized) and the **conversational elicitation UX** (see lld §B2) —
+  product-experience work, orthogonal to the benchmark's soundness.
 - **Discrete-event substrate** — its answer-key is *projected* (not by-construction) and unverifiable in fiction
   (#2) → not a sound benchmark yet.
 
-Everything below describes the eventual full scope; the **v0 slice** is the SCM-path discovery benchmark + the
-validity layer (§7, hld §4/§4a).
+The **pure-SCM path now carries both Stage 1 and Stage 2**; the discrete-event substrate and the amplifier UX
+remain out until their soundness/scoping is resolved.
 
 ## 2. Who it's for / use cases
 
@@ -75,8 +103,13 @@ composing** these donors and filling the two genuinely-novel pieces (§7).
   horizon. Deterministic given a seed.
 - **Dataset:** the emitted multivariate time-series (+ an event trace for discrete-event worlds).
 - **Answer-key:** an open causal-world schema — variables (with roles: controllable / observable / disturbance /
-  outcome), a causal graph (edges with direction + lag), functional forms / mechanisms, and regimes.
-- **Manifest:** ties the three together; records the seed, the generating spec, and an **honesty label**
+  outcome), a causal graph (edges with direction + lag), functional forms / mechanisms, and regimes. *(Discovery
+  key — Stage 1.)*
+- **Control key (Stage 2):** a declared **objective** (reward over outcomes), an **action space** (controllable
+  variables + admissible ranges), a **perturbation model** (regime/distribution shifts), and the two quantities
+  *derived* from the known SCM — the **ground-truth optimal policy** and a **counterfactual engine** — all
+  correct-by-construction.
+- **Manifest:** ties everything together; records the seed, the generating spec, and an **honesty label**
   (fictional; not real-world advice).
 
 ## 5. In scope
@@ -85,7 +118,9 @@ composing** these donors and filling the two genuinely-novel pieces (§7).
 - A consistency / conformance layer that keeps the authored world honest **without calibration data**.
 - Two executable substrates (SCM-sampling and discrete-event), selected by world type — one shared IR.
 - Perturbation / intervention / counterfactual support.
-- A scoring harness that grades a pluggable, external causal-discovery agent against the answer-key.
+- A scoring harness that grades a pluggable, external agent against the answer-key — a **discovery** agent against
+  the graph key (Stage 1), and a **control** agent against the by-construction optimal policy via regret and
+  regret-under-perturbation (Stage 2).
 
 ## 6. Out of scope / non-goals
 
@@ -112,6 +147,14 @@ A generated world is admitted to the benchmark only if it passes **measured** ga
    rating against a checklist of the prose's claims), with a threshold; below it → re-author. *(Subjective
    "someone agrees" is explicitly replaced by this.)*
 
+**Control-track gates (Stage 2, added to the above for control worlds):**
+7. **Optimal policy is recoverable by construction** — the declared SCM + objective + action space yield a
+   computable optimum (closed-form or offline-solved), verified by a reference controller that achieves ~zero
+   regret against it. Worlds where the optimum is ill-defined or intractable are rejected.
+8. **Control is non-trivial & perturbation-sensitive (measured)** — a *static* baseline policy (ignore the regime)
+   must incur materially higher regret than the regime-aware optimum under the perturbation model; otherwise the
+   world doesn't actually test staying-optimal-under-shift → reject or sharpen the perturbation.
+
 ## 8. Open questions (the frontier — tracked in hld/lld)
 
 - **The AUTHOR step is STILL UNTESTED — it is build-task-0.** lld §0 spikes (#1–#2) validated the *test harness*
@@ -126,5 +169,11 @@ A generated world is admitted to the benchmark only if it passes **measured** ga
   piece no public tool does. **Noise is a first-class designed knob** (the learnability dial), not an afterthought.
 - **Cost / scale** — per-world LLM authoring + a re-authoring loop + per-world reference-discovery runs (the
   learnability gate) is real compute per world; "scale" is bounded by cost. Needs caching/batching/amortization.
-- *(Deferred with their milestones:)* temporal/regime authoring; the discrete-event substrate + topology→graph
-  projection; the control-gym magnitude problem; the conversational elicitation UX.
+- **Control track (Stage 2) — the new frontier:** the "magnitude problem" is *resolved in principle* (§1a: the
+  optimal policy is correct-by-construction from the known SCM), but its *execution* is open — (a) authoring a
+  coherent **objective + action space + perturbation model** from prose, gate-passing, anti-cliché (a degenerate
+  objective whose optimum is "do nothing" is the control analogue of a name-guessable graph); (b) keeping the
+  **optimal-policy solver tractable** for nonlinear/temporal worlds (closed-form only covers linear-Gaussian +
+  quadratic cost); (c) a **counterfactual engine** correct under regime switches. These are the Stage-2 build risks.
+- *(Deferred with their milestones:)* the discrete-event substrate + topology→graph projection; the
+  describe-a-world amplifier + conversational elicitation UX.
