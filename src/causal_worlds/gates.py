@@ -138,7 +138,7 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
         )
 
     if _is_temporal(spec):
-        return _temporal_gates(spec, substrate, temporal_discoverer, seed)
+        return _temporal_gates(spec, substrate, temporal_discoverer, seed, judge=judge, prose=prose)
 
     key = answer_key(spec)
     if not key.edges:
@@ -175,13 +175,22 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
     )
 
 
-def _temporal_gates(
+def _temporal_gates(  # noqa: PLR0913 — keyword-only judge/prose mirror run_gates' T4 inputs
     spec: WorldSpec,
     substrate: Substrate,
     temporal_discoverer: TemporalDiscoverer | None,
     seed: int,
+    *,
+    judge: Judge | None = None,
+    prose: str | None = None,
 ) -> GateReport:
-    """Temporal T3: admit iff a TS reference recovers the lagged structure above the F1 floor."""
+    """Temporal T3 (a TS reference recovers the lagged structure) + T4 anti-cliché when judged.
+
+    T4 runs on the **summary graph** (``answer_key`` collapses lags), so a temporal world is
+    admitted only if it is recoverable *and* not guessable from names/roles — the same anti-cliché
+    bar the cross-sectional path enforces. (Temporal grader-independent faithfulness is future work;
+    PCMCI+ recoverability is the temporal recoverability proxy here.)
+    """
     truth = temporal_answer_key(spec)
     if not truth:
         return GateReport(
@@ -189,14 +198,27 @@ def _temporal_gates(
         )
     grader = temporal_discoverer if temporal_discoverer is not None else PcmciPlusDiscoverer()
     report = temporal_score(grader.recover_temporal(substrate, seed=seed), truth)
-    admitted = report.temporal_f1 >= _TEMPORAL_F1_MIN
-    reason = (
-        "admitted"
-        if admitted
-        else f"T3 temporal structure not recoverable: F1 {report.temporal_f1:.2f}"
-    )
+    if report.temporal_f1 < _TEMPORAL_F1_MIN:
+        return GateReport(
+            admitted=False,
+            reason=f"T3 temporal structure not recoverable: F1 {report.temporal_f1:.2f}",
+            null_shd=0.0,
+            grade=None,
+            temporal_grade=report,
+        )
+    if judge is None or prose is None:
+        return GateReport(
+            admitted=True, reason="admitted", null_shd=0.0, grade=None, temporal_grade=report
+        )
+    admitted, reason, difficulty, faithfulness = _anti_cliche(spec, prose, judge, answer_key(spec))
     return GateReport(
-        admitted=admitted, reason=reason, null_shd=0.0, grade=None, temporal_grade=report
+        admitted=admitted,
+        reason=reason,
+        null_shd=0.0,
+        grade=None,
+        temporal_grade=report,
+        difficulty=difficulty,
+        faithfulness=faithfulness,
     )
 
 

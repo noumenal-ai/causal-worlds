@@ -1,8 +1,8 @@
 """Tests for the validity gate pipeline."""
 
-from causal_worlds import answer_key, worlds
+from causal_worlds import answer_key, temporal_answer_key, worlds
 from causal_worlds.discover import InterventionalCiDiscoverer
-from causal_worlds.fakes import FakeJudge
+from causal_worlds.fakes import FakeJudge, FakeTemporalDiscoverer
 from causal_worlds.gates import run_gates
 from causal_worlds.protocols import Edges, Substrate
 from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
@@ -100,6 +100,44 @@ def test_t4_rejects_an_unfaithful_spec():
 
 def test_ecommerce_admitted():
     assert run_gates(worlds.get("ecommerce"), discoverer=_FAST, seed=7).admitted
+
+
+def _temporal_world() -> WorldSpec:
+    """A lagged world: lever ->(lag1) mid -> kpi. Temporal, so it routes to the temporal gate."""
+    return WorldSpec(
+        variables=(
+            Variable("lever", Role.CONTROLLABLE),
+            Variable("mid", Role.OBSERVABLE),
+            Variable("kpi", Role.OUTCOME),
+        ),
+        mechanisms=(
+            Mechanism("mid", (Term("lever", 0.8, lag=1),)),
+            Mechanism("kpi", (Term("mid", 0.9),)),
+        ),
+    )
+
+
+def test_temporal_world_also_runs_anti_cliche():
+    # Temporal worlds must clear T4 too (the gap that could invalidate the name-dependence eval).
+    spec = _temporal_world()
+    recoverable = FakeTemporalDiscoverer(temporal_answer_key(spec))  # T3 passes (F1 1.0)
+    # cliché: a judge that recovers the summary graph from names -> rejected at T4.
+    cliche = run_gates(
+        spec,
+        temporal_discoverer=recoverable,
+        judge=FakeJudge(prior=answer_key(spec).edges),
+        prose="a lagged operation",
+        seed=7,
+    )
+    assert not cliche.admitted
+    assert "cliché" in cliche.reason
+    # anti-cliché: judge guesses nothing -> admitted, carrying both temporal_grade and difficulty.
+    clean = run_gates(
+        spec, temporal_discoverer=recoverable, judge=FakeJudge(), prose="a lagged operation", seed=7
+    )
+    assert clean.admitted
+    assert clean.temporal_grade is not None
+    assert clean.difficulty == 1.0
 
 
 def test_t4_rejects_a_role_cliche():

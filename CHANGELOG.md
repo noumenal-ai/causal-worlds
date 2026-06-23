@@ -3,6 +3,31 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.26.0] — 2026-06-23
+
+**Temporal worlds now clear the T4 anti-cliché gate too — closing the gap that could invalidate a
+name-dependence study on temporal data.**
+
+### Fixed
+- **Temporal worlds were admitted on recoverability alone.** `_temporal_gates` ran T3 (a TS reference
+  recovers the lagged structure above F1 `_TEMPORAL_F1_MIN`) but **skipped T4** — so a temporal world
+  whose graph is guessable from variable names/roles could still be admitted. Any name-dependence
+  measurement on such worlds would be confounded by the cliché the cross-sectional path already
+  rejects. Now, when a judge + prose are supplied, the temporal path runs the **same `_anti_cliche`
+  T4** (named / roles-only / name+role-blind certificate) on the **summary graph** (`answer_key`
+  collapses lags), carrying `difficulty` and `faithfulness` onto the `GateReport` alongside the
+  `temporal_grade`. A temporal world is admitted only if it is recoverable **and** not guessable.
+
+### Notes
+- Temporal *grader-independent* faithfulness (the closed-form `check_faithfulness` analogue for lagged
+  SCMs) remains future work; PCMCI+ recoverability is still the temporal recoverability proxy. The
+  anti-cliché bar, however, is now identical across both paths.
+- New test `test_temporal_world_also_runs_anti_cliche`: a lagged world (lever→(lag1)mid→kpi) is
+  rejected when a judge recovers its summary graph from names, and admitted (carrying `temporal_grade`
+  **and** `difficulty`) when it cannot. 136 tests, 95.6% coverage.
+
+[0.26.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.26.0
+
 ## [0.25.0] — 2026-06-23
 
 **`benchmark/v0.7` (role-gated companion) + generation resilience — and an honest read on roles.**
