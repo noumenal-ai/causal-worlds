@@ -19,10 +19,16 @@ class TermModel(BaseModel):
 
     parent: str = Field(description="Name of the parent variable that drives the target.")
     coeff: float = Field(description="Linear coefficient; sign encodes the direction of effect.")
+    lag: int = Field(
+        default=0,
+        ge=0,
+        description="Timesteps back the parent is read: 0 = contemporaneous, >=1 = a lagged edge "
+        "(a lagged self-reference is autoregression). Use 0 unless the world is temporal.",
+    )
 
     def to_term(self) -> Term:
         """Convert to the frozen core :class:`Term`."""
-        return Term(parent=self.parent, coeff=self.coeff)
+        return Term(parent=self.parent, coeff=self.coeff, lag=self.lag)
 
 
 class VariableModel(BaseModel):
@@ -111,11 +117,17 @@ class WorldSpecModel(BaseModel):
             mechanisms=[
                 MechanismModel(
                     target=mechanism.target,
-                    terms=[TermModel(parent=t.parent, coeff=t.coeff) for t in mechanism.terms],
+                    terms=[
+                        TermModel(parent=t.parent, coeff=t.coeff, lag=t.lag)
+                        for t in mechanism.terms
+                    ],
                     noise_scale=mechanism.noise_scale,
                     regime=mechanism.regime,
                     regime_terms=(
-                        [TermModel(parent=t.parent, coeff=t.coeff) for t in mechanism.regime_terms]
+                        [
+                            TermModel(parent=t.parent, coeff=t.coeff, lag=t.lag)
+                            for t in mechanism.regime_terms
+                        ]
                         if mechanism.regime_terms is not None
                         else None
                     ),

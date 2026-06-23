@@ -16,6 +16,15 @@ def test_spec_round_trips_through_json():
         assert spec_from_json(spec_to_json(spec)) == spec
 
 
+def test_temporal_world_round_trips_with_lags():
+    # the temporal `supply` world carries lagged terms — they must survive serialization
+    spec = worlds.get("supply")
+    restored = spec_from_json(spec_to_json(spec))
+    assert restored == spec
+    lags = {t.lag for m in restored.mechanisms for t in m.terms}
+    assert lags >= {0, 1}  # both contemporaneous and lagged terms preserved
+
+
 def test_no_regime_serializes_with_null_regime_terms():
     # ecommerce has no regime, so regime_terms must round-trip as None, not ().
     spec = worlds.get("ecommerce")

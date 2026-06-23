@@ -3,6 +3,16 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.8.1] — 2026-06-23
+
+### Fixed
+- **Temporal worlds now round-trip through persistence.** The pydantic boundary `TermModel` carried
+  no `lag`, so serializing a temporal spec (`spec_to_json` / `save_bundle`) silently dropped the lags.
+  `TermModel.lag` is added (and threaded through `to_term`/`from_spec`), so lagged worlds persist
+  faithfully — and the LLM author can now express lagged edges.
+
+[0.8.1]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.8.1
+
 ## [0.8.0] — 2026-06-23
 
 **Temporal grading.** Time-series discovery can now be benchmarked against the lagged ground truth.
