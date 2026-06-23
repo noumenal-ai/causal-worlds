@@ -27,24 +27,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 2.3333333333333335,
+          "skeleton_shd_mean": 3.3333333333333335,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7797619047619048,
+          "directed_f1_mean": 0.6428571428571429,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 2.3333333333333335,
+          "skeleton_shd_mean": 3.3333333333333335,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8095238095238095,
+          "directed_f1_mean": 0.6666666666666667,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3.3333333333333335,
+          "skeleton_shd_mean": 1.3333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8280701754385965,
+          "directed_f1_mean": 0.9138888888888889,
           "confounded_kept_mean": 0
         }
       }
@@ -60,24 +60,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 5.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5937392500859993,
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.5882352941176471,
           "confounded_kept_mean": 2
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 5.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6143790849673203,
-          "confounded_kept_mean": 1.6666666666666667
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.5882352941176471,
+          "confounded_kept_mean": 2
         },
         "gies": {
-          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_mean": 5.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7608695652173912,
+          "directed_f1_mean": 0.7717391304347826,
           "confounded_kept_mean": 2
         }
       }
@@ -87,30 +87,30 @@
       "n_confounded": 0,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 2,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.875,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 5,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.3157894736842105,
+          "directed_f1_mean": 0.9411764705882353,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.28571428571428575,
+          "directed_f1_mean": 0.9411764705882353,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 6,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.7282765543635109,
+          "skeleton_shd_mean": 6.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7167325428194994,
           "confounded_kept_mean": 0
         }
       }
@@ -126,24 +126,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.5,
-          "confounded_kept_mean": 1
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.47678018575851394,
+          "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.6250000000000001,
-          "confounded_kept_mean": 1
+          "skeleton_shd_mean": 2.3333333333333335,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.5641025641025641,
+          "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 1,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.9473684210526316,
+          "skeleton_shd_mean": 2.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.8714285714285714,
           "confounded_kept_mean": 1
         }
       }
@@ -159,24 +159,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_mean": 6.666666666666667,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.3833333333333333,
-          "confounded_kept_mean": 1.3333333333333333
+          "directed_f1_mean": 0.5111111111111111,
+          "confounded_kept_mean": 2
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_mean": 6.666666666666667,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5303030303030303,
-          "confounded_kept_mean": 0.3333333333333333
+          "directed_f1_mean": 0.5111111111111111,
+          "confounded_kept_mean": 2
         },
         "gies": {
-          "skeleton_shd_mean": 2.3333333333333335,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8671023965141613,
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7272727272727273,
           "confounded_kept_mean": 2
         }
       }
@@ -192,24 +192,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 1,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8000000000000002,
+          "directed_f1_mean": 0.9090909090909091,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 1,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8000000000000002,
+          "directed_f1_mean": 0.9090909090909091,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.9696969696969697,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7692307692307693,
           "confounded_kept_mean": 0
         }
       }
@@ -219,30 +219,30 @@
       "n_confounded": 0,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 1,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.9473684210526316,
+          "directed_f1_mean": 1.0,
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 3.3333333333333335,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5508771929824561,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.8421052631578948,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 2,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.4605263157894736,
+          "directed_f1_mean": 0.7966976264189887,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4.333333333333333,
+          "skeleton_shd_mean": 3.6666666666666665,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.74,
+          "directed_f1_mean": 0.7532938076416337,
           "confounded_kept_mean": 0
         }
       }
@@ -267,15 +267,15 @@
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 5.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6308985132514544,
-          "confounded_kept_mean": 0.3333333333333333
+          "skeleton_shd_mean": 5,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.586080586080586,
+          "confounded_kept_mean": 0.6666666666666666
         },
         "gies": {
-          "skeleton_shd_mean": 7.333333333333333,
-          "skeleton_shd_std": 1.247219128924647,
-          "directed_f1_mean": 0.6222222222222222,
+          "skeleton_shd_mean": 6.666666666666667,
+          "skeleton_shd_std": 0.9428090415820634,
+          "directed_f1_mean": 0.638888888888889,
           "confounded_kept_mean": 1
         }
       }
@@ -291,24 +291,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 1,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.763888888888889,
+          "directed_f1_mean": 0.923076923076923,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 1,
+          "skeleton_shd_mean": 0,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.763888888888889,
+          "directed_f1_mean": 0.923076923076923,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.9743589743589743,
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.6666666666666666,
           "confounded_kept_mean": 0
         }
       }
@@ -324,18 +324,18 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 7.333333333333333,
+          "skeleton_shd_mean": 4.666666666666667,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.49902534113060426,
+          "directed_f1_mean": 0.2657952069716775,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.5272331154684096,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.5018315018315018,
           "confounded_kept_mean": 0
         },
         "gies": {
@@ -351,30 +351,30 @@
       "n_confounded": 1,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 2,
+          "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.9,
+          "directed_f1_mean": 0.8421052631578948,
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 4.333333333333333,
+          "skeleton_shd_mean": 6.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6888888888888889,
-          "confounded_kept_mean": 0.3333333333333333
+          "directed_f1_mean": 0.5666666666666667,
+          "confounded_kept_mean": 1
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4.333333333333333,
+          "skeleton_shd_mean": 6.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7000000000000001,
+          "directed_f1_mean": 0.49891067538126366,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_mean": 6.666666666666667,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6577777777777778,
+          "directed_f1_mean": 0.6002415458937198,
           "confounded_kept_mean": 1
         }
       }
@@ -405,9 +405,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4.333333333333333,
+          "skeleton_shd_mean": 5.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7641325536062378,
+          "directed_f1_mean": 0.724561403508772,
           "confounded_kept_mean": 0
         }
       }
@@ -417,30 +417,30 @@
       "n_confounded": 0,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 4,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8571428571428571,
+          "directed_f1_mean": 0.7999999999999999,
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 0,
+          "skeleton_shd_mean": 1,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7666666666666666,
+          "directed_f1_mean": 0.7777777777777778,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 0,
+          "skeleton_shd_mean": 1,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8518518518518519,
+          "directed_f1_mean": 0.7777777777777778,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 6,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.6674396135265701,
+          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_std": 1.247219128924647,
+          "directed_f1_mean": 0.6772068511198946,
           "confounded_kept_mean": 0
         }
       }
@@ -456,24 +456,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 4.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.48547008547008547,
-          "confounded_kept_mean": 0
+          "skeleton_shd_mean": 5,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.4507936507936508,
+          "confounded_kept_mean": 1
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.48547008547008547,
+          "skeleton_shd_mean": 5,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.5707070707070707,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7270955165692007,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7777777777777778,
           "confounded_kept_mean": 1
         }
       }
@@ -489,18 +489,18 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 1.6666666666666667,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7990196078431372,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.5333333333333333,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 1.6666666666666667,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7990196078431372,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.5714285714285714,
           "confounded_kept_mean": 0
         },
         "gies": {
@@ -522,24 +522,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 2,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.4210526315789474,
+          "directed_f1_mean": 0.8750000000000001,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 2,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.6153846153846153,
+          "directed_f1_mean": 0.8750000000000001,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8571428571428571,
+          "skeleton_shd_mean": 1.6666666666666667,
+          "skeleton_shd_std": 1.699673171197595,
+          "directed_f1_mean": 0.9157894736842105,
           "confounded_kept_mean": 0
         }
       }
@@ -557,22 +557,22 @@
         "pc": {
           "skeleton_shd_mean": 5,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.23529411764705882,
+          "directed_f1_mean": 0.5263157894736842,
           "confounded_kept_mean": 1
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.634920634920635,
+          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6483516483516483,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_mean": 6.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7388167388167389,
+          "directed_f1_mean": 0.7167325428194994,
           "confounded_kept_mean": 1
         }
       }
@@ -621,9 +621,9 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 2.3333333333333335,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7538126361655773,
+          "skeleton_shd_mean": 2.6666666666666665,
+          "skeleton_shd_std": 0.9428090415820634,
+          "directed_f1_mean": 0.8518518518518519,
           "confounded_kept_mean": 0
         },
         "ges": {
@@ -632,13 +632,13 @@
         "fci": {
           "skeleton_shd_mean": 2.3333333333333335,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7990196078431372,
+          "directed_f1_mean": 0.8148148148148149,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.6956521739130435,
+          "skeleton_shd_mean": 3.3333333333333335,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7717391304347826,
           "confounded_kept_mean": 0
         }
       }
@@ -648,30 +648,30 @@
       "n_confounded": 0,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.888888888888889,
+          "skeleton_shd_mean": 2.3333333333333335,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.8671023965141612,
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 2,
+          "skeleton_shd_mean": 4,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8000000000000002,
+          "directed_f1_mean": 0.611111111111111,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 2,
+          "skeleton_shd_mean": 4,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8000000000000002,
+          "directed_f1_mean": 0.6873065015479874,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_mean": 5.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7794871794871795,
+          "directed_f1_mean": 0.7897435897435898,
           "confounded_kept_mean": 0
         }
       }
@@ -702,9 +702,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.86007326007326,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.8,
           "confounded_kept_mean": 0
         }
       }
@@ -735,9 +735,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.7793830982685471,
+          "skeleton_shd_mean": 5,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7368421052631579,
           "confounded_kept_mean": 1
         }
       }
@@ -768,9 +768,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 1.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8603174603174604,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.823529411764706,
           "confounded_kept_mean": 0
         }
       }
@@ -801,9 +801,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 2,
+          "skeleton_shd_mean": 5,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8571428571428571,
+          "directed_f1_mean": 0.7058823529411764,
           "confounded_kept_mean": 0
         }
       }
@@ -819,24 +819,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7272727272727272,
+          "skeleton_shd_mean": 2.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.3429951690821256,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7272727272727272,
+          "skeleton_shd_mean": 1.6666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6527777777777778,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 8.666666666666666,
+          "skeleton_shd_mean": 6.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6978653530377669,
+          "directed_f1_mean": 0.7597340930674265,
           "confounded_kept_mean": 1
         }
       }
@@ -846,30 +846,30 @@
       "n_confounded": 1,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 1.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.9407114624505929,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.9090909090909091,
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 3.3333333333333335,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6577777777777778,
+          "skeleton_shd_mean": 4.666666666666667,
+          "skeleton_shd_std": 1.247219128924647,
+          "directed_f1_mean": 0.5793650793650794,
           "confounded_kept_mean": 0.3333333333333333
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 3.3333333333333335,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6984126984126984,
+          "skeleton_shd_mean": 4.666666666666667,
+          "skeleton_shd_std": 1.247219128924647,
+          "directed_f1_mean": 0.5970418470418472,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 9,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.7277183600713012,
+          "skeleton_shd_mean": 8,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7333333333333334,
           "confounded_kept_mean": 1
         }
       }
@@ -885,24 +885,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 1.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7843137254901962,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.8357843137254902,
           "confounded_kept_mean": 0
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 1.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7843137254901962,
+          "skeleton_shd_mean": 0,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.865546218487395,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 1.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.9237472766884531,
+          "skeleton_shd_mean": 5,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.761904761904762,
           "confounded_kept_mean": 0
         }
       }
@@ -933,9 +933,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 3,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.8102240896358543,
+          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6797385620915032,
           "confounded_kept_mean": 1
         }
       }
@@ -951,24 +951,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 5,
+          "skeleton_shd_mean": 6,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.5521885521885522,
+          "directed_f1_mean": 0.5,
           "confounded_kept_mean": 1
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 5,
+          "skeleton_shd_mean": 6,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.5521885521885522,
+          "directed_f1_mean": 0.5,
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 8,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.706959706959707,
+          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7897435897435898,
           "confounded_kept_mean": 1
         }
       }
@@ -999,9 +999,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 5,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8,
+          "directed_f1_mean": 0.7058823529411764,
           "confounded_kept_mean": 0
         }
       }
@@ -1032,9 +1032,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 5.666666666666667,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.4722222222222222,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7499999999999999,
           "confounded_kept_mean": 1
         }
       }
@@ -1065,9 +1065,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 3.6666666666666665,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7745098039215687,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.75,
           "confounded_kept_mean": 1
         }
       }
@@ -1098,9 +1098,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0.3333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.9696969696969697,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.7142857142857143,
           "confounded_kept_mean": 0
         }
       }
@@ -1116,9 +1116,9 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 3.3333333333333335,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7714285714285714,
+          "skeleton_shd_mean": 3.6666666666666665,
+          "skeleton_shd_std": 0.9428090415820634,
+          "directed_f1_mean": 0.6527777777777778,
           "confounded_kept_mean": 0
         },
         "ges": {
@@ -1127,13 +1127,13 @@
         "fci": {
           "skeleton_shd_mean": 3.6666666666666665,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7428571428571429,
+          "directed_f1_mean": 0.6845238095238095,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 2,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8235294117647058,
+          "directed_f1_mean": 0.8750000000000001,
           "confounded_kept_mean": 0
         }
       }
@@ -1149,24 +1149,24 @@
           "confounded_kept_mean": 0
         },
         "pc": {
-          "skeleton_shd_mean": 4.666666666666667,
-          "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.46187363834422657,
+          "skeleton_shd_mean": 4,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.5634674922600619,
           "confounded_kept_mean": 1
         },
         "ges": {
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4.666666666666667,
-          "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.5222222222222223,
+          "skeleton_shd_mean": 3.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6091503267973857,
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 5.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7717391304347826,
+          "skeleton_shd_mean": 3,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.8571428571428571,
           "confounded_kept_mean": 1
         }
       }
@@ -1177,15 +1177,15 @@
       "worlds_scored": 35,
       "errored": 0,
       "mean_skeleton_shd": 1.438095238095238,
-      "mean_directed_f1": 0.9113200308420777,
+      "mean_directed_f1": 0.9115825148200204,
       "total_confounded_kept": 0
     },
     "pc": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 2.8095238095238093,
-      "mean_directed_f1": 0.6722807502095428,
-      "total_confounded_kept": 13.0
+      "mean_skeleton_shd": 2.7142857142857144,
+      "mean_directed_f1": 0.6915948504472244,
+      "total_confounded_kept": 14.333333333333334
     },
     "ges": {
       "worlds_scored": 0,
@@ -1197,29 +1197,23 @@
     "fci": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 2.6666666666666665,
-      "mean_directed_f1": 0.7051993189211234,
-      "total_confounded_kept": 8.333333333333334
+      "mean_skeleton_shd": 2.657142857142857,
+      "mean_directed_f1": 0.721799495408518,
+      "total_confounded_kept": 9.666666666666668
     },
     "gies": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 4.238095238095238,
-      "mean_directed_f1": 0.7777642800300181,
+      "mean_skeleton_shd": 4.6571428571428575,
+      "mean_directed_f1": 0.7516304158241482,
       "total_confounded_kept": 17
     }
   },
   "difficulty_vs_error": {
-    "interventional-ci": 0.13822905627977347,
-    "pc": 0.24666204109388137,
+    "interventional-ci": 0.24175208832730077,
+    "pc": 0.3933391155968883,
     "ges": null,
-    "fci": 0.30401151611366645,
-    "gies": 0.14782497309924006
-  },
-  "verdict": {
-    "data": "standardized (v0.13): continuous columns z-scored, regimes left as {0,1}.",
-    "framing": "Identifiability finding \u2014 the lever is latent-awareness, not interventions. GIES gets the same interventional budget yet keeps the hidden-confounded pair (17/35) assuming sufficiency; PC/FCI (observational) keep 8-13; only the latent-aware interventional grader keeps 0. PC/FCI are scale-invariant (unchanged by standardization); the grader still recovers the sign-flip.",
-    "known_circularity": "Worlds are still admitted by the reference grader (gate T3) \u2014 see #9 for grader-independent admission + an information-fair crossover + a name-only-at-chance baseline.",
-    "ges": "GES errors on every world (causal-learn GES is numpy-2 incompatible)."
+    "fci": 0.41281723305211354,
+    "gies": 0.09352803848263083
   }
 }

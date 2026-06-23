@@ -103,9 +103,9 @@ Across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each):
 | method | gets interventions? | latent-aware? | mean skeleton-SHD ↓ | confounded pair kept as causal ↓ |
 |---|---|---|---|---|
 | **interventional-ci** (reference) | yes | yes | **1.44** | **0** |
-| GIES | yes | no | 4.24 | 17 |
-| PC | no | no | 2.81 | 13 |
-| FCI | no | partly | 2.67 | 8 |
+| GIES | yes | no | 4.66 | 17 |
+| PC | no | no | 2.71 | 14 |
+| FCI | no | partly | 2.66 | 10 |
 
 The honest reading: the dividing line is **latent-awareness**, not interventions alone. GIES gets the
 *same* interventional budget as the reference and recovers the skeleton fine — but, assuming causal
@@ -116,13 +116,15 @@ interventions *and* a latent-aware method), not "our method beats the toolbox."
 
 **Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) the worlds are currently
 *admitted by the reference grader itself* (gate T3), so admission and the headline aren't yet fully
-decoupled. (2) ~~The worlds leak the causal order through marginal variance.~~ **Fixed in v0.13**:
-the substrate standardizes emitted data, dropping [varsortability](evals/varsortability/) 0.94 → 0.58
-and the trivial sort-by-variance baseline's F1 0.74 → 0.29 (regimes are left un-standardized so the
-grader still recovers the sign-flip). (3)
-Structural difficulty correlates with observational error (r≈0.8, partly mechanically) and with the
-*interventional advantage* (ΔF1, r≈0.36, n=35, no CIs) — a descriptive axis, not a validated predictor.
-Fixing (1) and (2), plus a name-only-at-chance baseline, is the next milestone (#9).
+decoupled. (2) **Simulated-DAG leakage** — synthetic SCMs can leak the causal order through marginal
+variance ([varsortability](evals/varsortability/)) *and* through scale-invariant predictability
+(R²-sortability). v0.14 generates worlds with **internal standardization (iSCM)**, which drops
+varsortability to 0.54 and R²-sortability 0.73 → 0.60; both trivial sorting baselines fall to F1
+≈ 0.33–0.37, well under the real methods. The residual R²-sortability (0.60 > 0.5) is disclosed, not
+yet fully closed. (3) Structural difficulty correlates with observational error (r≈0.8, partly
+mechanically) and with the *interventional advantage* (ΔF1, r≈0.24–0.36, n=35, no CIs) — a descriptive
+axis, not a validated predictor. Fixing (1), plus a name-only-at-chance baseline, is the next
+milestone (#9).
 
 ## What you get per world
 

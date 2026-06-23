@@ -13,7 +13,12 @@ from causal_worlds.baselines import (
 from causal_worlds.bench import grade_bundle, grade_spec, grade_temporal_spec
 from causal_worlds.config import Settings
 from causal_worlds.container import Container, build_container
-from causal_worlds.controls import SortnregressDiscoverer, varsortability
+from causal_worlds.controls import (
+    R2SortnregressDiscoverer,
+    SortnregressDiscoverer,
+    r2sortability,
+    varsortability,
+)
 from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.errors import BudgetExceededError, CausalWorldsError
@@ -103,6 +108,7 @@ __all__ = [
     "PcDiscoverer",
     "PcmciPlusDiscoverer",
     "Provenance",
+    "R2SortnregressDiscoverer",
     "Report",
     "Role",
     "RoleError",
@@ -134,6 +140,7 @@ __all__ = [
     "grade_spec",
     "grade_temporal_spec",
     "load_bundle",
+    "r2sortability",
     "run_gates",
     "save_bundle",
     "score",

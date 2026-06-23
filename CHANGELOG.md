@@ -3,6 +3,42 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] — 2026-06-23
+
+**R²-sortability — the scale-invariant leak v0.13 couldn't reach, and the iSCM fix for it.**
+
+The v0.13 post-hoc standardization closed the *variance* leak but not the second, scale-invariant one
+(Reisach et al. 2023): a variable's predictability from the rest (R²) also grows along the causal
+order, and standardization cannot remove it. We measured it, found it, and fixed it properly.
+
+### Added
+- **`controls.r2sortability(data, edges, names)`** — the scale-invariant analogue of varsortability
+  (Reisach et al. 2023), and **`R2SortnregressDiscoverer`**, the matching trivial baseline. Both are
+  now reported in `evals/varsortability` alongside the variance versions — the bar a 2026
+  causal-discovery reviewer expects.
+
+### Changed
+- **The substrate now uses internal standardization (iSCM, Ormaniec et al. 2024)** for cross-sectional
+  worlds: each continuous variable is z-scored *as it is generated*, in topological order, so neither
+  variance nor R² can compound along the causal order. Temporal worlds (where per-step standardization
+  is ill-defined) keep post-hoc column z-scoring. Regimes stay `{0,1}`.
+- Re-sampled `benchmark/v0.5` data under iSCM.
+
+### Finding (honest)
+- Under the v0.13 post-hoc fix, **R²-sortability was 0.73** and the trivial **R²-sortnregress baseline
+  scored F1 0.40** — the worlds still leaked via the scale-invariant axis. iSCM drops **R²-sortability
+  to 0.60** and **R²-sortnregress to F1 0.37**, with varsortability holding at 0.54; both trivial
+  baselines now sit well below the real methods. The residual R²-sortability (0.60 > 0.5) is
+  **disclosed, not yet fully closed**.
+
+### Validated
+- The reference **interventional-CI grader still recovers `coffee` at SHD 0 / F1 1.0** across 5 seeds
+  under iSCM.
+- The crossover is **robust to iSCM**: grader confounded-kept **0** (skeleton-SHD 1.44, F1 0.91),
+  while PC/FCI/GIES keep 10–17 confounded pairs — the identifiability finding is unchanged.
+
+[0.14.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.14.0
+
 ## [0.13.0] — 2026-06-23
 
 **Variance standardization — fixes the flaw v0.12 caught.**

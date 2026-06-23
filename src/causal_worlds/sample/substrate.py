@@ -28,21 +28,27 @@ _STD_EPS = 1e-9  # columns below this std are left as-is (avoid divide-by-zero)
 _MAX_BINARY = 2  # columns with <= this many unique values are left as-is (regimes/switches)
 
 
-def _standardize(data: FloatArray) -> FloatArray:
-    """Z-score continuous columns; leave binary/regime columns untouched.
+def _standardize_column(column: FloatArray) -> FloatArray:
+    """Z-score a continuous column; return a binary/regime column ({0, 1}) untouched.
 
     Standardizing a regime switch would turn its {0, 1} values into z-scores and break the grader's
-    regime-stratification; and a binary column carries no variance-order giveaway anyway. So we only
-    rescale columns that have more than two distinct values.
+    regime-stratification; and a binary column carries no order giveaway anyway. So we only rescale
+    columns with more than two distinct values (and never a (near-)constant one).
     """
+    if len(np.unique(column)) <= _MAX_BINARY:
+        return column
+    std = float(column.std())
+    if std < _STD_EPS:
+        return column
+    standardized: FloatArray = (column - column.mean()) / std
+    return standardized
+
+
+def _standardize(data: FloatArray) -> FloatArray:
+    """Post-hoc: z-score every continuous column of an emitted matrix (used for temporal series)."""
     out: FloatArray = data.astype(np.float64, copy=True)
     for col in range(data.shape[1]):
-        column = data[:, col]
-        if len(np.unique(column)) <= _MAX_BINARY:
-            continue
-        std = float(column.std())
-        if std >= _STD_EPS:
-            out[:, col] = (column - column.mean()) / std
+        out[:, col] = _standardize_column(data[:, col])
     return out
 
 
@@ -110,12 +116,16 @@ class ScmSubstrate:
     """A deterministic SCM world compiled from a *validated* :class:`WorldSpec`."""
 
     def __init__(self, spec: WorldSpec, *, standardize: bool = True) -> None:
-        """Compile a validated spec. ``standardize`` z-scores emitted columns (the default).
+        """Compile a validated spec. ``standardize`` standardizes emitted variables (the default).
 
-        Standardization removes the additive-noise "varsortability" giveaway (marginal variance
-        growing along causal edges), so the data can't be solved by sorting on variance. It's a
-        per-column affine transform, so it preserves (partial) correlations and CI relationships —
-        the things scale-invariant discoverers and the interventional-CI grader rely on.
+        Cross-sectional worlds use **internal standardization (iSCM, Ormaniec et al. 2024)**: each
+        continuous variable is z-scored *as it is generated*, in topological order, so children read
+        unit-variance parents and neither marginal variance nor predictability (R^2) can compound
+        along the causal order. This removes *both* the varsortability and the scale-invariant
+        R^2-sortability giveaways that mere post-hoc standardization cannot. Temporal worlds, where
+        per-step standardization is ill-defined, fall back to post-hoc column z-scoring. Regime
+        switches stay {0, 1}; standardization is affine per column, preserving the CI relationships
+        the interventional-CI grader relies on.
         """
         self._order = _topological_order(spec)
         self._mechanisms = {mechanism.target: mechanism for mechanism in spec.mechanisms}
@@ -136,11 +146,11 @@ class ScmSubstrate:
         rng = np.random.default_rng(seed)
         forced: dict[str, float | FloatArray] = dict(do) if do else {}
         if self._max_lag == 0:
-            data = self._sample_cross_sectional(n, forced, rng)
+            data = self._sample_cross_sectional(n, forced, rng)  # iSCM applied in-loop
         else:
             data = self._sample_temporal(n, forced, rng)
-        if self._standardize:
-            data = _standardize(data)
+            if self._standardize:
+                data = _standardize(data)  # post-hoc: per-step iSCM is ill-defined for series
         return Sample(variables=self._observed, data=data, intervened=frozenset(forced))
 
     # -- cross-sectional (i.i.d. rows) -------------------------------------------------------------
@@ -148,15 +158,22 @@ class ScmSubstrate:
     def _sample_cross_sectional(
         self, n: int, forced: dict[str, float | FloatArray], rng: np.random.Generator
     ) -> FloatArray:
-        """Vectorized i.i.d. sampling (every term is lag-0)."""
+        """Vectorized i.i.d. sampling (every term is lag-0), with iSCM standardization in-loop.
+
+        Standardizing each continuous variable in topological order *before* its children read it is
+        what makes the world iSCM: variance and R^2 cannot accumulate along the causal order. Forced
+        (``do``) variables are left exactly as the intervention set them.
+        """
         values: dict[str, FloatArray] = {}
         for name in self._order:
             if name in forced:
                 values[name] = _as_column(forced[name], n)
-            elif name in self._mechanisms:
-                values[name] = self._apply(self._mechanisms[name], values, n, rng)
+                continue
+            if name in self._mechanisms:
+                column = self._apply(self._mechanisms[name], values, n, rng)
             else:
-                values[name] = self._sample_root(name, n, rng)
+                column = self._sample_root(name, n, rng)
+            values[name] = _standardize_column(column) if self._standardize else column
         data: FloatArray = np.column_stack([values[name] for name in self._observed])
         return data
 
@@ -249,7 +266,8 @@ class ScmSubstrate:
 def build_substrate(spec: WorldSpec, *, standardize: bool = True) -> ScmSubstrate:
     """Validate a spec and compile it into an executable substrate (the Factory).
 
-    ``standardize`` z-scores emitted columns (default) to remove the varsortability giveaway.
+    ``standardize`` (default) standardizes emitted variables — iSCM in-loop for cross-sectional
+    worlds, post-hoc for temporal — to remove the varsortability and R^2-sortability giveaways.
     """
     validate(spec)
     return ScmSubstrate(spec, standardize=standardize)

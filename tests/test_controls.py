@@ -1,9 +1,14 @@
-"""Tests for the synthetic-DAG controls (varsortability + sortnregress)."""
+"""Tests for the synthetic-DAG controls (varsortability/sortnregress + R^2 variants)."""
 
 import numpy as np
 
 from causal_worlds import worlds
-from causal_worlds.controls import SortnregressDiscoverer, varsortability
+from causal_worlds.controls import (
+    R2SortnregressDiscoverer,
+    SortnregressDiscoverer,
+    r2sortability,
+    varsortability,
+)
 from causal_worlds.protocols import Discoverer
 from causal_worlds.sample import build_substrate
 
@@ -26,5 +31,38 @@ def test_sortnregress_is_a_discoverer_and_returns_edges():
     assert isinstance(SortnregressDiscoverer(), Discoverer)
     substrate = build_substrate(worlds.get("ecommerce"))
     edges = SortnregressDiscoverer(n=2000).recover(substrate, seed=7)
+    assert isinstance(edges, frozenset)
+    assert all(isinstance(e, tuple) and len(e) == 2 for e in edges)
+
+
+def test_r2sortability_reads_the_predictability_order():
+    # b = a + small noise: a is the (less predictable) root, b the (more predictable) child.
+    rng = np.random.default_rng(0)
+    a = rng.normal(0.0, 1.0, 5000)
+    b = a + rng.normal(0.0, 0.1, 5000)
+    data = np.column_stack([a, b])
+    # R^2(a from b) ≈ R^2(b from a) here, but along the true edge a->b R^2 should not decrease.
+    assert r2sortability(data, frozenset({("a", "b")}), _NAMES) >= 0.5
+    assert r2sortability(data, frozenset(), _NAMES) == 0.5  # no edges -> no signal
+
+
+def test_r2sortability_is_scale_invariant():
+    # Standardizing each column leaves R^2-sortability unchanged (the whole point of the metric).
+    rng = np.random.default_rng(1)
+    a = rng.normal(0.0, 1.0, 5000)
+    b = 2.0 * a + rng.normal(0.0, 0.5, 5000)
+    c = b + rng.normal(0.0, 0.5, 5000)
+    data = np.column_stack([a, b, c])
+    names = ("a", "b", "c")
+    edges = frozenset({("a", "b"), ("b", "c")})
+    raw = r2sortability(data, edges, names)
+    standardized = (data - data.mean(axis=0)) / data.std(axis=0)
+    assert abs(r2sortability(standardized, edges, names) - raw) < 1e-9
+
+
+def test_r2sortnregress_is_a_discoverer_and_returns_edges():
+    assert isinstance(R2SortnregressDiscoverer(), Discoverer)
+    substrate = build_substrate(worlds.get("ecommerce"))
+    edges = R2SortnregressDiscoverer(n=2000).recover(substrate, seed=7)
     assert isinstance(edges, frozenset)
     assert all(isinstance(e, tuple) and len(e) == 2 for e in edges)
