@@ -24,6 +24,26 @@ type FloatArray = NDArray[np.float64]
 _ROOT_SCALE = 1.0  # an exogenous root (no mechanism, not a regime switch) ~ N(0, 1)
 _REGIME_ON = 0.5  # a regime switch variable is "on" where its value exceeds this
 _BURN_IN = 200  # temporal: discard this many leading steps so the series settles
+_STD_EPS = 1e-9  # columns below this std are left as-is (avoid divide-by-zero)
+_MAX_BINARY = 2  # columns with <= this many unique values are left as-is (regimes/switches)
+
+
+def _standardize(data: FloatArray) -> FloatArray:
+    """Z-score continuous columns; leave binary/regime columns untouched.
+
+    Standardizing a regime switch would turn its {0, 1} values into z-scores and break the grader's
+    regime-stratification; and a binary column carries no variance-order giveaway anyway. So we only
+    rescale columns that have more than two distinct values.
+    """
+    out: FloatArray = data.astype(np.float64, copy=True)
+    for col in range(data.shape[1]):
+        column = data[:, col]
+        if len(np.unique(column)) <= _MAX_BINARY:
+            continue
+        std = float(column.std())
+        if std >= _STD_EPS:
+            out[:, col] = (column - column.mean()) / std
+    return out
 
 
 def _as_column(value: float | FloatArray, n: int) -> FloatArray:
@@ -89,13 +109,20 @@ def _max_lag(spec: WorldSpec) -> int:
 class ScmSubstrate:
     """A deterministic SCM world compiled from a *validated* :class:`WorldSpec`."""
 
-    def __init__(self, spec: WorldSpec) -> None:
-        """Compile a spec that has already passed :func:`causal_worlds.schema.validate`."""
+    def __init__(self, spec: WorldSpec, *, standardize: bool = True) -> None:
+        """Compile a validated spec. ``standardize`` z-scores emitted columns (the default).
+
+        Standardization removes the additive-noise "varsortability" giveaway (marginal variance
+        growing along causal edges), so the data can't be solved by sorting on variance. It's a
+        per-column affine transform, so it preserves (partial) correlations and CI relationships —
+        the things scale-invariant discoverers and the interventional-CI grader rely on.
+        """
         self._order = _topological_order(spec)
         self._mechanisms = {mechanism.target: mechanism for mechanism in spec.mechanisms}
         self._regime_vars = {m.regime for m in spec.mechanisms if m.regime is not None}
         self._observed = tuple(v.name for v in spec.variables if not v.hidden)
         self._max_lag = _max_lag(spec)
+        self._standardize = standardize
 
     @property
     def variables(self) -> tuple[str, ...]:
@@ -112,6 +139,8 @@ class ScmSubstrate:
             data = self._sample_cross_sectional(n, forced, rng)
         else:
             data = self._sample_temporal(n, forced, rng)
+        if self._standardize:
+            data = _standardize(data)
         return Sample(variables=self._observed, data=data, intervened=frozenset(forced))
 
     # -- cross-sectional (i.i.d. rows) -------------------------------------------------------------
@@ -217,7 +246,10 @@ class ScmSubstrate:
         return acc
 
 
-def build_substrate(spec: WorldSpec) -> ScmSubstrate:
-    """Validate a spec and compile it into an executable substrate (the Factory)."""
+def build_substrate(spec: WorldSpec, *, standardize: bool = True) -> ScmSubstrate:
+    """Validate a spec and compile it into an executable substrate (the Factory).
+
+    ``standardize`` z-scores emitted columns (default) to remove the varsortability giveaway.
+    """
     validate(spec)
-    return ScmSubstrate(spec)
+    return ScmSubstrate(spec, standardize=standardize)

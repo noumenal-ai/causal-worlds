@@ -43,7 +43,7 @@ def test_shape_and_hidden_excluded():
 
 
 def test_intervention_forces_constant():
-    sub = build_substrate(_coffee())
+    sub = build_substrate(_coffee(), standardize=False)  # raw mechanics
     s = sub.sample(200, seed=3, do={"price": 2.0})
     col = sub.variables.index("price")
     assert np.allclose(s.data[:, col], 2.0)
@@ -51,9 +51,21 @@ def test_intervention_forces_constant():
 
 
 def test_intervention_propagates_to_descendant():
-    sub = build_substrate(_coffee())
+    sub = build_substrate(
+        _coffee(), standardize=False
+    )  # raw mechanics (standardizing centers means)
     hi = sub.sample(2000, seed=5, do={"demand": 10.0})
     lo = sub.sample(2000, seed=5, do={"demand": -10.0})
     sales = sub.variables.index("sales")
     # sales = 1.0*demand + ...  -> forcing demand high vs low must move the sales mean a lot
     assert hi.data[:, sales].mean() > lo.data[:, sales].mean() + 5.0
+
+
+def test_standardize_zscores_continuous_but_leaves_regimes():
+    sub = build_substrate(_coffee())  # standardized by default
+    data = sub.sample(3000, seed=1).data
+    regime = sub.variables.index("R")  # binary regime — left as-is ({0, 1})
+    sales = sub.variables.index("sales")  # continuous — z-scored
+    assert set(np.unique(data[:, regime])) <= {0.0, 1.0}
+    assert abs(data[:, sales].mean()) < 1e-6
+    assert abs(data[:, sales].std() - 1.0) < 1e-6

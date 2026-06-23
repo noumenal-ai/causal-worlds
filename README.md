@@ -102,10 +102,10 @@ Across the 35-world [`benchmark/v0.5`](benchmark/v0.5/) set (3 seeds each):
 
 | method | gets interventions? | latent-aware? | mean skeleton-SHD ↓ | confounded pair kept as causal ↓ |
 |---|---|---|---|---|
-| **interventional-ci** (reference) | yes | yes | **1.47** | **0** |
-| GIES | yes | no | 2.37 | 17 |
+| **interventional-ci** (reference) | yes | yes | **1.44** | **0** |
+| GIES | yes | no | 4.24 | 17 |
 | PC | no | no | 2.81 | 13 |
-| FCI | no | partly | 2.68 | 8 |
+| FCI | no | partly | 2.67 | 8 |
 
 The honest reading: the dividing line is **latent-awareness**, not interventions alone. GIES gets the
 *same* interventional budget as the reference and recovers the skeleton fine — but, assuming causal
@@ -116,9 +116,10 @@ interventions *and* a latent-aware method), not "our method beats the toolbox."
 
 **Caveats we're not hiding** (see [`evals/`](evals/) and the issues): (1) the worlds are currently
 *admitted by the reference grader itself* (gate T3), so admission and the headline aren't yet fully
-decoupled. (2) We *measured* a real flaw — the worlds leak the causal order through marginal variance
-([varsortability](evals/varsortability/) 0.94; a trivial sort-by-variance baseline scores F1 0.74),
-the classic synthetic-DAG giveaway; **variance standardization (next release) removes it**. (3)
+decoupled. (2) ~~The worlds leak the causal order through marginal variance.~~ **Fixed in v0.13**:
+the substrate standardizes emitted data, dropping [varsortability](evals/varsortability/) 0.94 → 0.58
+and the trivial sort-by-variance baseline's F1 0.74 → 0.29 (regimes are left un-standardized so the
+grader still recovers the sign-flip). (3)
 Structural difficulty correlates with observational error (r≈0.8, partly mechanically) and with the
 *interventional advantage* (ΔF1, r≈0.36, n=35, no CIs) — a descriptive axis, not a validated predictor.
 Fixing (1) and (2), plus a name-only-at-chance baseline, is the next milestone (#9).

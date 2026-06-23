@@ -3,6 +3,27 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.13.0] — 2026-06-23
+
+**Variance standardization — fixes the flaw v0.12 caught.**
+
+### Changed
+- **The substrate now standardizes emitted data by default** (`build_substrate(spec, standardize=True)`):
+  continuous columns are z-scored, **regime/binary columns are left as `{0,1}`** (standardizing them
+  would break the grader's regime-stratification, and they carry no variance giveaway). This removes
+  the additive-noise varsortability leak.
+- Re-sampled `benchmark/v0.5` data to standardized.
+
+### Validated
+- **Varsortability 0.94 → 0.58** (near chance) and the trivial **sortnregress baseline F1 0.74 → 0.29**
+  — the variance giveaway is gone.
+- The reference **interventional-CI grader still recovers `coffee` at SHD 0 / F1 1.0** across seeds
+  (the regime sign-flip edge survives, thanks to leaving regimes un-standardized).
+- The crossover holds on standardized data: grader confounded-kept **0**, PC/FCI unchanged
+  (scale-invariant), GIES still keeps the confounded pair — the identifiability finding is robust.
+
+[0.13.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.13.0
+
 ## [0.12.0] — 2026-06-23
 
 **Synthetic-DAG control — and it caught a real flaw.**

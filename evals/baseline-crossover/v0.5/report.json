@@ -42,9 +42,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.888888888888889,
+          "skeleton_shd_mean": 3.3333333333333335,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.8280701754385965,
           "confounded_kept_mean": 0
         }
       }
@@ -75,9 +75,9 @@
           "confounded_kept_mean": 1.6666666666666667
         },
         "gies": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.9,
+          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7608695652173912,
           "confounded_kept_mean": 2
         }
       }
@@ -87,9 +87,9 @@
       "n_confounded": 0,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 1.3333333333333333,
-          "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.9166666666666666,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.875,
           "confounded_kept_mean": 0
         },
         "pc": {
@@ -108,9 +108,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.7282765543635109,
           "confounded_kept_mean": 0
         }
       }
@@ -207,9 +207,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "skeleton_shd_mean": 0.3333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.9696969696969697,
           "confounded_kept_mean": 0
         }
       }
@@ -219,9 +219,9 @@
       "n_confounded": 0,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 1.6666666666666667,
-          "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.912280701754386,
+          "skeleton_shd_mean": 1,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.9473684210526316,
           "confounded_kept_mean": 0
         },
         "pc": {
@@ -240,9 +240,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 1.3333333333333333,
+          "skeleton_shd_mean": 4.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8441558441558442,
+          "directed_f1_mean": 0.74,
           "confounded_kept_mean": 0
         }
       }
@@ -339,9 +339,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4,
+          "skeleton_shd_mean": 8,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7000000000000001,
+          "directed_f1_mean": 0.5833333333333334,
           "confounded_kept_mean": 0
         }
       }
@@ -372,9 +372,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_mean": 5.666666666666667,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7242028985507246,
+          "directed_f1_mean": 0.6577777777777778,
           "confounded_kept_mean": 1
         }
       }
@@ -405,9 +405,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "skeleton_shd_mean": 4.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7641325536062378,
           "confounded_kept_mean": 0
         }
       }
@@ -438,9 +438,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3.6666666666666665,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.7388167388167389,
+          "skeleton_shd_mean": 6,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.6674396135265701,
           "confounded_kept_mean": 0
         }
       }
@@ -471,9 +471,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_mean": 4.333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6561403508771929,
+          "directed_f1_mean": 0.7270955165692007,
           "confounded_kept_mean": 1
         }
       }
@@ -504,9 +504,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8235294117647058,
+          "skeleton_shd_mean": 6.666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.6777777777777778,
           "confounded_kept_mean": 0
         }
       }
@@ -537,9 +537,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
+          "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "directed_f1_mean": 0.8571428571428571,
           "confounded_kept_mean": 0
         }
       }
@@ -570,9 +570,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 6,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7272727272727274,
+          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7388167388167389,
           "confounded_kept_mean": 1
         }
       }
@@ -603,9 +603,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
+          "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "directed_f1_mean": 0.8,
           "confounded_kept_mean": 0
         }
       }
@@ -636,9 +636,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 5,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8153717627401839,
+          "directed_f1_mean": 0.6956521739130435,
           "confounded_kept_mean": 0
         }
       }
@@ -669,9 +669,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 5,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.7691197691197691,
+          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7794871794871795,
           "confounded_kept_mean": 0
         }
       }
@@ -702,9 +702,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "skeleton_shd_mean": 2,
+          "skeleton_shd_std": 0.816496580927726,
+          "directed_f1_mean": 0.86007326007326,
           "confounded_kept_mean": 0
         }
       }
@@ -735,9 +735,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 3,
+          "skeleton_shd_mean": 4,
           "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.8300653594771242,
+          "directed_f1_mean": 0.7793830982685471,
           "confounded_kept_mean": 1
         }
       }
@@ -768,9 +768,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 2.6666666666666665,
+          "skeleton_shd_mean": 1.3333333333333333,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.6825396825396826,
+          "directed_f1_mean": 0.8603174603174604,
           "confounded_kept_mean": 0
         }
       }
@@ -801,9 +801,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
+          "skeleton_shd_mean": 2,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "directed_f1_mean": 0.8571428571428571,
           "confounded_kept_mean": 0
         }
       }
@@ -813,9 +813,9 @@
       "n_confounded": 1,
       "methods": {
         "interventional-ci": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.8964912280701754,
+          "skeleton_shd_mean": 1,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.9473684210526316,
           "confounded_kept_mean": 0
         },
         "pc": {
@@ -834,9 +834,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 2.6666666666666665,
+          "skeleton_shd_mean": 8.666666666666666,
           "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8827404479578393,
+          "directed_f1_mean": 0.6978653530377669,
           "confounded_kept_mean": 1
         }
       }
@@ -867,9 +867,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 4,
+          "skeleton_shd_mean": 9,
           "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.8536155202821869,
+          "directed_f1_mean": 0.7277183600713012,
           "confounded_kept_mean": 1
         }
       }
@@ -900,9 +900,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "skeleton_shd_mean": 1.3333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.9237472766884531,
           "confounded_kept_mean": 0
         }
       }
@@ -935,7 +935,7 @@
         "gies": {
           "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.816496580927726,
-          "directed_f1_mean": 0.8254357298474946,
+          "directed_f1_mean": 0.8102240896358543,
           "confounded_kept_mean": 1
         }
       }
@@ -966,9 +966,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 4.333333333333333,
-          "skeleton_shd_std": 0.4714045207910317,
-          "directed_f1_mean": 0.8222222222222222,
+          "skeleton_shd_mean": 8,
+          "skeleton_shd_std": 0.0,
+          "directed_f1_mean": 0.706959706959707,
           "confounded_kept_mean": 1
         }
       }
@@ -999,9 +999,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
+          "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "directed_f1_mean": 0.8,
           "confounded_kept_mean": 0
         }
       }
@@ -1032,9 +1032,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.625,
+          "skeleton_shd_mean": 5.666666666666667,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.4722222222222222,
           "confounded_kept_mean": 1
         }
       }
@@ -1065,9 +1065,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 2,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8571428571428571,
+          "skeleton_shd_mean": 3.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7745098039215687,
           "confounded_kept_mean": 1
         }
       }
@@ -1098,9 +1098,9 @@
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 0,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 1.0,
+          "skeleton_shd_mean": 0.3333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.9696969696969697,
           "confounded_kept_mean": 0
         }
       }
@@ -1125,15 +1125,15 @@
           "errored": "TypeError: only 0-dimensional arrays can be converted to Python scalars"
         },
         "fci": {
-          "skeleton_shd_mean": 4,
-          "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.7142857142857143,
+          "skeleton_shd_mean": 3.6666666666666665,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7428571428571429,
           "confounded_kept_mean": 0
         },
         "gies": {
-          "skeleton_shd_mean": 2,
+          "skeleton_shd_mean": 3,
           "skeleton_shd_std": 0.0,
-          "directed_f1_mean": 0.8750000000000001,
+          "directed_f1_mean": 0.8235294117647058,
           "confounded_kept_mean": 0
         }
       }
@@ -1164,9 +1164,9 @@
           "confounded_kept_mean": 1
         },
         "gies": {
-          "skeleton_shd_mean": 3.6666666666666665,
-          "skeleton_shd_std": 0.9428090415820634,
-          "directed_f1_mean": 0.650103519668737,
+          "skeleton_shd_mean": 5.333333333333333,
+          "skeleton_shd_std": 0.4714045207910317,
+          "directed_f1_mean": 0.7717391304347826,
           "confounded_kept_mean": 1
         }
       }
@@ -1176,8 +1176,8 @@
     "interventional-ci": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 1.4666666666666666,
-      "mean_directed_f1": 0.9100543666816766,
+      "mean_skeleton_shd": 1.438095238095238,
+      "mean_directed_f1": 0.9113200308420777,
       "total_confounded_kept": 0
     },
     "pc": {
@@ -1197,29 +1197,29 @@
     "fci": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 2.676190476190476,
-      "mean_directed_f1": 0.7043829923905112,
+      "mean_skeleton_shd": 2.6666666666666665,
+      "mean_directed_f1": 0.7051993189211234,
       "total_confounded_kept": 8.333333333333334
     },
     "gies": {
       "worlds_scored": 35,
       "errored": 0,
-      "mean_skeleton_shd": 2.3714285714285714,
-      "mean_directed_f1": 0.8543547355849402,
+      "mean_skeleton_shd": 4.238095238095238,
+      "mean_directed_f1": 0.7777642800300181,
       "total_confounded_kept": 17
     }
   },
   "difficulty_vs_error": {
-    "interventional-ci": 0.168633197941696,
+    "interventional-ci": 0.13822905627977347,
     "pc": 0.24666204109388137,
     "ges": null,
-    "fci": 0.29936133542451515,
-    "gies": 0.20920338120727425
+    "fci": 0.30401151611366645,
+    "gies": 0.14782497309924006
   },
   "verdict": {
-    "framing": "IDENTIFIABILITY finding, not 'defeats the standard toolbox'. The dividing line is latent-awareness, not interventions: GIES gets the same interventional budget as the reference and recovers the skeleton well (SHD 2.37) but, assuming causal sufficiency, still reports the hidden-confounded pair as causal in most worlds (17/35); PC/FCI likewise (13/8). Only the latent-aware interventional rule keeps confounded-kept at 0.",
-    "known_circularity": "These worlds are admitted by the reference grader itself (gate T3), so admission and the headline are not yet decoupled. Next milestone: grader-independent admission + an information-fair crossover + varsortability/variance-standardization control + a name-only LLM baseline that should score at chance.",
-    "seed_fix": "Independent per-environment seeds for GIES (was aliasing the obs+do envs to one seed, which had inflated GIES skeleton-SHD to 6.66; now 2.37 \u2014 a fairer comparison).",
+    "data": "standardized (v0.13): continuous columns z-scored, regimes left as {0,1}.",
+    "framing": "Identifiability finding \u2014 the lever is latent-awareness, not interventions. GIES gets the same interventional budget yet keeps the hidden-confounded pair (17/35) assuming sufficiency; PC/FCI (observational) keep 8-13; only the latent-aware interventional grader keeps 0. PC/FCI are scale-invariant (unchanged by standardization); the grader still recovers the sign-flip.",
+    "known_circularity": "Worlds are still admitted by the reference grader (gate T3) \u2014 see #9 for grader-independent admission + an information-fair crossover + a name-only-at-chance baseline.",
     "ges": "GES errors on every world (causal-learn GES is numpy-2 incompatible)."
   }
 }
