@@ -1,6 +1,6 @@
 # A causal benchmark that defeats the standard toolbox (and how we measured it)
 
-*Draft technical post — Noumenal / causal-worlds, v0.3.0*
+*Draft technical post — Noumenal / causal-worlds, through v0.6*
 
 ## The problem: most LLM causal benchmarks are guessable
 
@@ -32,32 +32,35 @@ no real-world data is needed and there's nothing to leak.
 ## The decisive experiment
 
 The headline claim — *"a benchmark that defeats the standard toolbox"* — is only worth anything if
-it's measured. So across all 12 worlds in the v0.2 set we ran the standard discoverers (PC, GES, FCI,
-GIES via `causal-learn`/`gies`) against the reference interventional grader, three seeds each:
+it's measured. So we ran the standard discoverers (PC, GES, FCI, GIES via `causal-learn`/`gies`)
+against the reference interventional grader on every world, three seeds each. On the scaled 35-world
+set:
 
-| method | mean skeleton-SHD ↓ | directed F1 ↑ | confounded-pair kept as causal ↓ (of 12) |
+| method | mean skeleton-SHD ↓ | directed F1 ↑ | confounded-pair kept as causal ↓ (of 35) |
 |---|---|---|---|
-| **interventional-ci (reference)** | **1.31** | **0.91** | **0.33** |
-| PC | 3.22 | 0.57 | 8.3 |
-| FCI | 3.31 | 0.53 | 7.3 |
-| GIES | 4.53 | 0.78 | 10.0 |
+| **interventional-ci (reference)** | **1.47** | **0.91** | **0** |
+| PC | 2.81 | 0.67 | 13 |
+| FCI | 2.67 | 0.71 | 8 |
+| GIES | 6.66 | 0.68 | 17 |
 
-The standard methods **keep the hidden-confounded pair as a causal edge in 7–10 of 12 worlds** and
-post 2–4× the structural error. The interventional grader almost never does. The trap — a hidden
-common cause with no direct edge — is exactly what observational and score-based methods can't escape,
-because they assume causal sufficiency. Interventions break the tie.
+The standard methods **keep the hidden-confounded pair as a causal edge in most worlds**; the
+interventional grader **never** does (0 across all 35). The trap — a hidden common cause with no direct
+edge — is exactly what observational and score-based methods can't escape, because they assume causal
+sufficiency. Interventions break the tie.
 
-## What we *didn't* get (the honest part)
+## The difficulty story (a useful wrong turn)
 
-We also tested whether our anti-cliché *difficulty* score predicts how badly the standard methods do.
-It doesn't yet (correlations 0.05–0.11). The reason is informative: our difficulty metric measures
-*name-guessability* (can a judge guess the graph from variable names?), but the discovery hardness in
-these worlds comes from the *structural* confounder+regime trap, which is present across the whole set
-regardless of naming. Two different axes. The next release adds a structural-difficulty axis and pushes
-name-difficulty higher (the current mean, 0.28, is lower than we want).
+We wanted a *difficulty* score that predicts how badly the standard tools fail. Our first one measured
+**name-guessability** — can the judge guess the graph from variable names alone? At 12 worlds it
+predicted nothing (correlation ~0.1). Rather than bury that, we shipped it as an honest negative — and
+it pointed at the real answer: the discovery hardness isn't in the *names*, it's in the *structure*
+(hidden confounders + sign-flipping regimes).
 
-Twelve worlds is a demo, not a benchmark. The crossover is clear enough to justify scaling to 50–100+
-worlds with controlled diversity — which is what comes next.
+So we added a **structural-difficulty** score and a complexity dial on the author (easy → no traps;
+hard → several), generated a 36-world set spanning the range, and re-ran. The signal appeared:
+**structural difficulty predicts the observational collapse (correlation +0.62)** where
+name-guessability still doesn't (+0.14). Difficulty became a real instrument once we measured the
+right thing. The honest negative at n=12 was the fastest route to the positive result at n=35.
 
 ## Try it
 
@@ -68,3 +71,10 @@ causal-worlds generate "a hospital ED with triage staffing and bed pressure" ./w
 
 Everything here is reproducible: the benchmark set, the model bake-off that picked the author, and the
 crossover table all ship as versioned artifacts in the repo.
+
+## What's next
+
+The worlds are tabular today. The clear next frontier is **genuinely temporal** worlds — lags,
+seasonality, regime dynamics over time — graded with time-series discovery methods (PCMCI+,
+VARLiNGAM). That's the slice no public tool occupies, and it's where this becomes a benchmark you
+can't get anywhere else.

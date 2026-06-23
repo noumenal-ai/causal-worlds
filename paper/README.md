@@ -13,12 +13,16 @@ the crossover holds at scale — needs a **personal endorser** (founder action i
 *Fiction-first causal worlds: a leakage-resistant generator where interventional discovery beats the
 observational toolbox*
 
-## Abstract (to draft once scaled results land)
+## Abstract (draft — scaled results landed)
 LLM causal benchmarks are undermined by contamination and prior-guessability. We generate fictional
 operations from natural language with a declared ground-truth causal graph, gate them with an
 independent cross-family judge so they are not solvable from priors, and show that standard
-observational/score-based discovery (PC/GES/FCI/GIES) systematically mistakes a hidden-confounded pair
-for a causal edge while an interventional-CI grader does not. [Headline numbers at scale.]
+observational/score-based discovery (PC/FCI/GIES) systematically mistakes a hidden-confounded pair for
+a causal edge while an interventional-CI grader does not. Across a 35-world set the grader keeps zero
+confounded pairs as causal (skeleton-SHD 1.47, F1 0.91) versus 8–17 for the baselines; and a
+**structural** difficulty score (hidden confounders + regime sign-flips) predicts the observational
+collapse (corr +0.62) where name-guessability does not (+0.14) — making difficulty a usable instrument.
+[Extend to ≥100 worlds + genuine temporal worlds before submission.]
 
 ## 1. Introduction / motivation
 - The contamination + "causal parrots" critique (cite Srivastava et al. 2510.16530; Kıcıman et al.
@@ -37,7 +41,10 @@ for a causal edge while an interventional-CI grader does not. [Headline numbers 
 ## 3. Method (the apparatus)
 - The IR (variables/roles, mechanisms, hidden confounders, regimes); the answer-key derivation.
 - Author (cross-family from the judge) → gates T1–T4 (incl. the anti-cliché difficulty
-  `1 − F1(prior, truth)`) → admit. Reproducible bake-off picks the author model.
+  `1 − F1(prior, truth)`) → admit. Reproducible bake-off picks the author model; an author
+  **complexity knob** (easy/standard/hard) spreads difficulty for the analysis.
+- Two difficulty axes: **name-guessability** (`1 − F1(judge_prior, truth)`) and **structural**
+  (confounders + regime sign-flips); we show the latter is what predicts discovery error.
 - The reference interventional-CI grader; why observational/score-based methods fail the confounder
   trap (causal sufficiency assumption).
 
@@ -52,10 +59,13 @@ for a causal edge while an interventional-CI grader does not. [Headline numbers 
 - **Temporal**: genuine temporal/regime worlds + time-series baselines (PCMCI+, VARLiNGAM, Granger).
 
 ## 5. Limitations
-- Difficulty metric currently measures name-guessability, not structural hardness (v0.3 finding).
-- Mean difficulty 0.28 is low → worlds still partly guessable; needs to be pushed up with spread.
-- GES (causal-learn) numpy-2 incompatible — toolchain pinning.
-- Linear-Gaussian mechanisms so far; nonlinearity is future.
+- n=35 is enough for the crossover + the +0.62 difficulty signal, but a flagship D&B paper wants ≥100
+  with documented diversity coverage.
+- Mean name-guessability difficulty is still ~0.28; worlds remain partly name-guessable even though
+  structural difficulty is what drives discovery error.
+- Faithfulness scored by a single judge (1.00) — needs multiple judges + human spot-checks.
+- Worlds are tabular linear-Gaussian today; genuine temporal/lagged dynamics and nonlinearity are next.
+- GES (causal-learn) is numpy-2 incompatible (errors out) — reported, not hidden.
 
 ## 6. Conclusion
 The synthesis (NL authoring × executable causal sim × ground-truth answer-key) + the anti-cliché
