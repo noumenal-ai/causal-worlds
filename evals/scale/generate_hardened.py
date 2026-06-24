@@ -74,6 +74,7 @@ def main():
     discoverer = InterventionalCiDiscoverer(n=N)
     author = build_claude_author(complexity="adversarial", temporal=temporal)
     out.mkdir(parents=True, exist_ok=True)
+    prior = _load_prior(out)  # resume: prompts already judged in a previous (possibly killed) run
     index = []
     for i, prompt in enumerate(prompts):
         slug = f"world_{i:02d}"
@@ -82,12 +83,24 @@ def main():
             index.append({"slug": slug, "admitted": True, "prompt": prompt,
                           "difficulty": man.get("difficulty"), "resumed": True})
             print(f"{slug} resumed (exists)")
+            _write_index(out, index)
+            continue
+        if _was_real_reject(prior.get(prompt)):  # don't re-burn a prompt the gate already rejected
+            index.append({**prior[prompt], "slug": slug, "resumed": True})
+            print(f"{slug} resumed (already rejected): {str(prior[prompt].get('reason'))[:60]}")
+            _write_index(out, index)
             continue
         try:
             world = _generate_resilient(prompt, author, judge, discoverer)
         except NotAdmittedError as exc:
             index.append({"admitted": False, "prompt": prompt, "reason": str(exc)[:90]})
             print(f"{slug} NOT ADMITTED ({world_attempts(exc)}): {str(exc)[:70]}")
+            _write_index(out, index)
+            continue
+        except Exception as exc:  # noqa: BLE001 - a transient storm shouldn't crash the whole run
+            index.append({"admitted": False, "prompt": prompt, "error": f"{type(exc).__name__}: {exc}"[:90]})
+            print(f"{slug} ERROR (will retry on resume): {type(exc).__name__}: {str(exc)[:50]}")
+            _write_index(out, index)
             continue
         provenance = Provenance(
             author_model="claude-opus-4-8",
@@ -108,7 +121,7 @@ def main():
             "admitted": True,
             "prompt": prompt,
             "attempts": world.attempts,
-            "difficulty": r.difficulty,  # None for temporal worlds (T4 anti-cliché is skipped)
+            "difficulty": r.difficulty,  # since v0.26 temporal worlds carry a T4 difficulty too
             "faithfulness": r.faithfulness,
             "structural_score": sd.score,
             "directed_shd": r.grade.directed_shd if r.grade else None,
@@ -117,13 +130,40 @@ def main():
         })
         diff_str = f"diff {r.difficulty:.2f}" if r.difficulty is not None else f"tF1 {temporal_f1:.2f}"
         print(f"{slug} {diff_str} struct {sd.score} attempts {world.attempts}")
+        _write_index(out, index)
 
-    (out / "index.json").write_text(json.dumps(index, indent=2))
+    _write_index(out, index)
     admitted = [e for e in index if e["admitted"]]
     scores = [e["difficulty"] if e["difficulty"] is not None else e.get("temporal_f1") for e in admitted]
     scores = [s for s in scores if s is not None]
     mean_score = sum(scores) / len(scores) if scores else 0.0
     print(f"\n{len(admitted)}/{len(index)} admitted -> {out} | mean difficulty/tF1 {mean_score:.2f}")
+
+
+def _load_prior(out):
+    """Load a prior index.json (from a killed/earlier run) keyed by prompt, for idempotent resume."""
+    path = out / "index.json"
+    if not path.exists():
+        return {}
+    return {e["prompt"]: e for e in json.loads(path.read_text()) if "prompt" in e}
+
+
+# Gate verdicts that are deterministic given the spec — re-authoring won't change them, so skip on
+# resume. A transient "error" entry has no such reason, so it is NOT skipped (it gets retried).
+_REAL_REJECT_MARKERS = ("T4", "recoverable", "no temporal", "no causal", "T1", "T2", "trivial")
+
+
+def _was_real_reject(entry):
+    """True if a prior index entry is a genuine gate rejection (vs a transient error or an admit)."""
+    if not entry or entry.get("admitted"):
+        return False
+    reason = str(entry.get("reason", ""))
+    return any(marker in reason for marker in _REAL_REJECT_MARKERS)
+
+
+def _write_index(out, index):
+    """Persist the index after every world so a kill/crash never loses progress (resume reads it)."""
+    (out / "index.json").write_text(json.dumps(index, indent=2))
 
 
 def _generate_resilient(prompt, author, judge, discoverer):

@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     from causal_worlds.schema import WorldSpec
 
 DEFAULT_JUDGE_MODEL = "gemini-2.5-flash"
+_REQUEST_TIMEOUT_MS = 120_000  # finite per-request timeout (google-genai takes ms) — never hang
 
 _M = TypeVar("_M", bound=BaseModel)  # the structured response model a judge call returns
 
@@ -186,9 +187,19 @@ class GeminiJudge:
 def build_gemini_judge(
     model: str = DEFAULT_JUDGE_MODEL, *, api_key: str | None = None
 ) -> GeminiJudge:  # pragma: no cover - real provider wiring, exercised only in live runs
-    """Construct a live Gemini judge; needs the ``llm`` extra and a Gemini API key in the env."""
+    """Construct a live Gemini judge; needs the ``llm`` extra and a Gemini API key in the env.
+
+    The client carries a finite per-request timeout so a reset/stalled connection fails fast and is
+    retried by :meth:`GeminiJudge._create` rather than hanging a socket read forever.
+    """
     import instructor  # noqa: PLC0415 - lazy: the provider SDK is an optional `llm` extra
     from google import genai  # noqa: PLC0415
+    from google.genai import types  # noqa: PLC0415
 
-    client = instructor.from_genai(genai.Client(api_key=api_key))
+    client = instructor.from_genai(
+        genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(timeout=_REQUEST_TIMEOUT_MS),
+        )
+    )
     return GeminiJudge(client, model)

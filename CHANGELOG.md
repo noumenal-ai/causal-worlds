@@ -3,6 +3,29 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.28.0] — 2026-06-24
+
+**Finite request timeouts on both LLM clients — a reset/stalled connection now fails fast instead of
+hanging a socket read forever.**
+
+### Fixed
+- **Unbounded LLM-client reads could hang indefinitely.** Neither the Claude author nor the Gemini
+  judge client set a request timeout, so a transient Anthropic 500 + "connection reset by peer" left
+  a socket read blocked — stalling an overnight generation run for ~12 hours at 0% CPU on a single
+  prompt. Both clients now carry a finite per-request timeout (`author`: `timeout=120s` +
+  `max_retries=4` on the Anthropic SDK; `judge`: `HttpOptions(timeout=120_000ms)` on google-genai),
+  so a bad connection raises promptly and the existing retry loops (judge `_create`, generation
+  resilience) actually get to retry it. Failure is fast and loud, never a silent hang.
+
+### Changed
+- **`evals/scale/generate_hardened.py` resume is now idempotent and crash-safe** (research script):
+  the index is written after *every* world (a kill no longer loses progress); a prompt the gate
+  already rejected is skipped on resume (no re-burning author spend on a deterministic reject); and a
+  transient error on one prompt is recorded and skipped rather than crashing the whole run (it
+  retries on the next resume). Matters on a fixed eval budget under flaky providers.
+
+[0.28.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.28.0
+
 ## [0.27.0] — 2026-06-23
 
 **The Gemini judge rides through transient provider overloads — so a 503 spike no longer wastes the

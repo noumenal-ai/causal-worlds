@@ -24,6 +24,11 @@ if TYPE_CHECKING:
 DEFAULT_AUTHOR_MODEL = "claude-opus-4-8"
 _MAX_TOKENS = 4096
 _MAX_RETRIES = 2  # instructor's bounded re-ask on a schema-invalid response
+# A finite per-request timeout + SDK-level HTTP retries: a reset/overloaded connection must fail
+# fast (and be retried) rather than hang a socket read forever — an unbounded read stalled an
+# overnight generation run for 12h on one transient Anthropic 500 + connection reset.
+_REQUEST_TIMEOUT_S = 120.0
+_HTTP_RETRIES = 4
 
 _SYSTEM_BASE = """\
 You design small, fictional-but-internally-consistent CAUSAL OPERATIONS for a causal-discovery
@@ -141,5 +146,7 @@ def build_claude_author(
     import instructor  # noqa: PLC0415 - lazy: the provider SDK is an optional `llm` extra
     from anthropic import Anthropic  # noqa: PLC0415
 
-    client = instructor.from_anthropic(Anthropic(api_key=api_key))
+    client = instructor.from_anthropic(
+        Anthropic(api_key=api_key, timeout=_REQUEST_TIMEOUT_S, max_retries=_HTTP_RETRIES)
+    )
     return ClaudeAuthor(client, model, complexity=complexity, temporal=temporal)
