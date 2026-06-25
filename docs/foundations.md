@@ -51,13 +51,14 @@ alone):
 
 ## Scoped residuals (tracked)
 
-1. **Temporal counterfactuals** — `counterfactual()` raises on lagged worlds; Rung 3 is
-   cross-sectional only for now.
-2. **Faithfulness is enforced, not stress-tested** — real systems can be unfaithful (canceling
+1. **Faithfulness is enforced, not stress-tested** — real systems can be unfaithful (canceling
    paths); we gate those out. An opt-in "unfaithful / hard mode" is proposed in
    [#18](https://github.com/noumenal-ai/causal-worlds/issues/18).
-3. **Valid intervention targets** (Woodward's interventionism) — our `controllable` role *asserts* a
+2. **Valid intervention targets** (Woodward's interventionism) — our `controllable` role *asserts* a
    variable is a legitimate `do()` target; only lightly examined.
+
+*(Resolved: temporal counterfactuals — `counterfactual_temporal` now rolls a whole trajectory under a
+sustained intervention, so Rung 3 covers cross-sectional and temporal worlds.)*
 
 ## References
 

@@ -14,25 +14,30 @@ This is a *structural* query, so it works on the raw structural equations (the n
 mechanisms), not the iSCM-standardized data the benchmark emits. Holding the noise fixed is
 what makes it a counterfactual about *the same unit*, not a fresh draw — and **autonomy /
 modularity** (each mechanism is independent) is what licenses re-running every other equation
-unchanged. Cross-sectional worlds only for now; temporal (trajectory) counterfactuals are future.
+unchanged. :func:`counterfactual` handles a single cross-sectional unit;
+:func:`counterfactual_temporal` rolls a whole trajectory forward under a *sustained* intervention.
 """
 
 from collections.abc import Mapping
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.typing import NDArray
 
 from causal_worlds.errors import CausalWorldsError
 from causal_worlds.schema import Mechanism, WorldSpec, validate
 
 _REGIME_ON = 0.5  # a regime switch is "on" above this (matches the sampler)
 _ROOT_SCALE = 1.0  # an exogenous (non-regime) root ~ N(0, 1)
+_BURN_IN = 200  # temporal: discard this many leading steps so the series settles (matches sampler)
 
 type Assignment = dict[str, float]
+type FloatArray = NDArray[np.float64]
+type Series = dict[str, FloatArray]
 
 
 class TemporalCounterfactualError(CausalWorldsError):
-    """Counterfactuals on temporal (lagged) worlds are not supported yet."""
+    """Raised by :func:`counterfactual` on a temporal world (use ``counterfactual_temporal``)."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,9 +66,15 @@ def _is_temporal(spec: WorldSpec) -> bool:
     )
 
 
-def _parents(mechanism: Mechanism) -> set[str]:
-    """The variables a mechanism reads: its term parents plus any regime switch (lag-0)."""
-    parents = {term.parent for term in (*mechanism.terms, *(mechanism.regime_terms or ()))}
+def _contemporaneous_parents(mechanism: Mechanism) -> set[str]:
+    """The variables a mechanism reads *this step*: lag-0 term parents + any regime switch.
+
+    Lagged parents read *history*, not the current step, so they don't constrain within-step order
+    (and a lagged self-loop must not appear here, or the topological sort would see a cycle).
+    """
+    parents = {
+        term.parent for term in (*mechanism.terms, *(mechanism.regime_terms or ())) if term.lag == 0
+    }
     if mechanism.regime is not None:
         parents.add(mechanism.regime)
     return parents
@@ -80,7 +91,7 @@ def _topological_order(spec: WorldSpec) -> list[str]:
             return
         visited.add(node)
         if node in mechanisms:
-            for parent in _parents(mechanisms[node]):
+            for parent in _contemporaneous_parents(mechanisms[node]):
                 visit(parent)
         order.append(node)
 
@@ -165,15 +176,107 @@ def counterfactual(spec: WorldSpec, do: Mapping[str, float], *, seed: int) -> Co
     intervention — that is the counterfactual.
 
     Raises:
-        TemporalCounterfactualError: if the world is temporal (lagged) — not supported yet.
+        TemporalCounterfactualError: if the world is temporal (lagged) — use
+            ``counterfactual_temporal``, which returns trajectories.
     """
     validate(spec)
     if _is_temporal(spec):
-        msg = "counterfactuals on temporal (lagged) worlds are not supported yet"
+        msg = "this world is temporal (lagged); use counterfactual_temporal() for trajectory CFs"
         raise TemporalCounterfactualError(msg)
     noise = _draw_noise(spec, np.random.default_rng(seed))
     return CounterfactualResult(
         factual=predict(spec, noise, {}),
         counterfactual=predict(spec, noise, do),
+        intervention=dict(do),
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Temporal (trajectory) counterfactuals
+# --------------------------------------------------------------------------- #
+@dataclass(frozen=True, slots=True)
+class TemporalCounterfactualResult:
+    """Factual and counterfactual *trajectories* (per observed var) under a sustained ``do``."""
+
+    factual: Series
+    counterfactual: Series
+    intervention: dict[str, float]
+
+    @property
+    def effect(self) -> Series:
+        """Per-variable counterfactual - factual, step by step."""
+        return {name: self.counterfactual[name] - self.factual[name] for name in self.factual}
+
+
+def _deterministic_at(mechanism: Mechanism, history: Series, t: int) -> float:
+    """Noise-free mechanism output at step ``t``: ``coeff * parent[t - lag]``, regime-switched."""
+    terms = mechanism.terms
+    if (
+        mechanism.regime is not None
+        and mechanism.regime_terms is not None
+        and history[mechanism.regime][t] > _REGIME_ON
+    ):
+        terms = mechanism.regime_terms
+    return sum(
+        term.coeff * float(history[term.parent][t - term.lag])
+        for term in terms
+        if t - term.lag >= 0
+    )
+
+
+def _draw_noise_series(spec: WorldSpec, total: int, rng: np.random.Generator) -> Series:
+    """A per-variable exogenous noise series of length ``total`` (mechanism/regime/root)."""
+    mechanisms = _mechanisms(spec)
+    regime_vars = {m.regime for m in spec.mechanisms if m.regime is not None}
+    series: Series = {}
+    for variable in spec.variables:
+        name = variable.name
+        if name in mechanisms:
+            series[name] = rng.normal(0.0, mechanisms[name].noise_scale, total)
+        elif name in regime_vars:
+            series[name] = rng.integers(0, 2, total).astype(np.float64)
+        else:
+            series[name] = rng.normal(0.0, _ROOT_SCALE, total)
+    return series
+
+
+def _evaluate_temporal(
+    spec: WorldSpec, noise: Series, do: Mapping[str, float], total: int
+) -> Series:
+    """Roll the SCM forward ``total`` steps from a fixed noise series under a sustained ``do``."""
+    mechanisms = _mechanisms(spec)
+    order = _topological_order(spec)
+    history: Series = {v.name: np.zeros(total, dtype=np.float64) for v in spec.variables}
+    for t in range(total):
+        for name in order:
+            if name in do:  # sustained surgery: forced to a constant at every step
+                history[name][t] = float(do[name])
+            elif name in mechanisms:
+                history[name][t] = _deterministic_at(mechanisms[name], history, t) + noise[name][t]
+            else:
+                history[name][t] = noise[name][t]
+    return history
+
+
+def counterfactual_temporal(
+    spec: WorldSpec, do: Mapping[str, float], *, seed: int, steps: int = 200
+) -> TemporalCounterfactualResult:
+    """Trajectory counterfactual on a (temporal) world under a **sustained** intervention.
+
+    Rolls one realized noise series forward ``steps`` timesteps (after a burn-in) to get the factual
+    trajectory, then re-rolls the *same* noise with ``do`` held at its value at every step — so the
+    only difference is the sustained intervention. Returns per-observed-variable arrays of length
+    ``steps``. Meant for lagged worlds (works on cross-sectional too); for one cross-sectional unit
+    use :func:`counterfactual`.
+    """
+    validate(spec)
+    total = steps + _BURN_IN
+    noise = _draw_noise_series(spec, total, np.random.default_rng(seed))
+    factual = _evaluate_temporal(spec, noise, {}, total)
+    cf = _evaluate_temporal(spec, noise, do, total)
+    observed = [v.name for v in spec.variables if not v.hidden]
+    return TemporalCounterfactualResult(
+        factual={name: factual[name][_BURN_IN:] for name in observed},
+        counterfactual={name: cf[name][_BURN_IN:] for name in observed},
         intervention=dict(do),
     )

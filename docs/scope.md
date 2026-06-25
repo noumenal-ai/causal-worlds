@@ -58,7 +58,7 @@ the known SCM:
 - a **ground-truth optimal policy** (closed-form for linear-Gaussian + quadratic cost; offline optimization over
   the known mechanisms otherwise) — **SHIPPED**, and
 - a **counterfactual engine** (abduction → action → prediction on the known SCM) for counterfactual replay —
-  **SHIPPED for cross-sectional worlds** (`causal_worlds.counterfactual`); temporal (trajectory) is future.
+  **SHIPPED** (`causal_worlds.counterfactual` for a single unit; `counterfactual_temporal` for trajectories).
 
 > **Status (2026-06-25, verified against the code).** In Pearl's-ladder terms the package now supports all three
 > rungs on cross-sectional worlds: **Rung 1 (association — sampling)**; **Rung 2 (intervention — `do()`)**, which
@@ -66,7 +66,8 @@ the known SCM:
 > in `sample/substrate.py`); and **Rung 3 (counterfactuals)** via `counterfactual` / `abduct` / `predict`
 > (abduction recovers each unit's noise in closed form, then re-runs the SCM under `do` with that noise held
 > fixed). The control track is shipped (optimal-policy answer-key, `grade_control`, `regret_under_perturbation`,
-> Gym). **Remaining:** counterfactuals on *temporal* (lagged) worlds — `counterfactual` raises on those for now.
+> Gym). Counterfactuals cover **both** cross-sectional units (`counterfactual`) and temporal trajectories
+> under a sustained intervention (`counterfactual_temporal`). All three rungs are live.
 
 The control **score** is **regret vs. the known optimum** and — the load-bearing one for the World Models thesis —
 **regret *under perturbation*** (does a policy *stay* near-optimal when the regime shifts?). That is precisely what

@@ -3,6 +3,28 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.33.0] — 2026-06-25
+
+**Temporal counterfactuals — Rung 3 now covers lagged worlds too (the last gap closed).**
+
+### Added
+- **`counterfactual_temporal(spec, do, *, seed, steps=...)`** — a *trajectory* counterfactual under a
+  **sustained** intervention: roll one realized noise series forward `steps` timesteps for the factual
+  path, then re-roll the *same* noise with the lever held at its value throughout, holding all lagged
+  dynamics and the noise series fixed. Returns per-observed-variable arrays (`TemporalCounterfactualResult`,
+  with `.effect`). Handles autoregression, lags, and regimes.
+- The cross-sectional `counterfactual` now points temporal worlds to it (clear error) instead of just
+  refusing.
+
+### Notes
+- **Pearl's ladder is now complete for both substrates** — association, intervention, and
+  counterfactual on cross-sectional *and* temporal worlds. Internally the topological order was made
+  lag-0-aware (a lagged self-loop must not look like a within-step cycle). Verified on the built-in
+  temporal `supply` world (holding `order` high cuts mean `stockout`). 157 tests, 95% coverage.
+- `docs/scope.md` + `docs/foundations.md` updated — the temporal-counterfactual residual is resolved.
+
+[0.33.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.33.0
+
 ## [0.32.0] — 2026-06-25
 
 **Rung 3 — a counterfactual engine — completes Pearl's ladder; plus `do()` is now visualizable.**

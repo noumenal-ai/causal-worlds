@@ -46,8 +46,10 @@ from causal_worlds.controls import (
 )
 from causal_worlds.counterfactual import (
     CounterfactualResult,
+    TemporalCounterfactualResult,
     abduct,
     counterfactual,
+    counterfactual_temporal,
     predict,
 )
 from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
@@ -173,6 +175,7 @@ __all__ = [
     "SpecError",
     "StructuralDifficulty",
     "Substrate",
+    "TemporalCounterfactualResult",
     "TemporalDiscoverer",
     "TemporalEdges",
     "TemporalReport",
@@ -194,6 +197,7 @@ __all__ = [
     "check_faithfulness",
     "control_substrate",
     "counterfactual",
+    "counterfactual_temporal",
     "default_objective",
     "directed_shd",
     "f1",
