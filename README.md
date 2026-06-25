@@ -220,8 +220,10 @@ simulated-DAG leakage, difficulty-as-descriptor, anti-cliché role leakage) are 
 - **Reference grader** — an interventional-CI discoverer that uses `do()` data to tell *confounding*
   from *causation*, where PC/GES/GIES/FCI (which assume causal sufficiency) cannot.
 
-Depth: [`docs/scope.md`](docs/scope.md) · [`docs/hld.md`](docs/hld.md) · [`docs/lld.md`](docs/lld.md)
-· [`docs/architecture.md`](docs/architecture.md) · [`docs/findings.md`](docs/findings.md) ·
+Depth: [`docs/foundations.md`](docs/foundations.md) (are these worlds *truly* causal? — the three
+rungs, grounded in Pearl/Wright/Haavelmo) · [`docs/scope.md`](docs/scope.md) ·
+[`docs/hld.md`](docs/hld.md) · [`docs/lld.md`](docs/lld.md) ·
+[`docs/architecture.md`](docs/architecture.md) · [`docs/findings.md`](docs/findings.md) ·
 [`docs/validation.md`](docs/validation.md).
 
 ## Roadmap
