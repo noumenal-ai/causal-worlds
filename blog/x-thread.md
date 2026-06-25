@@ -205,3 +205,46 @@ Honest measurement is the whole identity. Come break a world.
 
 📖 Full story: selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
 🔗 github.com/noumenal-ai/causal-worlds
+
+═══════════════════════════════════════════════════════════════════════
+## Take F — for RL / control people ("agents have to ACT, not just see")
+═══════════════════════════════════════════════════════════════════════
+
+**1/**
+Causal benchmarks test what you can SEE. But decision agents have to ACT.
+
+So causal-worlds is also a control benchmark: same worlds, but now you choose lever values to hit an objective — and we can score you against the *true* optimum. 🧵
+
+**2/**
+Because the mechanisms are DECLARED, the best the levers can possibly do is computable — a by-construction optimal policy.
+
+So a controller is graded by REGRET against it. No learned reward model, no real data, no human labels.
+
+**3/**
+The real test is regret UNDER PERTURBATION. The regime flips (a weekend, a shock) and a policy that ignores it collapses — while the regime-aware optimum stays ~0.
+
+A Gymnasium env shifts the regime under you, step to step. Cumulative regret = your score.
+
+**4/**
+Plug in your RL / decision agent, drive a world that changes beneath it, and measure whether it stays optimal — against a known answer.
+
+MIT, `pip install causal-worlds`
+🔗 github.com/noumenal-ai/causal-worlds
+
+═══════════════════════════════════════════════════════════════════════
+## Take G — for time-series people ("real operations aren't i.i.d.")
+═══════════════════════════════════════════════════════════════════════
+
+**1/**
+Most causal-discovery benchmarks are cross-sectional — i.i.d. rows. Real operations are time series.
+
+causal-worlds builds TEMPORAL worlds too: lagged edges, autoregression, and a lagged ground-truth answer key. 🧵
+
+**2/**
+Graded against the time-series toolbox — PCMCI+, LPCMCI, VARLiNGAM, Granger — so you can see which method recovers which variable drives which, and at which lag.
+
+**3/**
+And counterfactuals roll forward in time: hold the realized noise fixed, change one lever, replay the whole trajectory. Exact, because the world is declared.
+
+MIT. `pip install causal-worlds`
+🔗 github.com/noumenal-ai/causal-worlds

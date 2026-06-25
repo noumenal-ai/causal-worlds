@@ -167,6 +167,25 @@ validated predictor of error — its correlation CIs include zero. We report it 
 
 ---
 
+## Beyond the coffee cup: control, and time
+
+Two tracks the coffee snapshot doesn't show.
+
+**Control.** The same declared worlds are a *control* benchmark. Because the mechanisms are known, the
+best the levers can do is computable — a **by-construction optimal policy** — so a controller is graded
+by **regret** against it, with no learned reward and no real data. The load-bearing metric is **regret
+under perturbation**: a regime-blind policy collapses when a sign-flipped regime kicks in, while the
+regime-aware optimum stays near zero. A `Gymnasium` env (`causal_worlds.gym.ControlEnv`) shifts the
+regime between steps, so cumulative regret is the stay-optimal score — drop in an RL or decision agent
+and watch.
+
+**Time.** Worlds can be **temporal** — lagged edges, autoregression, a lagged answer key — graded
+against the time-series toolbox (PCMCI+, LPCMCI, VARLiNGAM, Granger), with counterfactuals that roll a
+whole trajectory forward under a sustained intervention. (Honest caveat: temporal *grading* is
+validated, but a temporal benchmark *set* — n > 1 — is still on the roadmap.)
+
+---
+
 ## Try it in 60 seconds (no API key)
 
 ```python

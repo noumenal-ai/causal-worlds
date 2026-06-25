@@ -98,3 +98,50 @@ Open source, MIT. If you build or evaluate causal methods — come break a world
 → github.com/noumenal-ai/causal-worlds
 
 #causalinference #datascience #AI #opensource
+
+═══════════════════════════════════════════════════════════════════════
+## Take D — RL / control audience ("agents have to act, not just see")
+═══════════════════════════════════════════════════════════════════════
+
+Causal benchmarks usually test what a method can *see*. But decision-makers have to *act* — and acting
+is where causal reasoning earns its keep.
+
+causal-worlds is also a control benchmark. The same fictional worlds, but now you choose lever settings
+to hit an objective. And because the mechanisms are declared, the best those levers can do is
+computable — a by-construction optimal policy. So a controller is graded by *regret* against the true
+optimum: no learned reward model, no real data, no human labels.
+
+The sharp test is regret under perturbation. The regime shifts — a weekend, a demand shock — and a
+policy that ignores it collapses, while the regime-aware optimum stays near zero. A Gymnasium
+environment shifts the regime under your agent, step by step; cumulative regret is the score.
+
+If you build RL or decision agents and want to know whether they stay optimal when the world changes
+beneath them — against a known answer — this is for you.
+
+→ Read the full story (Medium): https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
+→ pip install causal-worlds
+→ github.com/noumenal-ai/causal-worlds
+
+#reinforcementlearning #causalinference #controltheory #opensource
+
+═══════════════════════════════════════════════════════════════════════
+## Take E — time-series audience ("real operations aren't i.i.d.")
+═══════════════════════════════════════════════════════════════════════
+
+Most causal-discovery benchmarks are cross-sectional — independent rows. Real operations are time
+series, with lags and feedback.
+
+causal-worlds builds temporal worlds too: lagged edges, autoregressive dynamics, and a lagged
+ground-truth answer key. It grades against the time-series causal toolbox — PCMCI+, LPCMCI, VARLiNGAM,
+Granger — so you can see which method recovers which variable drives which, and at which lag.
+
+And it does counterfactuals over time: hold a realized trajectory's noise fixed, change one lever, and
+replay the whole series. Exact, because the world is fully declared.
+
+If you work on temporal causal discovery or time-series intervention, come kick the tires.
+
+→ Read the full story (Medium): https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
+→ pip install causal-worlds
+→ github.com/noumenal-ai/causal-worlds
+
+#timeseries #causalinference #machinelearning #opensource

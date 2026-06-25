@@ -102,6 +102,33 @@ print(round(corr, 2), round((hi - lo) / 2, 2))   # 0.64  0.00  → strong correl
 </div></section>
 
 <section><div class="wrap">
+  <h2>More than a coffee demo — who it's for</h2>
+  <p class="muted">One generator, several jobs. The coffee world above is one cross-sectional example;
+  the same machinery spans discovery and control, cross-sectional and temporal.</p>
+  <div class="rungs">
+    <div class="rung"><div class="tag">Causal discovery</div><h3>Benchmark a method</h3>
+      <p class="muted">Implement one function — <code>recover()</code> — and score it against the answer
+      key, with PC, FCI, GES, GIES, DAGMA, and DirectLiNGAM wrapped as baselines to beat.</p></div>
+    <div class="rung"><div class="tag">RL / control</div><h3>Benchmark a control agent</h3>
+      <p class="muted">The same worlds are a control gym: a by-construction <em>optimal policy</em>,
+      <strong>regret</strong>, and <strong>regret-under-perturbation</strong>, plus a
+      <code>gymnasium.Env</code> whose regime shifts under you.</p></div>
+    <div class="rung"><div class="tag">Time series</div><h3>Temporal causal discovery</h3>
+      <p class="muted">Lagged, autoregressive worlds with a lagged answer key and temporal
+      counterfactuals — graded against PCMCI+, LPCMCI, VARLiNGAM, and Granger.</p></div>
+    <div class="rung"><div class="tag">LLM evaluation</div><h3>Parrot-proof reasoning eval</h3>
+      <p class="muted">A test an LLM can't ace by reciting variable names: fiction-first, name-blinded,
+      and audited so the only way to score is to actually discover.</p></div>
+    <div class="rung"><div class="tag">Sandbox</div><h3>Describe a world, conversationally</h3>
+      <p class="muted"><code>causal-worlds elicit</code> builds a world through a short dialogue;
+      <code>causal-worlds viz</code> draws it — a playground for causal intuition.</p></div>
+    <div class="rung"><div class="tag">Agents</div><h3>Stress-test a causal agent</h3>
+      <p class="muted">Plug in your own discoverer or controller and see whether it recovers structure —
+      and stays optimal — where the standard toolbox gets fooled.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
   <h2>A benchmark we tried to break ourselves</h2>
   <p>A benchmark you can memorize isn't a benchmark. <strong>Fiction-first</strong> means there's nothing
   real to recite and no data to leak. Then we audited our own work and fixed what we found:</p>
