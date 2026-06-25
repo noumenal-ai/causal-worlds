@@ -99,6 +99,11 @@ print(round(corr, 2), round((hi - lo) / 2, 2))   # 0.64  0.00  → strong correl
     <img class="fig" src="figures/coffee_do_footfall.png" alt="do(footfall): the arrows into footfall are cut; its downstream effects still flow." />
     <figcaption>Rung 2 — <code>do(footfall)</code>: arrows into footfall are cut; its effects still flow. Verified genuine surgery, not conditioning.</figcaption>
   </figure>
+  <p class="muted" style="margin-top:18px">Rung 3 — imagine a different past on the <em>same</em> day. Because the
+  SCM is declared, the counterfactual is exact (abduction → action → prediction):</p>
+  <pre><code>from causal_worlds import counterfactual, worlds
+cf = counterfactual(worlds.get("coffee"), do={"footfall": 2.0}, seed=0)
+print(round(cf.factual["sales"], 2), "->", round(cf.counterfactual["sales"], 2))   # 3.24 -> 4.55</code></pre>
 </div></section>
 
 <section><div class="wrap">
@@ -127,6 +132,68 @@ print(round(corr, 2), round((hi - lo) / 2, 2))   # 0.64  0.00  → strong correl
       <p class="muted">Plug in your own discoverer or controller and see whether it recovers structure —
       and stays optimal — where the standard toolbox gets fooled.</p></div>
   </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Every capability — a few lines each</h2>
+  <p class="muted">Everything below runs with no API key (only authoring needs a model). Every number is
+  from a live run.</p>
+
+  <h3 style="margin:22px 0 6px;font-size:17px">Benchmark a discoverer against ground truth</h3>
+  <p class="muted">Implement one function, <code>recover()</code> — or run the wrapped baselines — and
+  score against the answer key. The column that matters is <code>confounded_reported</code>: how many
+  spurious confounded pairs a method keeps as real edges.</p>
+  <pre><code>from causal_worlds import worlds, grade_spec, InterventionalCiDiscoverer, PcDiscoverer, GiesDiscoverer
+spec = worlds.get("coffee")
+for name, disc in {"interventional-ci": InterventionalCiDiscoverer, "pc": PcDiscoverer, "gies": GiesDiscoverer}.items():
+    r = grade_spec(spec, disc(), seed=0)
+    print(f"{name:>18}  F1={r.f1:.2f}  confounded_kept={r.confounded_reported}")
+# interventional-ci  F1=1.00  confounded_kept=0     ← the only one that nails it AND avoids the trap
+#                pc  F1=0.77  confounded_kept=1
+#               gies  F1=0.77  confounded_kept=1</code></pre>
+  <figure style="margin-top:12px">
+    <img class="fig" src="figures/tour1_shootout.png" alt="Discovery shootout on the coffee world: only the latent-aware reference keeps zero confounded pairs and recovers the structure; PC, FCI and GIES all keep the spurious edge." />
+    <figcaption>Only a latent-aware method isn't fooled — every box-stock discoverer on the coffee world.</figcaption>
+  </figure>
+
+  <h3 style="margin:26px 0 6px;font-size:17px">Stay optimal when the world shifts</h3>
+  <p class="muted">The same worlds are a control benchmark: the optimum is computable from the declared
+  SCM, so a policy is graded by <strong>regret</strong> — and the load-bearing metric is regret under a
+  regime shift.</p>
+  <pre><code>from causal_worlds import worlds, default_objective, optimal_policy, regret_under_perturbation
+spec = worlds.get("coffee"); obj = default_objective(spec)
+print(optimal_policy(spec, obj))                                   # {'price': 0.0}  ← declared optimum
+# the price lever's sign flips across regimes, so a regime-blind policy collapses when it flips:
+rep = regret_under_perturbation(spec, obj, {"price": -1.0}, seed=7)
+print(rep.per_regime)                                              # {'baseline': 0.0, 'weekend': 2.0}</code></pre>
+  <figure style="margin-top:12px">
+    <img class="fig" src="figures/tour2_regime_flip.png" alt="Control under perturbation: a regime-blind policy has 0.0 regret in its own regime and 2.0 when the regime flips, while a regime-aware policy stays at 0.0." />
+    <figcaption>A regime-blind policy stays optimal — until the regime flips. A regime-aware one stays at zero.</figcaption>
+  </figure>
+
+  <h3 style="margin:26px 0 6px;font-size:17px">Worlds that evolve in time</h3>
+  <p class="muted">Lagged, autoregressive worlds with a lagged answer key — and counterfactuals that roll a
+  whole trajectory forward under a sustained intervention.</p>
+  <pre><code>from causal_worlds import counterfactual_temporal, worlds
+tcf = counterfactual_temporal(worlds.get("supply"), do={"order": 2.0}, seed=0, steps=200)
+# hold orders high for 200 steps:  stockout -2.68,  inventory +3.35,  cost +0.63  (mean shift)</code></pre>
+
+  <h3 style="margin:26px 0 6px;font-size:17px">Author one from a sentence — or just describe it</h3>
+  <p class="muted">By default authoring builds a <em>benchmark-grade</em> world (rejected if it's guessable
+  from the variable names). Pass <code>--playground</code> to keep faithfulness + a difficulty score but
+  never reject — describe a world and just get it.</p>
+  <pre><code>$ causal-worlds generate "a regional power grid with rooftop solar and time-of-use pricing" ./grid
+not admitted: T4 cliché: names+roles recover it (prior F1 0.84 >= 0.5)
+hint: re-run with --playground to author it anyway (guessability becomes an advisory score).
+
+$ causal-worlds generate "a regional power grid with rooftop solar and time-of-use pricing" ./grid --playground
+admitted -> ./grid  difficulty=0.16 (advisory)     # 8 edges + a hidden confounder, reference grader F1 0.93</code></pre>
+
+  <h3 style="margin:26px 0 6px;font-size:17px">See any world</h3>
+  <p class="muted">Zero-dependency SCM renderers — Mermaid (draws on GitHub) or Graphviz DOT, with path
+  coefficients on the edges and hidden confounders dashed.</p>
+  <pre><code>from causal_worlds import to_mermaid, worlds
+print(to_mermaid(worlds.get("coffee")))     # or from the CLI:  causal-worlds viz coffee --format dot</code></pre>
 </div></section>
 
 <section><div class="wrap">
