@@ -3,6 +3,36 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.29.0] — 2026-06-25
+
+**See the world it builds — zero-dependency SCM graph renderers, a richer examples set, and a
+slimmed README.**
+
+### Added
+- **`to_mermaid(spec)` and `to_dot(spec)`** (`causal_worlds.viz`) — pure-string renderers (no extra
+  deps) turning a `WorldSpec` into a Mermaid flowchart (renders natively on GitHub) or Graphviz DOT.
+  Visual grammar: controllable / outcome / observable / disturbance / **hidden confounder** each get a
+  distinct shape + colour; lags are edge labels; edges out of a hidden node (and regime-only edges)
+  are dashed — so the latent structure a discovery method never sees is exactly what you look at.
+- **`causal-worlds viz <world>`** CLI command (`--format mermaid|dot`); accepts a built-in world name
+  **or** a persisted bundle directory.
+- A **rendered hero image** in the README (the `coffee` SCM, hidden confounder dashed) via
+  `docs/figures/render_world_dag.py` — embedded by absolute URL so it shows on PyPI too.
+
+### Changed
+- **Examples overhauled** (`examples/`): 5 focused scripts (grade · **visualize** · control · inspect ·
+  author), and **every example's docstring now carries its expected output** so you get a feel without
+  running. `examples/README.md` indexes them with outputs (incl. a live Mermaid diagram).
+- **README slimmed** (254 → ~150 lines): the visualization leads; the full crossover table + the four
+  honest caveats moved to **`docs/findings.md`** (nothing lost, just linked); the roadmap is trimmed;
+  the stale `v0.6` status is corrected.
+
+### Notes
+- 144 tests (5 new for the renderers), 95% coverage. The renderers are in the base install (no new
+  runtime deps); the README figure uses matplotlib+networkx as a one-off doc tool (not a package dep).
+
+[0.29.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.29.0
+
 ## [0.28.0] — 2026-06-24
 
 **Finite request timeouts on both LLM clients — a reset/stalled connection now fails fast instead of

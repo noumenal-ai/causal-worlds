@@ -1,6 +1,14 @@
 """Implement a Discoverer and score it against a world's declared answer key (no API key).
 
     uv run python examples/01_grade_your_discoverer.py
+
+Expected output:
+
+    naive correlation : Report(directed_shd=3, skeleton_shd=3, f1=0.73, n_truth=6, n_recovered=5, confounded_reported=1)
+    interventional-ci : Report(directed_shd=0, skeleton_shd=0, f1=1.0, n_truth=6, n_recovered=6, confounded_reported=0)
+
+    correlation keeps 1 spurious confounded edge(s) as causal;
+    the interventional grader keeps 0 — that gap is the point.
 """
 
 import numpy as np

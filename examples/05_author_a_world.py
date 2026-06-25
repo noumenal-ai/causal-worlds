@@ -4,7 +4,15 @@ Needs the `llm` extra and both keys in the environment:
 
     uv add 'causal-worlds[llm]'
     set -a && . ../.env && set +a
-    uv run python examples/03_author_a_world.py
+    uv run python examples/05_author_a_world.py
+
+Expected output (illustrative — depends on the live models, so a real run varies):
+
+    admitted in 2 attempt(s)
+      observed : ['surge_multiplier', 'driver_supply', 'rider_demand', 'cancellations', 'churn']
+      hidden   : ['L_market_heat']
+      difficulty 0.62  faithfulness 0.90
+      reference grader: directed_shd=1 f1=0.86
 """
 
 from causal_worlds import NotAdmittedError, generate

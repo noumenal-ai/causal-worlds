@@ -107,6 +107,7 @@ from causal_worlds.temporal_baselines import (
     PcmciPlusDiscoverer,
     VarLingamDiscoverer,
 )
+from causal_worlds.viz import to_dot, to_mermaid
 
 __all__ = [
     "BASELINES",
@@ -220,6 +221,8 @@ __all__ = [
     "temporal_directed_shd",
     "temporal_f1",
     "temporal_score",
+    "to_dot",
+    "to_mermaid",
     "validate",
     "varsortability",
 ]

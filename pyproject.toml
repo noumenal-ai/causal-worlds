@@ -77,7 +77,7 @@ target-version = "py313"
 # Research spikes + eval harnesses + figure scripts are exploratory, NOT held to production lint
 # (docs/engineering.md §Research). Their *outputs* (evals/*/report.json, blog/figures/*.png, README)
 # are the shipped, reproducible evidence — re-run to regenerate.
-extend-exclude = ["spikes", "experiments", "evals", "examples", "blog"]
+extend-exclude = ["spikes", "experiments", "evals", "examples", "blog", "docs/figures"]
 
 [tool.ruff.lint]
 select = ["ALL"]

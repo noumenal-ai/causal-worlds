@@ -96,6 +96,32 @@ def gate(world: str, seed: int = 0) -> None:
     typer.echo(f"admitted={report.admitted}  reason={report.reason!r}")
 
 
+def _spec_of(world: str) -> WorldSpec:
+    """Resolve ``world`` as a persisted bundle dir if it exists, else as a built-in world name."""
+    path = Path(world)
+    if (path / "spec.json").exists():
+        from causal_worlds.artifact import load_bundle  # noqa: PLC0415 - keep IO out of import time
+
+        return load_bundle(path).spec
+    return _resolve(world)
+
+
+@app.command()
+def viz(world: str, fmt: str = typer.Option("mermaid", "--format", help="mermaid | dot")) -> None:
+    """Print a world's SCM as a Mermaid (default) or Graphviz-DOT graph (hidden confounders shown).
+
+    ``world`` is a built-in name (e.g. ``coffee``) or a persisted bundle directory.
+    """
+    from causal_worlds.viz import to_dot, to_mermaid  # noqa: PLC0415
+
+    spec = _spec_of(world)
+    renderers = {"mermaid": to_mermaid, "dot": to_dot}
+    if fmt not in renderers:
+        typer.echo("--format must be 'mermaid' or 'dot'", err=True)
+        raise typer.Exit(code=1)
+    typer.echo(renderers[fmt](spec))
+
+
 def _load_discoverer(path: str) -> Discoverer:
     """Import a discoverer from a ``module:Class`` path and instantiate it (no args)."""
     module_name, _, attr = path.partition(":")

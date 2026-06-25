@@ -1,13 +1,25 @@
 """Load a shipped benchmark world and read its truth + provenance (no API key).
 
-    uv run python examples/02_inspect_a_bundle.py
+    uv run python examples/04_inspect_a_bundle.py
+
+Expected output:
+
+    world: benchmark/v0.6/world_01
+      prompt          : A hospital emergency department with triage staffing, inflow, beds, and wait times.
+      observed columns: ('triage_nurses', 'patient_inflow', 'beds_open', 'wait_time', ...)
+      data shape      : (2000, 7)  (rows x observed)
+      causal edges    : [('beds_open', 'los_hours'), ('boarding_pressure', 'triage_nurses'), ...]
+      confounded pairs: [['beds_open', 'patient_inflow']]  (NOT causal edges)
+      difficulty      : name=0.78 structural=2.0
+      provenance      : author=claude-opus-4-8 judge=gemini-2.5-flash grader=interventional-ci
+      honesty         : Fictional world for benchmarking causal discovery; not a model of any real system.
 """
 
 from pathlib import Path
 
 from causal_worlds import answer_key, load_bundle
 
-BUNDLE = Path("benchmark/v0.5/world_01")
+BUNDLE = Path("benchmark/v0.6/world_01")
 
 
 def main() -> None:
