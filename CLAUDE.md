@@ -25,6 +25,17 @@ approach are **validated** (see [docs/validation.md](docs/validation.md)); this 
   `uv.lock` + pinned model ids; honest negatives.
 - **Commits:** Conventional Commits, atomic, **no `Co-Authored-By` trailer**. Push/PR only on explicit request.
 
+## Public presence (launch)
+- **GitHub Pages:** `docs/index.html` (self-contained landing; `docs/.nojekyll` keeps Jekyll off so our
+  math-heavy `docs/*.md` don't break the build). Pages source = `main` / `/docs`. Live at
+  https://noumenal-ai.github.io/causal-worlds/ (also the repo homepage). To update: edit `index.html`,
+  push to `main` — Pages rebuilds. Re-render the diagrams with `docs/figures/render_world_dag.py` (needs
+  graphviz `dot`).
+- **Comms drafts** (not auto-published — needs Amit's accounts): `blog/medium-launch.md` (published at
+  selftaughtamit.medium.com/correlation-lies-...-30efae26b457), `blog/x-thread.md` (5 takes incl. a
+  long-form for X Premium), `blog/linkedin-launch.md` (3 takes). Every number in them is verified; the
+  hook is the coffee "0.64 correlation → 0.00 causal effect" mirage.
+
 ## Map
 - [docs/scope.md](docs/scope.md) · [docs/hld.md](docs/hld.md) · [docs/lld.md](docs/lld.md) ·
   [docs/validation.md](docs/validation.md) — product/design + the validation evidence.
