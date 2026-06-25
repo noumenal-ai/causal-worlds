@@ -78,6 +78,7 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
     max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
     temporal_discoverer: TemporalDiscoverer | None = None,
     tracer: Tracer | None = None,
+    anti_cliche: bool = True,
 ) -> AdmittedWorld:
     """Author a world from ``prompt`` and admit it through the gates, re-asking on failure.
 
@@ -90,6 +91,8 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
         max_attempts: How many times to (re-)ask the author before giving up.
         temporal_discoverer: The reference TS grader for temporal worlds (defaults to PCMCI+).
         tracer: Observability tracer; each author + gate step is wrapped in a span (default no-op).
+        anti_cliche: Benchmark mode (``True``, default) rejects name-guessable worlds; playground
+            mode (``False``) keeps faithfulness + difficulty but never rejects on guessability.
 
     Returns:
         The admitted world and the gate report that admitted it.
@@ -116,6 +119,7 @@ def generate(  # noqa: PLR0913 — a public entrypoint; the extra params are all
                     judge=judge,
                     prose=prompt,
                     temporal_discoverer=temporal_discoverer,
+                    anti_cliche=anti_cliche,
                 )
                 tr.record(admitted=report.admitted, reason=report.reason)
             if report.admitted:
@@ -137,6 +141,7 @@ def generate_many(  # noqa: PLR0913 — a public entrypoint; the extra params ar
     max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
     temporal_discoverer: TemporalDiscoverer | None = None,
     tracer: Tracer | None = None,
+    anti_cliche: bool = True,
 ) -> list[Outcome]:
     """Generate a world for each prompt; never raises — a failure becomes a non-admitted outcome.
 
@@ -154,6 +159,7 @@ def generate_many(  # noqa: PLR0913 — a public entrypoint; the extra params ar
                 max_attempts=max_attempts,
                 temporal_discoverer=temporal_discoverer,
                 tracer=tracer,
+                anti_cliche=anti_cliche,
             )
             outcomes.append(Outcome(prompt=prompt, world=world, reason="admitted"))
         except NotAdmittedError as exc:

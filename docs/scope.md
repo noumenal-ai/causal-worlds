@@ -172,6 +172,11 @@ A generated world is admitted to the benchmark only if it passes **measured** ga
   They did **not** test whether an **LLM can author** a valid, anti-cliché, **gate-passing** SCM **from prose** —
   the actual product and the riskiest assumption. Measure that (author N worlds → pass-rate through T1–T4, first-try
   + within K iters) **before** building the pipeline around it. Don't conflate "harness works" with "author works."
+  **(Update 2026-06-25, #19:** measured live, the strict T4 gate **rejects most *intuitive* prompts** — a name+role
+  guesser recovers ≥ 50% of their edges. The bake-off/spike pass-rates predate T4 and don't count. **Playground
+  mode** (`anti_cliche=False` / `--playground`) is the *product* escape hatch — faithfulness + difficulty kept,
+  guessability never rejects — **not** a claim the benchmark-grade pass-rate improved. Re-benchmarking it, and
+  "perturb-instead-of-reject" auto-salvage, stay open.**)**
 - **Benchmark validity / circularity** — generator and agent-under-test may share LLM priors; defused by (a) scoring
   a *statistical* discoverer, (b) the prior-only meter, (c) required anti-cliché worlds (hld §4a). Still the
   highest-stakes open risk.

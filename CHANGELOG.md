@@ -3,6 +3,44 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.34.0] — 2026-06-25
+
+**Playground mode — author a world from any sentence without the benchmark's anti-cliché rejection (#19).**
+
+### Added
+- **`anti_cliche` flag** on `generate` / `generate_many` / `run_gates` (default `True`), surfaced on
+  the CLI as **`causal-worlds generate … --playground`** (and `elicit --playground`). Benchmark mode
+  (the default, unchanged) rejects worlds that are guessable from their variable names/roles — the
+  published benchmark must not be name-guessable. **Playground mode** (`anti_cliche=False`) keeps the
+  faithfulness check and still *reports* `difficulty`, but **never rejects on guessability**: the
+  "describe a world and just get it" path the World Models product needs. T4 still only runs when a
+  judge + prose are supplied.
+- A strict-mode T4-cliché rejection now prints an **actionable hint** pointing at `--playground`
+  instead of leaving a dead end.
+- The bundle manifest records **`anti_cliche`** (provenance), so a playground world can never
+  masquerade as benchmark-grade.
+
+### Why
+- The strict T4 anti-cliché gate (v0.19+) rejects *intuitive* operations on purpose — coffee, power
+  grid, hospital ED, bike-share all let a name+role guesser recover ≥ 50% of the edges. That is right
+  for building the benchmark and wrong for a playground; the two use cases were sharing one gate.
+  Measured live (v0.33): grid, bike-share, mushroom-farm, coffee, and streaming prompts were all
+  rejected, even after the full re-author budget. With `--playground`, the same grid prompt is
+  admitted in 1 attempt (difficulty 0.16, advisory; faithfulness 1.0; reference grader F1 0.92).
+
+### Fixed / honesty
+- **`docs/validation.md`** and **`evals/author-model-bakeoff`** corrected: their "authoring is solved"
+  numbers (5/5 first-try; 8/8 admit) predate the strict T4 gate (the bake-off ran on v0.2.0 at mean
+  difficulty 0.30 — those worlds would be rejected today). The author pass-rate *under the strict gate*
+  remains the open question `docs/scope.md §8` flags; playground mode is the product escape hatch, not
+  a claim that the strict gate got easier.
+
+### Notes
+- Backward compatible — the default is unchanged, so the published benchmark and every existing call
+  site keep strict admission. 163 tests, 95% coverage.
+
+[0.34.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.34.0
+
 ## [0.33.0] — 2026-06-25
 
 **Temporal counterfactuals — Rung 3 now covers lagged worlds too (the last gap closed).**

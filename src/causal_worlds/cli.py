@@ -152,7 +152,7 @@ def _live(container: Container) -> tuple[Author, Judge]:
         raise typer.Exit(code=1) from None
 
 
-def _provenance(container: Container, seed: int) -> Provenance:
+def _provenance(container: Container, seed: int, *, anti_cliche: bool = True) -> Provenance:
     """Assemble manifest provenance, reading the wall clock here at the shell edge."""
     grader, version = container.grader_provenance()
     return Provenance(
@@ -163,6 +163,7 @@ def _provenance(container: Container, seed: int) -> Provenance:
         seed=seed,
         n_rows=container.settings.bundle_rows,
         created_at=datetime.now(UTC).isoformat(),
+        anti_cliche=anti_cliche,
     )
 
 
@@ -192,7 +193,14 @@ def _admit_detail(world: AdmittedWorld) -> str:
 
 
 def _author_and_save(  # noqa: PLR0913 - a shell glue function over the generate pipeline's inputs
-    container: Container, author: Author, judge: Judge, prompt: str, out: Path, seed: int
+    container: Container,
+    author: Author,
+    judge: Judge,
+    prompt: str,
+    out: Path,
+    seed: int,
+    *,
+    anti_cliche: bool = True,
 ) -> None:
     """Author a world from ``prompt``, gate it, save the bundle (the shared generate path)."""
     tracer = container.tracer()
@@ -205,22 +213,35 @@ def _author_and_save(  # noqa: PLR0913 - a shell glue function over the generate
             seed=seed,
             max_attempts=container.settings.max_attempts,
             tracer=tracer,
+            anti_cliche=anti_cliche,
         )
     except NotAdmittedError as exc:
         typer.echo(f"not admitted: {exc}", err=True)
+        if anti_cliche and exc.last is not None and "cliché" in exc.last.reason:
+            typer.echo(
+                "hint: that is the benchmark anti-cliché gate (the world was guessable from its "
+                "names/roles). Re-run with --playground to author it anyway — guessability then "
+                "becomes an advisory difficulty score instead of a rejection.",
+                err=True,
+            )
         raise typer.Exit(code=1) from None
     finally:
         tracer.flush()
-    save_bundle(world, out, provenance=_provenance(container, seed))
+    save_bundle(world, out, provenance=_provenance(container, seed, anti_cliche=anti_cliche))
     typer.echo(f"admitted -> {out}  {_admit_detail(world)}")
 
 
 @app.command()
-def generate(prompt: str, out: Path, seed: int = 0) -> None:
-    """Author a world from PROMPT, gate it, and write the admitted bundle to OUT."""
+def generate(prompt: str, out: Path, seed: int = 0, *, playground: bool = False) -> None:
+    """Author a world from PROMPT, gate it, and write the admitted bundle to OUT.
+
+    By default a world is rejected if it is guessable from its variable names/roles (benchmark
+    mode). Pass --playground to keep the faithfulness check and difficulty score but never reject
+    on guessability — the "describe a world and get it" path.
+    """
     container = build_container()
     author, judge = _live(container)
-    _author_and_save(container, author, judge, prompt, out, seed)
+    _author_and_save(container, author, judge, prompt, out, seed, anti_cliche=not playground)
 
 
 def _live_elicitor(container: Container) -> Elicitor:
@@ -252,15 +273,20 @@ def _run_dialogue(elicitor: Elicitor) -> Session:
 
 
 @app.command()
-def elicit(out: Path, seed: int = 0) -> None:
-    """Interactively elicit a world brief through dialogue, then author + gate it into OUT."""
+def elicit(out: Path, seed: int = 0, *, playground: bool = False) -> None:
+    """Interactively elicit a world brief through dialogue, then author + gate it into OUT.
+
+    Pass --playground to skip the benchmark anti-cliché rejection (see ``generate``).
+    """
     container = build_container()
     elicitor = _live_elicitor(container)
     author, judge = _live(container)
     session = _run_dialogue(elicitor)
     if not is_complete(session.brief):
         typer.echo("note: the brief is still thin; authoring from what we have.", err=True)
-    _author_and_save(container, author, judge, render(session.brief), out, seed)
+    _author_and_save(
+        container, author, judge, render(session.brief), out, seed, anti_cliche=not playground
+    )
 
 
 @app.command()

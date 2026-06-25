@@ -42,6 +42,17 @@ def test_bundle_round_trips(tmp_path):
     assert loaded.manifest["author_model"] == "fake"
     assert loaded.manifest["difficulty"] == 1.0
     assert loaded.manifest["grade"]["directed_shd"] == 0
+    assert loaded.manifest["anti_cliche"] is True  # benchmark-grade by default
+
+
+def test_manifest_records_playground_mode(tmp_path):
+    # A playground world is honestly stamped so it can never masquerade as benchmark-grade.
+    world = _admit_coffee()
+    provenance = Provenance(
+        author_model="fake", grader="g", grader_version="1", seed=7, n_rows=100, anti_cliche=False
+    )
+    directory = save_bundle(world, tmp_path / "playground", provenance=provenance)
+    assert load_bundle(directory).manifest["anti_cliche"] is False
 
 
 def test_answer_key_file_lists_the_confounded_pair(tmp_path):

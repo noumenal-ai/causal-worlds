@@ -13,7 +13,7 @@ uv run python examples/01_grade_your_discoverer.py
 | 02 | [`02_visualize_a_world.py`](02_visualize_a_world.py) | no | render the SCM as Mermaid; read the answer key |
 | 03 | [`03_benchmark_a_controller.py`](03_benchmark_a_controller.py) | no | score a policy by **regret** vs the by-construction optimum |
 | 04 | [`04_inspect_a_bundle.py`](04_inspect_a_bundle.py) | no | load a shipped world; read its truth + provenance |
-| 05 | [`05_author_a_world.py`](05_author_a_world.py) | **yes** (`[llm]`) | natural language → an admitted causal world |
+| 05 | [`05_author_a_world.py`](05_author_a_world.py) | **yes** (`[llm]`) | natural language → an admitted causal world (benchmark mode, with a **playground** fallback) |
 
 ## 01 — grade your discoverer
 
@@ -86,12 +86,19 @@ world: benchmark/v0.6/world_01
 
 ## 05 — author a world (needs `[llm]` + `ANTHROPIC_API_KEY` + `GEMINI_API_KEY`)
 
+Benchmark mode rejects worlds that are guessable from variable names/roles (the published benchmark
+must not be name-guessable). Everyday operations often trip this on purpose — so the example falls
+back to **playground mode** (`anti_cliche=False`, or the CLI `--playground` flag), which keeps the
+faithfulness check + difficulty score but never rejects on guessability:
+
 ```text
-admitted in 2 attempt(s)
-  observed : ['surge_multiplier', 'driver_supply', 'rider_demand', 'cancellations', 'churn']
-  hidden   : ['L_market_heat']
-  difficulty 0.62  faithfulness 0.90
-  reference grader: directed_shd=1 f1=0.86
+benchmark mode: not admitted (T4 cliché: names+roles recover it (prior F1 0.57 >= 0.5))
+-> retrying in playground mode (anti-cliché advisory)...
+admitted in 1 attempt(s)  [playground]
+  observed : ['tou_price', 'solar_gen', 'battery_charge', 'peak_regime', 'home_demand', 'grid_import']
+  hidden   : ['weather']
+  difficulty 0.41 (advisory)  faithfulness 0.90
+  reference grader: directed_shd=1 f1=0.92
 ```
 
-_(illustrative — a real authoring run depends on the live models)_
+_(a real playground run of the grid prompt; live models vary)_

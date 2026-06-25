@@ -12,11 +12,21 @@ observational stats fail, and **interventional data recovers SHD 0**. spike #2 (
 *general*, non-hand-targeted interventional rule recovers **directed SHD 0**, robust 20/20 across seeds × noise.
 
 **2. Can an LLM author valid, gate-passing worlds from a one-line prose prompt? (build-task-0 — THE product risk)**
-→ **YES, at small–medium scale.** `spike_author.py`: 5/5 worlds authored from prompts pass T1–T3 first-try, robust
-5/5. **Crucial method point:** difficulty must be judged by an **independent model** — self-grading (Claude author
-+ Claude prior) understated it (gap ≈1); an independent **Gemini (`gemini-3.5-flash`)** prior revealed the real
-spectrum (anti-cliché worlds gap 3–5, textbook worlds 0). Rule: the prior-only / faithfulness judge ≠ the author's
-model family.
+→ **YES through T1–T3; the strict T4 anti-cliché gate is a separate, harder bar (still the open risk).**
+`spike_author.py`: 5/5 worlds authored from prompts pass **T1–T3** first-try, robust 5/5. **Crucial method point:**
+difficulty must be judged by an **independent model** — self-grading (Claude author + Claude prior) understated it
+(gap ≈1); an independent **Gemini** prior revealed the real spectrum (anti-cliché worlds gap 3–5, textbook worlds
+0). Rule: the prior-only / faithfulness judge ≠ the author's model family.
+
+> ⚠️ **Honesty correction (2026-06-25, #19).** The "5/5 first-try" result above is **T1–T3 only** — it predates the
+> strict **T4 anti-cliché gate** (added v0.19, which requires a name+role guesser to recover < 50% of the edges,
+> i.e. difficulty ≥ 0.5). The `evals/author-model-bakeoff` "8/8 admit, 1.0 attempts" likewise ran on **package
+> v0.2.0** at **mean difficulty 0.30** — *those worlds would be rejected by today's gate.* Measured live on v0.33,
+> intuitive prompts (coffee, power grid, hospital ED, bike-share, streaming) are **routinely rejected by T4** even
+> after the re-author budget, because real operations have common-sense structure a judge guesses from names. The
+> author pass-rate **under the strict gate** is therefore **still the open question** `docs/scope.md §8` flags — it
+> is *not* "solved." **Playground mode** (v0.34, `anti_cliche=False` / `--playground`) is the product escape hatch:
+> it keeps faithfulness + the difficulty score but never rejects on guessability, so a user always gets their world.
 
 **3. What grader does the benchmark need? (build-task-1)** → **An interventional-CI discoverer — NOT a stock
 library.** `spike_grader.py`: vetted off-the-shelf methods (causal-learn PC/GES, `gies`/GIES, FCI) **all fail the

@@ -215,6 +215,16 @@ world = generate(
 print(world.report.difficulty, world.report.grade)
 ```
 
+By default authoring is **benchmark mode**: a world is rejected if it is guessable from its variable
+names/roles (the published benchmark must not be name-guessable, so *intuitive* operations often fail
+on purpose). To just **describe a world and get it**, use **playground mode** — `--playground` on the
+CLI, or `anti_cliche=False` in Python. It keeps the faithfulness check and still reports `difficulty`
+(now advisory), but never rejects on guessability:
+
+```bash
+causal-worlds generate "a regional power grid with rooftop solar and time-of-use pricing" ./grid --playground
+```
+
 (With the `observability` extra + Langfuse keys, every `generate → author → gate` run is traced.)
 
 ## What the benchmark shows

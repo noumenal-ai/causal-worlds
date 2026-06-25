@@ -106,6 +106,7 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
     judge: Judge | None = None,
     prose: str | None = None,
     temporal_discoverer: TemporalDiscoverer | None = None,
+    anti_cliche: bool = True,
 ) -> GateReport:
     """Run the validity gates; admit the world only if all pass.
 
@@ -116,6 +117,11 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
         judge: An independent LLM judge; enables T4 (anti-cliché) when given with ``prose``.
         prose: The natural-language description the spec was authored from (for T4 faithfulness).
         temporal_discoverer: The reference TS grader for temporal worlds (defaults to PCMCI+).
+        anti_cliche: When ``True`` (benchmark mode, the default), a world is rejected if it is
+            guessable from variable names/roles — the benchmark must not be name-guessable. When
+            ``False`` (playground mode), the judge still checks faithfulness and *reports*
+            ``difficulty``, but guessability never rejects: the user always gets their world. T4
+            only runs at all when ``judge`` and ``prose`` are supplied.
 
     Returns:
         A :class:`GateReport` with the admit decision, the failing gate's reason, the grade, and —
@@ -138,7 +144,15 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
         )
 
     if _is_temporal(spec):
-        return _temporal_gates(spec, substrate, temporal_discoverer, seed, judge=judge, prose=prose)
+        return _temporal_gates(
+            spec,
+            substrate,
+            temporal_discoverer,
+            seed,
+            judge=judge,
+            prose=prose,
+            anti_cliche=anti_cliche,
+        )
 
     key = answer_key(spec)
     if not key.edges:
@@ -164,7 +178,9 @@ def run_gates(  # noqa: PLR0911, PLR0913 — one return per gate outcome; keywor
 
     if judge is None or prose is None:
         return GateReport(admitted=True, reason="admitted", null_shd=null_shd, grade=grade)
-    admitted, reason, difficulty, faithfulness = _anti_cliche(spec, prose, judge, key)
+    admitted, reason, difficulty, faithfulness = _anti_cliche(
+        spec, prose, judge, key, enforce=anti_cliche
+    )
     return GateReport(
         admitted=admitted,
         reason=reason,
@@ -183,6 +199,7 @@ def _temporal_gates(  # noqa: PLR0913 — keyword-only judge/prose mirror run_ga
     *,
     judge: Judge | None = None,
     prose: str | None = None,
+    anti_cliche: bool = True,
 ) -> GateReport:
     """Temporal T3 (a TS reference recovers the lagged structure) + T4 anti-cliché when judged.
 
@@ -210,7 +227,9 @@ def _temporal_gates(  # noqa: PLR0913 — keyword-only judge/prose mirror run_ga
         return GateReport(
             admitted=True, reason="admitted", null_shd=0.0, grade=None, temporal_grade=report
         )
-    admitted, reason, difficulty, faithfulness = _anti_cliche(spec, prose, judge, answer_key(spec))
+    admitted, reason, difficulty, faithfulness = _anti_cliche(
+        spec, prose, judge, answer_key(spec), enforce=anti_cliche
+    )
     return GateReport(
         admitted=admitted,
         reason=reason,
@@ -223,12 +242,14 @@ def _temporal_gates(  # noqa: PLR0913 — keyword-only judge/prose mirror run_ga
 
 
 def _anti_cliche(
-    spec: WorldSpec, prose: str, judge: Judge, key: AnswerKey
+    spec: WorldSpec, prose: str, judge: Judge, key: AnswerKey, *, enforce: bool = True
 ) -> tuple[bool, str, float | None, float]:
     """The T4 decision: ``(admitted, reason, difficulty, faithfulness)``.
 
-    Rejects a spec the judge reads as unfaithful, or a world it all but recovers from priors alone
-    (a cliché). Otherwise admits, carrying ``difficulty = 1 - F1(judge_prior, truth)``.
+    Faithfulness is enforced in **every** mode — a world must represent the prose it was authored
+    from. The three guessability controls only *reject* when ``enforce`` is True (benchmark mode);
+    when ``enforce`` is False (playground mode) they are advisory — ``difficulty`` is still computed
+    and reported, but a guessable world is admitted rather than bounced.
     """
     faithfulness = judge.faithfulness(prose, spec)
     if faithfulness < _FAITHFUL_MIN:
@@ -241,6 +262,9 @@ def _anti_cliche(
 
     prior_f1 = f1(judge.prior_edges(spec), key.edges)
     difficulty = 1.0 - prior_f1
+    if not enforce:
+        # Playground: anti-cliché is advisory. Report difficulty; never reject on guessability.
+        return True, "admitted (playground; anti-cliché advisory)", difficulty, faithfulness
     if prior_f1 >= _CLICHE_MAX_F1:
         return (
             False,

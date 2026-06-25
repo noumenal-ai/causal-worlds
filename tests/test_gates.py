@@ -149,6 +149,68 @@ def test_t4_rejects_a_role_cliche():
     assert "role cliché" in report.reason
 
 
+def test_playground_admits_a_cliche_world_with_difficulty_reported():
+    # The same fully-guessable world that strict mode rejects is ADMITTED in playground mode,
+    # still carrying its (low) difficulty score — guessability is advisory, not a rejection.
+    judge = FakeJudge(prior=answer_key(worlds.get("coffee")).edges)
+    report = run_gates(
+        worlds.get("coffee"),
+        discoverer=_FAST,
+        seed=7,
+        judge=judge,
+        prose="a coffee chain",
+        anti_cliche=False,
+    )
+    assert report.admitted
+    assert report.difficulty == 0.0  # fully guessable — but admitted anyway
+    assert report.faithfulness == 1.0
+    assert "playground" in report.reason
+
+
+def test_playground_admits_a_role_cliche():
+    # the roles-only leak that trips the strict gate (#13) does not reject in playground mode.
+    report = run_gates(
+        worlds.get("coffee"),
+        discoverer=_FAST,
+        seed=7,
+        judge=_RoleGuesser(),
+        prose="a coffee chain",
+        anti_cliche=False,
+    )
+    assert report.admitted
+
+
+def test_playground_still_enforces_faithfulness():
+    # Playground relaxes only anti-cliché — an unfaithful spec is still rejected.
+    report = run_gates(
+        worlds.get("coffee"),
+        discoverer=_FAST,
+        seed=7,
+        judge=FakeJudge(score=0.3),
+        prose="something else entirely",
+        anti_cliche=False,
+    )
+    assert not report.admitted
+    assert "T4 unfaithful" in report.reason
+
+
+def test_playground_admits_a_temporal_cliche():
+    # the temporal path honours playground mode too: a name-guessable lagged world is admitted.
+    spec = _temporal_world()
+    recoverable = FakeTemporalDiscoverer(temporal_answer_key(spec))
+    report = run_gates(
+        spec,
+        temporal_discoverer=recoverable,
+        judge=FakeJudge(prior=answer_key(spec).edges),
+        prose="a lagged operation",
+        seed=7,
+        anti_cliche=False,
+    )
+    assert report.admitted
+    assert report.temporal_grade is not None
+    assert report.difficulty == 0.0
+
+
 def test_admission_is_grader_independent():
     # The decisive decoupling test: a world faithful by construction is admitted even when the
     # supplied discoverer recovers nothing. Admission is now a property of the SCM, not the grader.

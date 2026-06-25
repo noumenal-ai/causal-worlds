@@ -45,6 +45,9 @@ class Provenance:
     judge_model: str | None = None
     created_at: str | None = None
     complexity: str | None = None  # the author's requested structural-complexity level, if any
+    anti_cliche: bool = (
+        True  # whether the anti-cliché gate rejected (benchmark) or was advisory (playground)
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,6 +86,7 @@ def _manifest(
         "author_model": provenance.author_model,
         "judge_model": provenance.judge_model,
         "complexity": provenance.complexity,
+        "anti_cliche": provenance.anti_cliche,
         "grader": provenance.grader,
         "grader_version": provenance.grader_version,
         "difficulty": report.difficulty,
