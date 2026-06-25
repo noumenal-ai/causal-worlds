@@ -30,6 +30,7 @@ effect.
 
 If you've ever been burned by a confident, confounded number, this one's for you.
 
+→ Read the full story (Medium): https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
 → pip install causal-worlds
 → github.com/noumenal-ai/causal-worlds
 
@@ -61,6 +62,7 @@ association, intervention, counterfactual — each verified, not asserted.
 Honest measurement is the whole identity. If we got something wrong, the best contribution you can make
 is to show us — in the open.
 
+→ Read the full story (Medium): https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
 → pip install causal-worlds
 → github.com/noumenal-ai/causal-worlds
 
@@ -91,6 +93,7 @@ we found.
 
 Open source, MIT. If you build or evaluate causal methods — come break a world.
 
+→ Read the full story (Medium): https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
 → pip install causal-worlds
 → github.com/noumenal-ai/causal-worlds
 

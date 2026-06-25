@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>causal-worlds — a causal world with an answer key</title>
+<meta name="description" content="Turn a sentence into a fictional causal world with a declared ground-truth answer key — see it, intervene on it, ask counterfactuals. An MIT, leakage-resistant benchmark for causal discovery and control." />
+<style>
+  :root{
+    --ink:#10151c; --muted:#5b6675; --line:#e6e9ee; --bg:#ffffff; --soft:#f7f9fc;
+    --accent:#0f766e; --accent2:#1d4ed8; --bad:#b91c1c; --good:#15803d; --code:#0b1220;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+       color:var(--ink);background:var(--bg)}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{padding:64px 0 28px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 10px}
+  h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:0 0 14px;letter-spacing:-.02em}
+  .lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);margin:0 0 26px;max-width:46em}
+  .btns{display:flex;flex-wrap:wrap;gap:10px}
+  .btn{display:inline-block;padding:11px 18px;border-radius:9px;font-weight:600;font-size:15px;border:1px solid var(--line)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.primary:hover{background:#0c5e57;text-decoration:none}
+  .btn:hover{text-decoration:none;background:var(--soft)}
+  section{padding:40px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:24px;letter-spacing:-.01em;margin:0 0 14px}
+  p{margin:0 0 14px}
+  .fig{width:100%;border:1px solid var(--line);border-radius:12px;margin:8px 0 4px;background:var(--soft)}
+  figcaption{font-size:13px;color:var(--muted);margin-bottom:8px}
+  pre{background:var(--code);color:#e6edf3;border-radius:11px;padding:16px 18px;overflow-x:auto;font-size:13.5px;
+      line-height:1.5;margin:0 0 6px}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .stat{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch;margin:6px 0 16px}
+  .card{flex:1 1 200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--soft)}
+  .card .big{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .card .lab{font-size:13px;color:var(--muted);margin-top:4px}
+  .seeing .big{color:var(--accent2)} .doing .big{color:var(--bad)} .imagine .big{color:var(--good)}
+  .rungs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px}
+  .rung{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .rung h3{margin:0 0 6px;font-size:16px}
+  .rung .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+  .muted{color:var(--muted)}
+  footer{padding:34px 0 64px;color:var(--muted);font-size:14px}
+  ul{margin:0 0 14px;padding-left:20px} li{margin:4px 0}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="eyebrow">open source · MIT · pip install causal-worlds</p>
+  <h1>A causal world with an answer key.</h1>
+  <p class="lede">Turn a plain-language description of an operation into a fictional-but-coherent causal
+  world with a <strong>declared ground-truth causal graph</strong>. See its correlations, intervene with
+  <code>do()</code>, ask counterfactuals — and check every answer against the truth, because you wrote it.</p>
+  <div class="btns">
+    <a class="btn primary" href="https://github.com/noumenal-ai/causal-worlds">GitHub</a>
+    <a class="btn" href="https://pypi.org/project/causal-worlds/">PyPI</a>
+    <a class="btn" href="https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457">Read the story (Medium)</a>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <h2>Correlation lies — and because the world is <em>declared</em>, you can prove it</h2>
+  <p>In the built-in <code>coffee</code> world, <code>overtime</code> and <code>sales</code> rise
+  together. A naive analyst "discovers" that overtime drives sales. But <em>force</em> overtime with an
+  intervention and watch sales — it doesn't move. The whole link was a hidden confounder.</p>
+  <div class="stat">
+    <div class="card seeing"><div class="big">0.64</div><div class="lab">SEEING — correlation(overtime, sales)</div></div>
+    <div class="card doing"><div class="big">0.00</div><div class="lab">DOING — causal effect via do(overtime)</div></div>
+    <div class="card imagine"><div class="big">3 / 3</div><div class="lab">rungs of Pearl's ladder, with a known answer</div></div>
+  </div>
+  <figure>
+    <img class="fig" src="figures/coffee_world.png" alt="The declared SCM for the coffee world; the hidden confounder local_buzz, dashed red, drives footfall, overtime, and sales." />
+    <figcaption>The declared SCM. The dashed-red node is a hidden confounder — the structure a discovery method never sees.</figcaption>
+  </figure>
+  <pre><code>import numpy as np
+from causal_worlds import build_substrate, worlds
+
+sub = build_substrate(worlds.get("coffee"), standardize=False)
+ov, sa = sub.variables.index("overtime"), sub.variables.index("sales")
+seen = sub.sample(40_000, seed=0).data
+corr = np.corrcoef(seen[:, ov], seen[:, sa])[0, 1]                  # ≈ 0.64  → looks causal
+hi = sub.sample(40_000, seed=1, do={"overtime":  1.0}).data[:, sa].mean()
+lo = sub.sample(40_000, seed=1, do={"overtime": -1.0}).data[:, sa].mean()
+print(round(corr, 2), round((hi - lo) / 2, 2))   # 0.64  0.00  → strong correlation, ZERO causal effect</code></pre>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Seeing, doing, imagining</h2>
+  <div class="rungs">
+    <div class="rung"><div class="tag">Rung 1</div><h3>Seeing</h3><p class="muted">Association — what correlates. The data alone can't tell you why.</p></div>
+    <div class="rung"><div class="tag">Rung 2</div><h3>Doing</h3><p class="muted"><code>do()</code> is genuine graph surgery — cut the arrows <em>into</em> a variable, keep the arrows <em>out</em>. The mirage vanishes.</p></div>
+    <div class="rung"><div class="tag">Rung 3</div><h3>Imagining</h3><p class="muted">Counterfactuals (abduction → action → prediction), exact — on cross-sectional and temporal worlds.</p></div>
+  </div>
+  <figure style="margin-top:18px">
+    <img class="fig" src="figures/coffee_do_footfall.png" alt="do(footfall): the arrows into footfall are cut; its downstream effects still flow." />
+    <figcaption>Rung 2 — <code>do(footfall)</code>: arrows into footfall are cut; its effects still flow. Verified genuine surgery, not conditioning.</figcaption>
+  </figure>
+</div></section>
+
+<section><div class="wrap">
+  <h2>A benchmark we tried to break ourselves</h2>
+  <p>A benchmark you can memorize isn't a benchmark. <strong>Fiction-first</strong> means there's nothing
+  real to recite and no data to leak. Then we audited our own work and fixed what we found:</p>
+  <ul>
+    <li><strong>No circular admission</strong> — worlds are admitted by a closed-form faithfulness check, with no discovery method run.</li>
+    <li><strong>No name-guessing</strong> — a data-free, name-only LLM guess fell from F1 0.71 to ~chance once words are stripped; adversarial names actively mislead.</li>
+    <li><strong>No simulated-DAG leakage</strong> — internal standardization (iSCM) collapses the trivial "sort-by-variance" baseline that once beat real algorithms.</li>
+  </ul>
+  <p class="muted">The headline crossover is an honest identifiability result: given the same interventions,
+  standard methods keep a hidden-confounded pair as causal; only a latent-aware rule reaches zero. Details +
+  the disclosed residuals: <a href="https://github.com/noumenal-ai/causal-worlds/blob/main/docs/findings.md">findings</a>
+  · <a href="https://github.com/noumenal-ai/causal-worlds/blob/main/docs/foundations.md">foundations</a>.</p>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Try it in 60 seconds — no API key</h2>
+  <pre><code>pip install causal-worlds
+
+# in Python:
+from causal_worlds import worlds, grade_spec, InterventionalCiDiscoverer
+print(grade_spec(worlds.get("coffee"), InterventionalCiDiscoverer()))
+# directed_shd=0  f1=1.0  confounded_reported=0     ← swap in YOUR discoverer</code></pre>
+  <p class="muted">Engine, grading, and the graph renderers run offline; only authoring a fresh world from a
+  sentence needs a model. <code>causal-worlds viz coffee</code> draws the world for you.</p>
+</div></section>
+
+<footer><div class="wrap">
+  <a href="https://github.com/noumenal-ai/causal-worlds">GitHub</a> ·
+  <a href="https://pypi.org/project/causal-worlds/">PyPI</a> ·
+  <a href="https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457">Medium</a>
+  · MIT, from <a href="https://github.com/noumenal-ai">Noumenal</a>.
+  <br />Built on pgmpy, DoWhy, CausalPlayground, causal-learn, and Gymnasium.
+</div></footer>
+</body>
+</html>

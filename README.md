@@ -13,6 +13,9 @@ discovery method on the generated data and *score* how well it recovered the wor
 **fiction-first** — plausible and internally consistent, not models of any real system — so there is
 no data to leak and nothing to memorize, which is exactly what makes a causal benchmark trustworthy.
 
+📖 **The story:** [*Correlation lies — we built a causal world that can prove it, then tried to break it
+ourselves*](https://selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457) (Medium).
+
 ### Correlation lies — and because the world is *declared*, you can prove it
 
 In the built-in `coffee` world, `overtime` and `sales` rise together (correlation **0.64**) — a naive

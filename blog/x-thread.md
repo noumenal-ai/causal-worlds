@@ -82,8 +82,8 @@ MIT. Live on PyPI. Honest measurement is the whole identity.
 
 Best thing you can do: try to break a world without doing real discovery. That's how we got here.
 
-🔗 github.com/noumenal-ai/causal-worlds
-`pip install causal-worlds`
+📖 Full story: selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
+🔗 github.com/noumenal-ai/causal-worlds · `pip install causal-worlds`
 
 ═══════════════════════════════════════════════════════════════════════
 ## Take B — "Stop letting models cheat off variable names" (LLM-eval angle)
@@ -203,4 +203,5 @@ The headline is an identifiability result, stated honestly: given the SAME inter
 
 Honest measurement is the whole identity. Come break a world.
 
+📖 Full story: selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
 🔗 github.com/noumenal-ai/causal-worlds
