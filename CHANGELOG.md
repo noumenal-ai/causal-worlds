@@ -3,6 +3,36 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.32.0] — 2026-06-25
+
+**Rung 3 — a counterfactual engine — completes Pearl's ladder; plus `do()` is now visualizable.**
+
+### Added
+- **`causal_worlds.counterfactual`** — counterfactuals on a declared SCM via Pearl's
+  **abduction → action → prediction**: `counterfactual(spec, do, *, seed)` returns the **factual**
+  world and what *would* have happened under `do`, on the *same* unit (noise held fixed), with a
+  `.effect`. Exact because the SCM is declared (abduction recovers each unit's noise in closed form).
+  Also the building blocks `abduct(spec, factual)` and `predict(spec, noise, do)`. Cross-sectional
+  worlds for now; temporal raises `TemporalCounterfactualError`. **This completes the ladder: the
+  package now stands on all three rungs (association · intervention · counterfactual).**
+- **`to_mermaid` / `to_dot` take a `do=` argument** — render the *post-intervention* graph: the
+  intervened variable is shown **set**, with its **incoming edges cut** (and effects kept). Graph
+  surgery you can see. `causal-worlds viz` gains nothing new here, but the renderers do.
+
+### Changed
+- README **"Causality in three rungs"** now *shows* the rungs: a Rung-2 graph-surgery figure
+  (`do(footfall)`, generated from `to_dot(..., do=...)`) and a runnable Rung-3 `counterfactual`
+  snippet. `docs/scope.md` updated — Rung 3 is now shipped (cross-sectional); only temporal
+  counterfactuals remain.
+
+### Notes
+- The counterfactual engine is a *structural* query on the raw equations (autonomy/modularity is
+  what licenses holding the other mechanisms fixed). Tests cover the consistency axiom, exact
+  fixed-noise propagation, determinism, the hidden-confounder case, and the temporal guard.
+  154 tests, 95% coverage; renderers stay zero-dependency.
+
+[0.32.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.32.0
+
 ## [0.31.0] — 2026-06-25
 
 **Path coefficients on the graphs, a single-glance hero image, and a README that teaches causality.**

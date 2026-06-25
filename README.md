@@ -69,19 +69,31 @@ keeps every arrow pointing *out* (its effects still flow). This is how you defea
 forced = substrate.sample(2000, seed=0, do={"footfall": 1.0})   # set it, don't merely observe it
 ```
 
-(Our `do()` is verified *genuine* graph surgery — it severs incoming edges, not statistical
-conditioning; see [docs/scope.md](docs/scope.md).)
+You can *see* the surgery — `to_dot(spec, do={"footfall": 1.0})` (or `causal-worlds viz coffee
+--format dot`) draws the mutilated graph: every arrow **into** `footfall` is gone, its arrows **out**
+remain. Our `do()` is verified *genuine* surgery, not statistical conditioning ([docs/scope.md](docs/scope.md)):
 
-**Rung 3 — Counterfactual · *what would have happened?*** "We set price = 2 last Saturday and sold 100
-— would we have sold more had we set price = 1, *that same Saturday*?" That needs the full model, with
-that specific day's hidden `local_buzz` held fixed. Because causal-worlds *declares* the entire SCM,
-this is computable in principle — it's the next piece on the [roadmap](#roadmap); Rungs 1 and 2 are
-live today.
+![Rung 2 — do(footfall): the arrows into footfall are cut, its effects still flow](https://raw.githubusercontent.com/noumenal-ai/causal-worlds/main/docs/figures/coffee_do_footfall.png)
+
+**Rung 3 — Counterfactual · *what would have happened?*** "We sold what we sold last Saturday — would
+we have sold more had we set `price` differently, *that same Saturday*?" That needs the full model,
+with that specific day's hidden `local_buzz` held fixed. Because causal-worlds *declares* the entire
+SCM, it's exact — Pearl's **abduction → action → prediction**:
+
+```python
+from causal_worlds import counterfactual
+cf = counterfactual(worlds.get("coffee"), do={"price": 3.0}, seed=0)
+print(cf.factual["sales"], "->", cf.counterfactual["sales"])   # what happened -> what would have
+print(cf.effect["sales"])                                       # the change attributable to the act
+```
+
+(Same noise, same hidden `local_buzz`, only `price` changed — so the difference is *caused* by the
+act. On a *weekend* unit the `price → demand` sign is flipped, so the counterfactual can surprise you.)
 
 **Why this makes a benchmark.** A method that only *sees* (Rung 1) keeps the `local_buzz` mirage as a
 real `overtime → sales` edge; only a *latent-aware* method that *does* (Rung 2) escapes it — which is
 exactly the [crossover result](docs/findings.md). New to causality? This *is* the tour — read the
-diagram, run the two snippets, and you've stood on the first two rungs.
+diagrams, run the snippets, and you've climbed all three rungs.
 
 ## Install
 

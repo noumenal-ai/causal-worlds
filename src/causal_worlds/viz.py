@@ -23,8 +23,12 @@ edge out of a hidden node is dashed (you can't observe its cause).
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from causal_worlds.schema import Role, Variable, WorldSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,31 +99,42 @@ def _ident(name: str) -> str:
     return "".join(ch if ch.isalnum() else "_" for ch in name)
 
 
-def _mermaid_node(variable: Variable) -> str:
+def _mermaid_node(variable: Variable, forced: float | None) -> str:
+    if forced is not None:  # an intervened (do) node: shown as set, with its forced value
+        return f'    {_ident(variable.name)}["{variable.name} = {forced:g}"]:::forced'
     if variable.hidden:
         return f'    {_ident(variable.name)}(("{variable.name}")):::hidden'
     open_, close = _MERMAID_SHAPE[variable.role]
     return f'    {_ident(variable.name)}{open_}"{variable.name}"{close}:::{variable.role.value}'
 
 
-def to_mermaid(spec: WorldSpec) -> str:
+def to_mermaid(spec: WorldSpec, *, do: Mapping[str, float] | None = None) -> str:
     """Render ``spec`` as a Mermaid ``graph LR`` flowchart (renders natively on GitHub).
 
     Args:
         spec: The world to draw. Hidden confounders are drawn as dashed circles.
+        do: An optional intervention. Each intervened variable is shown *set* to its value with its
+            **incoming edges cut** — i.e. the graph after ``do()`` surgery (Rung 2).
 
     Returns:
         A Mermaid diagram string, ready to drop in a fenced ``mermaid`` Markdown block.
     """
+    forced = dict(do or {})
     hidden = {v.name for v in spec.variables if v.hidden}
     lines = ["graph LR"]
-    lines += [_mermaid_node(v) for v in spec.variables]
+    lines += [_mermaid_node(v, forced.get(v.name)) for v in spec.variables]
     for edge in _collect_edges(spec):
+        if edge.target in forced:  # do() surgery: the intervened variable's incoming edges are cut
+            continue
         arrow = "-.->" if (edge.regime_only or edge.parent in hidden) else "-->"
         lines.append(
             f'    {_ident(edge.parent)} {arrow}|"{_edge_label(edge)}"| {_ident(edge.target)}'
         )
     lines += _MERMAID_CLASSDEFS
+    if forced:
+        lines.append(
+            "    classDef forced fill:#fde68a,stroke:#b45309,stroke-width:3px,color:#7c2d12;"
+        )
     return "\n".join(lines)
 
 
@@ -133,22 +148,28 @@ _DOT_STYLE = {  # role -> graphviz node attributes
     Role.DISTURBANCE: 'shape=hexagon, style=filled, fillcolor="#fef3c7", color="#b45309"',
 }
 _DOT_HIDDEN = 'shape=circle, style="dashed,filled", fillcolor="#fee2e2", color="#b91c1c"'
+_DOT_FORCED = 'shape=box, style="filled,bold", fillcolor="#fde68a", color="#b45309", penwidth=2.5'
 
 
-def _dot_node(variable: Variable) -> str:
+def _dot_node(variable: Variable, forced: float | None) -> str:
+    if forced is not None:  # an intervened (do) node: shown set, with its forced value
+        return f'  "{variable.name}" [label="{variable.name} = {forced:g}", {_DOT_FORCED}];'
     attrs = _DOT_HIDDEN if variable.hidden else _DOT_STYLE[variable.role]
     return f'  "{variable.name}" [label="{variable.name}", {attrs}];'
 
 
-def to_dot(spec: WorldSpec) -> str:
+def to_dot(spec: WorldSpec, *, do: Mapping[str, float] | None = None) -> str:
     """Render ``spec`` as Graphviz DOT (``digraph``), for ``dot``/any Graphviz viewer.
 
     Args:
         spec: The world to draw. Hidden confounders are drawn as dashed circles.
+        do: An optional intervention; each intervened variable is shown *set* with its **incoming
+            edges cut** — the graph after ``do()`` surgery (Rung 2).
 
     Returns:
         A DOT ``digraph`` string; render with e.g. ``dot -Tpng world.dot -o world.png``.
     """
+    forced = dict(do or {})
     hidden = {v.name for v in spec.variables if v.hidden}
     lines = [
         'digraph "causal-worlds" {',
@@ -158,8 +179,10 @@ def to_dot(spec: WorldSpec) -> str:
         '  node [fontname="Helvetica"];',
         '  edge [fontname="Helvetica", fontsize=11, color="#475569"];',
     ]
-    lines += [_dot_node(v) for v in spec.variables]
+    lines += [_dot_node(v, forced.get(v.name)) for v in spec.variables]
     for edge in _collect_edges(spec):
+        if edge.target in forced:  # do() surgery: the intervened variable's incoming edges are cut
+            continue
         from_hidden = edge.parent in hidden
         attrs = [f'label="{_edge_label(edge)}"']
         if from_hidden or edge.regime_only:

@@ -71,6 +71,22 @@ def test_regime_sign_flip_shows_both_coefficients():
     assert "-1/1" in out  # the sign-flip is visible on the edge label
 
 
+def test_mermaid_do_cuts_incoming_edges_and_marks_the_forced_node():
+    # Rung 2 visualized: do(footfall) cuts every arrow INTO footfall, keeps the arrows OUT.
+    surgical = to_mermaid(worlds.get("coffee"), do={"footfall": 1.0})
+    assert "footfall = 1" in surgical  # the node is shown set to its value
+    assert ":::forced" in surgical  # ...and styled as intervened
+    assert "| footfall" not in surgical  # every incoming edge to footfall is cut (surgery)
+    assert "footfall -->" in surgical  # but its outgoing effects still flow
+
+
+def test_dot_do_cuts_incoming_edges():
+    surgical = to_dot(worlds.get("coffee"), do={"footfall": 1.0})
+    assert "footfall = 1" in surgical
+    assert '-> "footfall"' not in surgical  # no edge points into the intervened node
+    assert '"footfall" ->' in surgical  # outgoing edges remain
+
+
 def test_renderers_handle_names_needing_sanitization():
     # a name with a space/dash must not break the Mermaid node id (label keeps the original)
     spec = WorldSpec(

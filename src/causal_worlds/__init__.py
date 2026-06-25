@@ -44,6 +44,12 @@ from causal_worlds.controls import (
     r2sortability,
     varsortability,
 )
+from causal_worlds.counterfactual import (
+    CounterfactualResult,
+    abduct,
+    counterfactual,
+    predict,
+)
 from causal_worlds.difficulty import StructuralDifficulty, structural_difficulty
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.elicit import (
@@ -123,6 +129,7 @@ __all__ = [
     "ControlObjective",
     "ControlReport",
     "Controller",
+    "CounterfactualResult",
     "CyclicGraphError",
     "DagmaDiscoverer",
     "DanglingReferenceError",
@@ -177,6 +184,7 @@ __all__ = [
     "WorldSpec",
     "WorldSpecModel",
     "__version__",
+    "abduct",
     "anonymize_spec",
     "answer_key",
     "build_claude_elicitor",
@@ -185,6 +193,7 @@ __all__ = [
     "build_substrate",
     "check_faithfulness",
     "control_substrate",
+    "counterfactual",
     "default_objective",
     "directed_shd",
     "f1",
@@ -203,6 +212,7 @@ __all__ = [
     "optimal_policy",
     "pooled_interventional_sample",
     "population_covariance",
+    "predict",
     "r2sortability",
     "regime_configs",
     "regime_optimal_policy",
