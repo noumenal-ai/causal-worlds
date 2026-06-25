@@ -13,13 +13,34 @@ discovery method on the generated data and *score* how well it recovered the wor
 **fiction-first** — plausible and internally consistent, not models of any real system — so there is
 no data to leak and nothing to memorize, which is exactly what makes a causal benchmark trustworthy.
 
+### Correlation lies — and because the world is *declared*, you can prove it
+
+In the built-in `coffee` world, `overtime` and `sales` rise together (correlation **0.64**) — a naive
+analyst "discovers" that overtime drives sales. But *force* `overtime` with `do()` and sales doesn't
+move: the true causal effect is **0.00**. The whole association was a hidden confounder the benchmark
+planted — and it *knows*, so it can score who gets fooled:
+
+```python
+import numpy as np
+from causal_worlds import build_substrate, worlds
+
+sub = build_substrate(worlds.get("coffee"), standardize=False)
+ov, sa = sub.variables.index("overtime"), sub.variables.index("sales")
+
+seen = sub.sample(40_000, seed=0).data
+corr = np.corrcoef(seen[:, ov], seen[:, sa])[0, 1]                     # ≈ 0.64  → looks causal
+hi = sub.sample(40_000, seed=1, do={"overtime":  1.0}).data[:, sa].mean()
+lo = sub.sample(40_000, seed=1, do={"overtime": -1.0}).data[:, sa].mean()
+print(round(corr, 2), round((hi - lo) / 2, 2))   # 0.64  0.00  → strong correlation, ZERO causal effect
+```
+
+That's the whole game: a method that only *sees* the data keeps the mirage; one that can *act* (and is
+latent-aware) doesn't. Score any discovery method against the known truth:
+
 ```python
 from causal_worlds import worlds, grade_spec, InterventionalCiDiscoverer
-
-spec = worlds.get("coffee")                          # a hidden confounder + a regime sign-flip
-report = grade_spec(spec, InterventionalCiDiscoverer())
-print(report)   # directed_shd=0  skeleton_shd=0  f1=1.0  confounded_reported=0
-#                ^ swap in YOUR discoverer to benchmark it against a known truth
+print(grade_spec(worlds.get("coffee"), InterventionalCiDiscoverer()))
+# directed_shd=0  f1=1.0  confounded_reported=0     ← swap in YOUR discoverer
 ```
 
 ## See the world it builds
@@ -60,13 +81,15 @@ data = substrate.sample(2000, seed=0)                  # just watch the world
 ```
 
 **Rung 2 — Intervention · *what if I act?*** Don't watch a variable — *set* it. `do()` is **surgery on
-the graph**: it cuts every arrow pointing *into* the variable (its usual causes no longer apply) and
-keeps every arrow pointing *out* (its effects still flow). This is how you defeat the hidden confounder:
-*force* `footfall`, and `local_buzz` no longer has any say in it — so whatever then moves `sales` is the
-**real** effect, mirage removed.
+the graph**: it cuts every arrow pointing *into* the variable and keeps every arrow pointing *out*, so
+what then moves `sales` is the **real** effect, mirage removed. The data slopes `sales` on `footfall`
+at **1.56** — but `do(footfall)` reveals the true effect is only **0.90** (the data overstated it by
+0.66, the confounder again); and for the pure-mirage pair above, `do(overtime)` gives exactly **0.00**.
 
 ```python
-forced = substrate.sample(2000, seed=0, do={"footfall": 1.0})   # set it, don't merely observe it
+hi = sub.sample(40_000, seed=1, do={"footfall":  1.0}).data[:, sa].mean()
+lo = sub.sample(40_000, seed=1, do={"footfall": -1.0}).data[:, sa].mean()
+print(round((hi - lo) / 2, 2))   # 0.9  — the true causal effect, vs the 1.56 the raw data suggested
 ```
 
 You can *see* the surgery — `to_dot(spec, do={"footfall": 1.0})` (or `causal-worlds viz coffee
