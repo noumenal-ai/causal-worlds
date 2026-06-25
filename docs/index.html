@@ -119,9 +119,10 @@ print(round(corr, 2), round((hi - lo) / 2, 2))   # 0.64  0.00  → strong correl
     <div class="rung"><div class="tag">LLM evaluation</div><h3>Parrot-proof reasoning eval</h3>
       <p class="muted">A test an LLM can't ace by reciting variable names: fiction-first, name-blinded,
       and audited so the only way to score is to actually discover.</p></div>
-    <div class="rung"><div class="tag">Sandbox</div><h3>Describe a world, conversationally</h3>
-      <p class="muted"><code>causal-worlds elicit</code> builds a world through a short dialogue;
-      <code>causal-worlds viz</code> draws it — a playground for causal intuition.</p></div>
+    <div class="rung"><div class="tag">Sandbox</div><h3>Describe a world, get a world</h3>
+      <p class="muted">Write a sentence and <code>causal-worlds generate … --playground</code> hands you an
+      executable world with its answer key — no benchmark gate in the way. <code>elicit</code> builds one
+      through dialogue; <code>viz</code> draws it.</p></div>
     <div class="rung"><div class="tag">Agents</div><h3>Stress-test a causal agent</h3>
       <p class="muted">Plug in your own discoverer or controller and see whether it recovers structure —
       and stays optimal — where the standard toolbox gets fooled.</p></div>
@@ -152,7 +153,9 @@ from causal_worlds import worlds, grade_spec, InterventionalCiDiscoverer
 print(grade_spec(worlds.get("coffee"), InterventionalCiDiscoverer()))
 # directed_shd=0  f1=1.0  confounded_reported=0     ← swap in YOUR discoverer</code></pre>
   <p class="muted">Engine, grading, and the graph renderers run offline; only authoring a fresh world from a
-  sentence needs a model. <code>causal-worlds viz coffee</code> draws the world for you.</p>
+  sentence needs a model — <code>causal-worlds generate "…" ./world --playground</code> for the
+  describe-and-get-it path, or the default for a benchmark-grade (name-unguessable) world.
+  <code>causal-worlds viz coffee</code> draws the world for you.</p>
 </div></section>
 
 <footer><div class="wrap">

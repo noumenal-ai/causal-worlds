@@ -1,250 +1,168 @@
-# X / Twitter — causal-worlds (multiple takes)
+# X / Twitter — causal-worlds
 
-Several independent angles — post whichever fits the moment; no need to use just one. Takes A–D are
-threads with each tweet ≤ 280 chars. **Take E is a single long-form post (needs X Premium) — no length
-limit.** `[attach: …]` notes are image attachments, not tweet text. Diagrams: `docs/figures/`; eval
-figures: `figures/` (raw-GitHub URLs work).
+Three threads, each conveying a *different* thing — post one per week, or pick the one that fits the
+moment. Tweet bodies are ≤ 280 chars. `[attach: …]` lines are image attachments, not tweet text
+(diagrams in `docs/figures/`, eval figures in `figures/`; raw-GitHub URLs work). Every number is
+copy-pasted from a real run.
+
+- **Thread 1 — The idea.** Why a *declared* world is the only honest causal benchmark. (the hook)
+- **Thread 2 — The proof.** I ran every discovery method in the box; only one isn't fooled. (the rigor)
+- **Thread 3 — The breadth.** See, do, imagine, *and act* — most benchmarks stop at "see." (the scope)
 
 ═══════════════════════════════════════════════════════════════════════
-## Take A — "Correlation lies" (the mirage; the default)
+## Thread 1 — The idea: "a benchmark that knows the right answer"
 ═══════════════════════════════════════════════════════════════════════
 
 **1/**
-In a coffee dataset, overtime and sales correlate 0.64. Looks like overtime drives sales.
+In this coffee dataset, `overtime` and `sales` correlate 0.64. Looks like overtime drives sales.
 
-Force overtime — *do* it, don't watch it — and sales moves 0.00.
+Now don't *watch* overtime — *set* it. Force it high, force it low, measure sales.
 
-The whole link was a hidden cause. We built a benchmark that KNOWS, so it can score who gets fooled. 🧵
+Effect: 0.00.
+
+The entire correlation was a hidden cause. 🧵
 
 [attach: docs/figures/coffee_world.png]
 
 **2/**
-The idea: write a sentence —
+The problem with causal benchmarks: to score who got the causality right, you have to know the right
+answer. With real-world data, nobody does.
 
-"a coffee chain with weekend swings and variable lead times"
-
-— and get a fictional-but-coherent causal world with a DECLARED ground-truth graph. An answer key, by construction.
-
-Fiction-first → nothing real to memorize, no data to leak.
+So we stopped using real data. Write a sentence → get a fictional world with a DECLARED ground-truth
+graph. An answer key, by construction.
 
 **3/**
-Causality has 3 rungs (Pearl's ladder). causal-worlds lets you stand on all three, on a world whose answer you already know:
+`causal-worlds generate "a hospital ED with triage staffing and bed pressure" ./world`
 
-SEE: overtime ~ sales = 0.64
-DO: do(overtime) → 0.00 (mirage gone)
-IMAGINE: the counterfactual, "what would have happened"
+An LLM authors the structural model. A *different* model (different family) judges it. Four gates admit
+it only if it's executable, faithful, and not guessable.
+
+Out comes a simulator + data + the truth.
+
+**3b/**
+Two modes:
+• default = **benchmark**: rejects worlds you could guess from the variable names (the bar's the point)
+• `--playground`: keep faithfulness + a difficulty score, but never reject — *describe any world and just get it*
+
+The bundle stamps which one, so they never mix.
 
 **4/**
-"Doing" is graph surgery. do(footfall) cuts every arrow INTO footfall — its causes, incl. the hidden confounder, no longer apply — and keeps every arrow OUT.
+Two consequences fall out of "fiction-first":
 
-That's how you escape confounding. Verified genuine surgery, not statistical conditioning.
+→ Nothing real to memorize. No data to leak. A model can't recite the answer from training.
+→ The key is *derived from the spec*, so it can never disagree with the simulator.
 
-[attach: docs/figures/coffee_do_footfall.png]
+That's what most benchmarks can't honestly promise.
 
 **5/**
-The decisive finding. Every world hides a confounder L → can a method tell X←L→Y from X→Y?
+So on the coffee world, the benchmark KNOWS `overtime → sales` is a trap — a hidden "local buzz" (a
+festival, good weather) drives both. It declared the trap.
 
-Given the SAME interventions as a latent-aware reference:
-PC + interventions keeps the confounded pair as causal (30, vs observational PC's 29).
-The latent-aware rule: 0.
+Which means it can score, exactly, who walks into it.
+
+MIT · `pip install causal-worlds`
+🔗 github.com/noumenal-ai/causal-worlds
+
+═══════════════════════════════════════════════════════════════════════
+## Thread 2 — The proof: "I ran every method in the box"
+═══════════════════════════════════════════════════════════════════════
+
+**1/**
+I took a causal world whose true graph I already had, and ran every discovery method that ships in the
+box against it. Same data, same seed.
+
+One column tells the whole story: how many spurious "confounded" pairs each method keeps as real causal
+edges. 🧵
+
+**2/**
+The world hides a confounder: `overtime` and `sales` move together but have NO edge between them — a
+latent cause drives both.
+
+The test: can a method tell confounding (X←L→Y) from causation (X→Y)?
+
+**3/**
+```
+method               F1    confounded_kept
+interventional-ci   1.00        0    ◀ latent-aware reference
+pc                  0.77        1
+fci                 0.77        1
+gies                0.77        1
+dagma               0.17        1
+directlingam        0.50        0
+```
+Only the reference keeps 0 AND nails the structure. (DirectLiNGAM drops the phantom but mangles
+everything else — F1 0.50.)
+
+[attach: blog/figures/tour1_shootout.png]
+
+**4/**
+The dividing line isn't horsepower, and it isn't even interventions. Across the 26-world hardened set,
+PC *with the same interventions* as the reference still keeps the confounded pair ~30 times.
+
+It's whether the method knows hidden confounders can exist. (ΔF1 +0.37, CI excl. 0.)
 
 [attach: figures/fig1_confounded_kept.png]
 
-**6/**
-Read it precisely: the lever is LATENT-AWARENESS, not interventions — and NOT "we beat the toolbox."
-
-A textbook identifiability result (Ψ-FCI, GIES). Our reference is a deliberately simple known discoverer the benchmark rewards. The contribution is the apparatus.
-
-**7/**
-The credible part: we audited our OWN benchmark and found 3 real flaws.
-
-(1) Circular admission — worlds were admitted by the grader that later "won." Fixed: admission is grader-INDEPENDENT, faithfulness in closed form, no discovery run.
-
-[attach: figures/fig2_anti_cliche.png]
-
-**8/**
-(2) Name-guessability. A data-free, name-only LLM guess scored F1 0.71 on our first set — a parrot.
-
-Now: named 0.38, name+role-blind ~0.01. Structure isn't guessable once you strip the words. Residual role-prior: disclosed.
-
-**9/**
-(3) Simulated-DAG leakage. Unstandardized, a trivial "sort by variance" baseline hit F1 0.74 — beating PC/FCI. The answer leaked into the data.
-
-Fix: internal standardization (iSCM). varsortability 0.94→0.54; R²-sortability 0.73→0.60. Residual disclosed.
-
-**10/**
-Counterfactuals too: abduction → action → prediction, on cross-sectional AND temporal worlds — cross-checked vs the simulator via Pearl's law that counterfactuals average to interventions.
-
-Engine, grading, and the diagrams run with NO API key.
-
-**11/**
-MIT. Live on PyPI. Honest measurement is the whole identity.
-
-Best thing you can do: try to break a world without doing real discovery. That's how we got here.
-
-📖 Full story: selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
-🔗 github.com/noumenal-ai/causal-worlds · `pip install causal-worlds`
-
-═══════════════════════════════════════════════════════════════════════
-## Take B — "Stop letting models cheat off variable names" (LLM-eval angle)
-═══════════════════════════════════════════════════════════════════════
-
-**1/**
-Most "can LLMs reason about causality?" benchmarks have a dirty secret: the model recites the graph from variable names and never touches the data.
-
-We measured it. A name-only, data-free guess scored F1 0.71 on our first benchmark. A parrot. 🧵
-
-**2/**
-So we rebuilt it to be uncheatable. causal-worlds generates fictional-but-coherent operations with a DECLARED causal answer key.
-
-Fiction-first → no real system to recite, no data to leak. The only way to score is to actually discover.
-
-**3/**
-Then we made the names LIE. An "adversarial" author writes worlds where the obvious name-based guess is WRONG — phantom edges, reversed edges, a misdirecting mediator — while every real edge stays statistically detectable.
-
-**4/**
-Three-tier certificate of progressive blinding:
-named → 0.38
-name-blind → 0.46 (the adversarial names actively mislead)
-name + role-blind → ~0.01 (chance floor)
-
-The structure isn't guessable once you strip the words.
-
-[attach: figures/fig2_anti_cliche.png]
-
 **5/**
-We don't pretend it's perfect: with roles visible, a guesser still beats chance — an intrinsic "controllable→outcome" prior you can't delete without deleting the operation. We disclose it, not hide it.
+Honest framing: this is a textbook identifiability result (Ψ-FCI, GIES), and our reference is a
+deliberately simple discoverer the benchmark is built to reward.
+
+We don't contribute the theorem. We contribute the apparatus that re-surfaces it in a minute.
 
 **6/**
-And it's more than a discovery test: do() interventions + counterfactuals on a known SCM. Seeing, doing, imagining — all three rungs of causality, with an answer key.
+Swap in your own method — implement one function, `recover(substrate, seed) -> set[(src,dst)]` — and
+get an apples-to-apples score against ground truth.
 
-MIT, `pip install causal-worlds`
+Then try to beat the reference's 0. That's the game.
+
+MIT · `pip install causal-worlds`
 🔗 github.com/noumenal-ai/causal-worlds
 
 ═══════════════════════════════════════════════════════════════════════
-## Take C — "Causality in one picture" (visual, short)
+## Thread 3 — The breadth: "most causal benchmarks stop at 'see'"
 ═══════════════════════════════════════════════════════════════════════
 
 **1/**
-Causality in one picture: a coffee shop's *declared* causal graph. The dashed-red node is a hidden confounder the data never shows you — the reason discovery is hard.
+Most causal benchmarks test one thing: can you SEE the structure in the data?
 
-You can SEE it, intervene on it, and ask counterfactuals — with a known answer key. 🧵
-
-[attach: docs/figures/coffee_world.png]
+But causality has three rungs, and agents have to ACT. causal-worlds lets you do all of it — on a world
+whose answer you already hold. 🧵
 
 **2/**
-SEE: overtime & sales correlate 0.64.
-DO: force overtime → sales moves 0.00.
-The link was the hidden confounder the whole time. The benchmark knows, because it declared it.
+SEE → DO. `do(footfall)` is graph surgery: cut every arrow INTO the variable, keep every arrow OUT.
 
-**3/**
-DO is graph surgery — cut arrows INTO the variable, keep the arrows OUT. Verified genuine surgery, not statistical conditioning.
+The data slopes sales on footfall at 1.56. The *true* causal effect is 0.90 — the data overstated it by
+the hidden confounder. The intervention corrects it.
 
 [attach: docs/figures/coffee_do_footfall.png]
 
-**4/**
-IMAGINE: "what would sales have been had footfall been higher, that same day?" Exact, because the world is declared.
-
-MIT, no API key for the engine.
-`pip install causal-worlds` · github.com/noumenal-ai/causal-worlds
-
-═══════════════════════════════════════════════════════════════════════
-## Take D — standalone single tweets (pick one)
-═══════════════════════════════════════════════════════════════════════
-
-**D1 (the mirage):**
-overtime and sales correlate 0.64 in this coffee dataset. Force overtime → sales moves 0.00.
-
-The link was a hidden confounder. We built a benchmark that knows the truth, so it can score who gets fooled.
-
-`pip install causal-worlds` 🧵👇
-[attach: docs/figures/coffee_world.png]
-
-**D2 (the parrot):**
-Most causal benchmarks can be solved by reciting variable names — F1 0.71, no data needed.
-
-We built one where the names LIE and the structure is unguessable, so the only way to win is to actually discover.
-
-MIT: github.com/noumenal-ai/causal-worlds
-
-**D3 (the ladder):**
-A causal world you can SEE (associations), DO (interventions / graph surgery), and IMAGINE (counterfactuals) — generated from a sentence, with a declared ground-truth answer key.
-
-All three rungs of Pearl's ladder. MIT.
-`pip install causal-worlds`
-
-═══════════════════════════════════════════════════════════════════════
-## Take E — long-form single post (X Premium; no 280 limit)
-═══════════════════════════════════════════════════════════════════════
-[attach: docs/figures/coffee_world.png]
-
-Correlation lies — and most causal benchmarks can't prove it, because they don't know the truth either.
-
-Here's a coffee-shop dataset. `overtime` and `sales` move together: correlation 0.64. Looks like overtime drives sales.
-
-Now *force* overtime instead of watching it — do() it high and low, measure sales. Effect: 0.00.
-
-There's no causal link. A hidden "local buzz" (a festival, good weather) was lifting foot traffic, overtime, and sales all at once. The correlation was a mirage.
-
-We built causal-worlds (MIT, `pip install causal-worlds`) so you can prove things like this on demand:
-
-→ Write a sentence — "a coffee chain with weekend swings and variable lead times" — and get a fictional-but-coherent world with a DECLARED ground-truth causal graph. An answer key, by construction.
-
-→ Fiction-first: nothing real to memorize, no data to leak. The only way to score is to actually discover.
-
-→ All three rungs of Pearl's ladder: SEE (associations), DO (interventions — genuine graph surgery), IMAGINE (counterfactuals via abduction → action → prediction). On a world whose answer you already hold.
-
-And we audited our own benchmark, hard:
-• A name-only LLM guess scored F1 0.71 on v1 — a parrot reciting variable names. We made the names mislead; strip them and the structure is unguessable (≈ chance).
-• A "sort by variance" baseline beat real algorithms (F1 0.74) because the simulator leaked the causal order. Fixed with internal standardization.
-• Admission was circular (the grader that won also admitted worlds). Now grader-independent, closed-form, no discovery run.
-
-The headline is an identifiability result, stated honestly: given the SAME interventions, PC keeps a hidden-confounded pair as causal (≈30 worlds) just like observational PC (29); only a latent-aware rule reaches 0. The dividing line is latent-awareness, not interventions — a textbook fact, surfaced as a one-minute reproducible crossover, not "we beat the toolbox."
-
-Honest measurement is the whole identity. Come break a world.
-
-📖 Full story: selftaughtamit.medium.com/correlation-lies-we-built-a-causal-world-that-can-prove-it-then-tried-to-break-it-ourselves-30efae26b457
-🔗 github.com/noumenal-ai/causal-worlds
-
-═══════════════════════════════════════════════════════════════════════
-## Take F — for RL / control people ("agents have to ACT, not just see")
-═══════════════════════════════════════════════════════════════════════
-
-**1/**
-Causal benchmarks test what you can SEE. But decision agents have to ACT.
-
-So causal-worlds is also a control benchmark: same worlds, but now you choose lever values to hit an objective — and we can score you against the *true* optimum. 🧵
-
-**2/**
-Because the mechanisms are DECLARED, the best the levers can possibly do is computable — a by-construction optimal policy.
-
-So a controller is graded by REGRET against it. No learned reward model, no real data, no human labels.
-
 **3/**
-The real test is regret UNDER PERTURBATION. The regime flips (a weekend, a shock) and a policy that ignores it collapses — while the regime-aware optimum stays ~0.
+DO → IMAGINE. "We sold what we sold — what would sales have been if footfall were higher, *that same
+day*?"
 
-A Gymnasium env shifts the regime under you, step to step. Cumulative regret = your score.
+Exact, because the model is declared (abduction → action → prediction):
+factual 3.24 → counterfactual 4.55. On cross-sectional AND temporal worlds.
 
 **4/**
-Plug in your RL / decision agent, drive a world that changes beneath it, and measure whether it stays optimal — against a known answer.
+IMAGINE → ACT. The same worlds are a CONTROL benchmark. The mechanisms are known, so the optimal policy
+is computable — you're graded by regret, no learned reward, no real data.
 
-MIT, `pip install causal-worlds`
-🔗 github.com/noumenal-ai/causal-worlds
+`optimal_policy → {price: 0.0}` · your overshoot → regret 4.5 · the optimum → 0.0
 
-═══════════════════════════════════════════════════════════════════════
-## Take G — for time-series people ("real operations aren't i.i.d.")
-═══════════════════════════════════════════════════════════════════════
+**5/**
+The real test: regret UNDER PERTURBATION. The coffee world's `price` lever flips sign across regimes
+(optimum −1 one regime, +1 the other).
 
-**1/**
-Most causal-discovery benchmarks are cross-sectional — i.i.d. rows. Real operations are time series.
+A regime-blind policy: 0 regret in its regime, 2.0 when it flips. A regime-aware one stays ~0. That gap
+is your "stay-optimal" score.
 
-causal-worlds builds TEMPORAL worlds too: lagged edges, autoregression, and a lagged ground-truth answer key. 🧵
+[attach: blog/figures/tour2_regime_flip.png]
 
-**2/**
-Graded against the time-series toolbox — PCMCI+, LPCMCI, VARLiNGAM, Granger — so you can see which method recovers which variable drives which, and at which lag.
+**6/**
+A `Gymnasium` env shifts the regime under your agent, step to step — drop in any RL/decision agent and
+watch.
 
-**3/**
-And counterfactuals roll forward in time: hold the realized noise fixed, change one lever, replay the whole trajectory. Exact, because the world is declared.
+Temporal worlds add lagged edges + a lagged answer key, graded vs PCMCI+/LPCMCI/VARLiNGAM/Granger.
 
-MIT. `pip install causal-worlds`
+See, do, imagine, act. MIT · `pip install causal-worlds`
 🔗 github.com/noumenal-ai/causal-worlds

@@ -37,7 +37,7 @@ def main() -> None:
     author = build_claude_author(complexity="adversarial")  # easy | standard | hard | adversarial
     judge = build_gemini_judge()  # a different model family than the author
 
-    playground = False
+    playground = True
     try:
         world = generate(PROMPT, author=author, judge=judge, seed=1)
     except NotAdmittedError as exc:

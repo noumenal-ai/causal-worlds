@@ -118,6 +118,49 @@ figure). X thread **tweet 8/** (the "we won't oversell difficulty" caveat) — o
 
 ---
 
+## Feature-tour figures — `make_tour_figures.py` (computed live, not from JSON)
+
+Two figures for the **follow-up** feature-tour post (`blog/medium-tour.md`). Unlike Figures 1–4, these
+are recomputed from the built-in `coffee` world **at render time** by
+[`make_tour_figures.py`](make_tour_figures.py), so they can never drift from the package's behaviour:
+
+```bash
+cd causal-worlds
+uv run --extra discover --with matplotlib python blog/figures/make_tour_figures.py
+```
+
+### Tour 1 — `tour1_shootout.png` (the discovery shootout)
+
+**Source:** live — `grade_spec(worlds.get("coffee"), <discoverer>, seed=0)` over the reference plus
+every method in `BASELINES`. **Purpose:** the single-world companion to Figure 1. A horizontal bar
+chart of directed-edge F1 with each bar annotated by how many spurious confounded pairs the method
+keeps. The latent-aware `interventional-ci` reference is the only method that recovers the structure
+(F1 1.0) *and* keeps zero confounded pairs; PC/FCI/GIES all hit F1 0.77 but keep the `overtime~sales`
+phantom (red); DAGMA collapses (0.17); DirectLiNGAM drops the phantom but mangles structure (0.50).
+
+**Alt-text:** "Horizontal bar chart titled 'Only a latent-aware method isn't fooled.' On the coffee
+world, interventional-ci scores F1 1.00 keeping 0 confounded pairs; PC, FCI and GIES each score 0.77
+while keeping 1 spurious confounded pair as a causal edge; DirectLiNGAM 0.50 keeping 0; DAGMA 0.17
+keeping 1. Only the reference both nails the structure and avoids the trap."
+
+**Used by:** Medium feature-tour (the "benchmarking discovery" section). X thread 2 (the shootout). LinkedIn Post 2.
+
+### Tour 2 — `tour2_regime_flip.png` (control under perturbation)
+
+**Source:** live — `regret_under_perturbation(coffee, default_objective, regime-blind policy, seed=7)`
+with the regime-aware optima from `regime_optimal_policy`. **Purpose:** make the stay-optimal thesis
+visible. A grouped bar chart: a regime-blind policy (tuned for the baseline regime) has 0.0 regret in
+its own regime but 2.0 when the regime flips to weekend — because the `price` lever's optimum reverses
+sign (−1 → +1); a regime-aware policy stays at 0.0 in both.
+
+**Alt-text:** "Grouped bar chart titled 'A regime-blind policy stays optimal — until the regime flips.'
+In the baseline regime both the regime-blind and regime-aware policies have 0.0 regret; in the weekend
+regime the regime-blind policy jumps to 2.0 regret while the regime-aware policy stays at 0.0."
+
+**Used by:** Medium feature-tour (the "control" section). X thread 3 (the ACT rung). LinkedIn Post 3.
+
+---
+
 ## Hero image concept (for the Medium header / X card)
 
 **Concept name: "The Answer Key."** A single, calm, conceptual hero — not a chart — that states the
