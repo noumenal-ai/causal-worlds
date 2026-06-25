@@ -43,6 +43,46 @@ print(to_mermaid(worlds.get("coffee")))   # paste into a ```mermaid block — Gi
 > *authoring* needs keys. Shipped: temporal (lagged) worlds, a control track, and a Gymnasium env.
 > See the [CHANGELOG](CHANGELOG.md).
 
+## Causality in three rungs (a 2-minute tour)
+
+That picture isn't decoration — it's a *causal* model, and causality has exactly three levels (Judea
+Pearl's **Ladder of Causation**). causal-worlds lets you stand on each rung with real code, on a world
+whose true answer you already know.
+
+**Rung 1 — Association · *what goes with what?*** In the data, `footfall` and `sales` rise together.
+But is that `footfall → sales`, or is the hidden `local_buzz` (a street festival, good weather) quietly
+driving *both*? From the data alone you **cannot tell** — two things moving together always have a
+hidden third suspect. That gap is the whole difficulty of causality.
+
+```python
+substrate = build_substrate(worlds.get("coffee"))
+data = substrate.sample(2000, seed=0)                  # just watch the world
+```
+
+**Rung 2 — Intervention · *what if I act?*** Don't watch a variable — *set* it. `do()` is **surgery on
+the graph**: it cuts every arrow pointing *into* the variable (its usual causes no longer apply) and
+keeps every arrow pointing *out* (its effects still flow). This is how you defeat the hidden confounder:
+*force* `footfall`, and `local_buzz` no longer has any say in it — so whatever then moves `sales` is the
+**real** effect, mirage removed.
+
+```python
+forced = substrate.sample(2000, seed=0, do={"footfall": 1.0})   # set it, don't merely observe it
+```
+
+(Our `do()` is verified *genuine* graph surgery — it severs incoming edges, not statistical
+conditioning; see [docs/scope.md](docs/scope.md).)
+
+**Rung 3 — Counterfactual · *what would have happened?*** "We set price = 2 last Saturday and sold 100
+— would we have sold more had we set price = 1, *that same Saturday*?" That needs the full model, with
+that specific day's hidden `local_buzz` held fixed. Because causal-worlds *declares* the entire SCM,
+this is computable in principle — it's the next piece on the [roadmap](#roadmap); Rungs 1 and 2 are
+live today.
+
+**Why this makes a benchmark.** A method that only *sees* (Rung 1) keeps the `local_buzz` mirage as a
+real `overtime → sales` edge; only a *latent-aware* method that *does* (Rung 2) escapes it — which is
+exactly the [crossover result](docs/findings.md). New to causality? This *is* the tour — read the
+diagram, run the two snippets, and you've stood on the first two rungs.
+
 ## Install
 
 ```bash

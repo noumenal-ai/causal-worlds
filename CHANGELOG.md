@@ -3,6 +3,38 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.31.0] — 2026-06-25
+
+**Path coefficients on the graphs, a single-glance hero image, and a README that teaches causality.**
+
+### Added
+- **Edge labels now carry the Wright path coefficient** in `to_mermaid` / `to_dot` (e.g.
+  `footfall --0.4--> sales`). Two coefficients (`-1/1`) show a regime **sign-flip**; `lag k` still
+  marks temporal edges. A diagram with strengths *is* a path diagram, not just a sketch.
+- `to_dot` now colors the **hidden confounder's out-edges red** (dashed) so the confounding pops, and
+  sets clean graph/edge fonts — its output lays out cleanly under Graphviz `dot`.
+- **README "Causality in three rungs"** — a 2-minute, plain-language tour of Pearl's Ladder
+  (association → intervention → counterfactual) on the `coffee` world, with runnable Rung-1/Rung-2
+  snippets. The mission: make causality legible to a newcomer from the README alone.
+
+### Changed
+- The README **hero image is now generated from the package's own `to_dot`** via Graphviz (proper
+  layered routing + a colored role legend + title) — a genuine single-glance DAG, and it dogfoods the
+  renderer. (`docs/figures/render_world_dag.py` rewritten; matplotlib/networkx no longer needed.)
+
+### Fixed / honesty
+- **`docs/scope.md` corrected:** the package supports **Rung 1 (association)** and **Rung 2
+  (intervention — `do()`, verified to be *genuine graph surgery*, not conditioning)**; the control
+  track (optimal policy, regret, regret-under-perturbation, Gym) is shipped — but **Rung 3
+  (counterfactuals) is NOT implemented**. The scope had listed a counterfactual engine as a Stage-2
+  output; it is the *next* piece, not a current capability. No more overclaiming the top rung.
+
+### Notes
+- Renderers stay zero-dependency (pure strings); Graphviz is only a docs-figure tool, not a package
+  dep. 146 tests (renderers at 100%), 95% coverage.
+
+[0.31.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.31.0
+
 ## [0.30.0] — 2026-06-25
 
 **Legible variable names in the built-in worlds — the rendered hero graph now reads on its own.**

@@ -56,8 +56,17 @@ worlds, plus three declared additions per world — an **objective**, an **actio
 model** (regime/distribution shifts; we already author regimes) — and two derived answer-keys computed offline from
 the known SCM:
 - a **ground-truth optimal policy** (closed-form for linear-Gaussian + quadratic cost; offline optimization over
-  the known mechanisms otherwise), and
-- a **counterfactual engine** (abduction → action → prediction on the known SCM) for counterfactual replay.
+  the known mechanisms otherwise) — **SHIPPED**, and
+- a **counterfactual engine** (abduction → action → prediction on the known SCM) for counterfactual replay —
+  **NOT yet built** (see status below).
+
+> **Status (2026-06-25, verified against the code).** In Pearl's-ladder terms, the package supports **Rung 1
+> (association — sampling)** and **Rung 2 (intervention — `do()`)** today; `do()` is *genuine graph surgery* (it
+> cuts the intervened variable's incoming edges, not mere conditioning — verified in `sample/substrate.py`). The
+> control track is **shipped**: optimal-policy answer-key, `grade_control`, `regret_under_perturbation`, and the
+> Gymnasium env. **Rung 3 (counterfactuals) is NOT implemented** — there is no abduction/counterfactual code yet;
+> `regret_under_perturbation` is interventional, not counterfactual. The counterfactual engine is the next
+> Stage-2 piece (tractable for our declared SCM: noise is recoverable in closed form), not a current capability.
 
 The control **score** is **regret vs. the known optimum** and — the load-bearing one for the World Models thesis —
 **regret *under perturbation*** (does a policy *stay* near-optimal when the regime shifts?). That is precisely what

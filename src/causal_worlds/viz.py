@@ -14,9 +14,10 @@ Visual grammar (both renderers):
 * **disturbance** — an exogenous shock (hexagon / diamond)
 * **hidden** — a latent confounder, never emitted as data (dashed circle)
 
-Edges are the generative mechanism's terms (``parent → target``); a ``lag`` label marks a temporal
-edge, a dashed edge marks one that only fires under a regime, and any edge out of a hidden node is
-dashed (you can't observe its cause).
+Edges are the generative mechanism's terms (``parent → target``), **labelled with their Wright path
+coefficient** — the strength of the cause (what makes it a path diagram, not just a sketch). Two
+coefficients (``-1/1``) mean the effect flips under a regime; ``lag k`` marks a temporal edge; an
+edge out of a hidden node is dashed (you can't observe its cause).
 """
 
 from __future__ import annotations
@@ -28,17 +29,19 @@ from causal_worlds.schema import Role, Variable, WorldSpec
 
 @dataclass(frozen=True, slots=True)
 class _Edge:
-    """One directed edge for rendering: parent → target, with its lags and regime flag."""
+    """One directed edge for rendering: parent → target, with its path coefficients and lags."""
 
     parent: str
     target: str
     lags: frozenset[int]
+    coeffs: tuple[float, ...]  # the path coefficient(s); two distinct ⇒ a regime sign-flip
     regime_only: bool
 
 
 def _collect_edges(spec: WorldSpec) -> list[_Edge]:
-    """Flatten the mechanisms into deduped directed edges, merging multiple lags onto one edge."""
+    """Flatten mechanisms into deduped directed edges, keeping each edge's coefficients + lags."""
     lags: dict[tuple[str, str], set[int]] = {}
+    coeffs: dict[tuple[str, str], list[float]] = {}
     regime_only: dict[tuple[str, str], bool] = {}
     for mechanism in spec.mechanisms:
         contemporaneous = [(t, False) for t in mechanism.terms]
@@ -46,18 +49,27 @@ def _collect_edges(spec: WorldSpec) -> list[_Edge]:
         for term, is_regime in contemporaneous + regimes:
             edge = (term.parent, mechanism.target)
             lags.setdefault(edge, set()).add(term.lag)
+            seen = coeffs.setdefault(edge, [])
+            if term.coeff not in seen:  # keep distinct coeffs in order (base then regime)
+                seen.append(term.coeff)
             # an edge is "regime-only" iff every term that produced it came from regime_terms
             regime_only[edge] = regime_only.get(edge, True) and is_regime
     return [
-        _Edge(parent, target, frozenset(edge_lags), regime_only[(parent, target)])
-        for (parent, target), edge_lags in lags.items()
+        _Edge(p, t, frozenset(edge_lags), tuple(coeffs[(p, t)]), regime_only[(p, t)])
+        for (p, t), edge_lags in lags.items()
     ]
 
 
-def _lag_label(lags: frozenset[int]) -> str:
-    """A compact edge label for any non-zero lags (contemporaneous lag-0 edges are unlabelled)."""
-    nonzero = sorted(lag for lag in lags if lag > 0)
-    return "lag " + ",".join(str(lag) for lag in nonzero) if nonzero else ""
+def _edge_label(edge: _Edge) -> str:
+    """The edge label: the Wright **path coefficient(s)**, plus any lag.
+
+    A single coefficient (``0.8``) is the usual case; two (``-1/1``) mean the effect *flips* under a
+    regime — the anti-cliché lever. ``lag k`` marks a temporal edge.
+    """
+    coeff = "/".join(f"{c:g}" for c in edge.coeffs)
+    nonzero = sorted(lag for lag in edge.lags if lag > 0)
+    lag = (" lag " + ",".join(str(lag) for lag in nonzero)) if nonzero else ""
+    return coeff + lag
 
 
 # --------------------------------------------------------------------------- #
@@ -104,9 +116,9 @@ def to_mermaid(spec: WorldSpec) -> str:
     lines += [_mermaid_node(v) for v in spec.variables]
     for edge in _collect_edges(spec):
         arrow = "-.->" if (edge.regime_only or edge.parent in hidden) else "-->"
-        label = _lag_label(edge.lags) or ("regime" if edge.regime_only else "")
-        mid = f'|"{label}"|' if label else ""
-        lines.append(f"    {_ident(edge.parent)} {arrow}{mid} {_ident(edge.target)}")
+        lines.append(
+            f'    {_ident(edge.parent)} {arrow}|"{_edge_label(edge)}"| {_ident(edge.target)}'
+        )
     lines += _MERMAID_CLASSDEFS
     return "\n".join(lines)
 
@@ -138,17 +150,23 @@ def to_dot(spec: WorldSpec) -> str:
         A DOT ``digraph`` string; render with e.g. ``dot -Tpng world.dot -o world.png``.
     """
     hidden = {v.name for v in spec.variables if v.hidden}
-    lines = ['digraph "causal-worlds" {', "  rankdir=LR;", '  node [fontname="Helvetica"];']
+    lines = [
+        'digraph "causal-worlds" {',
+        "  rankdir=LR;",
+        '  bgcolor="white";',
+        '  graph [fontname="Helvetica"];',
+        '  node [fontname="Helvetica"];',
+        '  edge [fontname="Helvetica", fontsize=11, color="#475569"];',
+    ]
     lines += [_dot_node(v) for v in spec.variables]
     for edge in _collect_edges(spec):
-        dashed = edge.regime_only or edge.parent in hidden
-        label = _lag_label(edge.lags) or ("regime" if edge.regime_only else "")
-        attrs = []
-        if label:
-            attrs.append(f'label="{label}"')
-        if dashed:
+        from_hidden = edge.parent in hidden
+        attrs = [f'label="{_edge_label(edge)}"']
+        if from_hidden or edge.regime_only:
             attrs.append("style=dashed")
-        suffix = f" [{', '.join(attrs)}]" if attrs else ""
-        lines.append(f'  "{edge.parent}" -> "{edge.target}"{suffix};')
+        if from_hidden:  # the hidden confounder's influence, in red, so the confounding pops
+            attrs.append('color="#b91c1c"')
+            attrs.append('fontcolor="#b91c1c"')
+        lines.append(f'  "{edge.parent}" -> "{edge.target}" [{", ".join(attrs)}];')
     lines.append("}")
     return "\n".join(lines)

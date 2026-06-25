@@ -52,7 +52,23 @@ def test_dot_is_a_digraph_with_nodes_and_edges():
 def test_dot_marks_hidden_and_lag():
     out = to_dot(_temporal_world())
     assert "dashed" in out  # hidden-origin / regime edges (and the hidden node) are dashed
-    assert 'label="lag 1"' in out
+    assert "lag 1" in out  # the lagged edge label carries the lag (alongside its coefficient)
+
+
+def test_renderers_label_edges_with_path_coefficients():
+    # Wright's contribution: the number on the wire. lever ->(lag1, 0.8) mid -> (0.9) kpi.
+    spec = _temporal_world()
+    mermaid, dot = to_mermaid(spec), to_dot(spec)
+    assert "0.8 lag 1" in mermaid  # coefficient AND lag on the lagged edge
+    assert "0.9" in mermaid  # the mid -> kpi coefficient
+    assert "0.8 lag 1" in dot
+    assert "0.9" in dot
+
+
+def test_regime_sign_flip_shows_both_coefficients():
+    # coffee's price -> demand is -1.0 normally, +1.0 under the weekend regime: both must show.
+    out = to_mermaid(worlds.get("coffee"))
+    assert "-1/1" in out  # the sign-flip is visible on the edge label
 
 
 def test_renderers_handle_names_needing_sanitization():

@@ -1,105 +1,62 @@
 """Render a built-in world's declared SCM to a PNG for the README (renders on GitHub AND PyPI).
 
-The package ships zero-dependency text renderers (``causal_worlds.to_mermaid`` / ``to_dot``); this is
-the one-off image generator for the docs, so it may use matplotlib + networkx (NOT package deps).
+This is the one-off image generator for the docs. It dogfoods the package's own ``to_dot`` renderer
+and lays it out with Graphviz ``dot`` (proper layered routing — a clean, single-glance DAG), then
+injects a title + a colored role legend (as the graph's top label, so it never tangles the layout).
+The graph body is *exactly* what a user gets from ``causal-worlds viz coffee --format dot | dot -Tpng``.
 
-    uv run --with matplotlib --with networkx python docs/figures/render_world_dag.py
+Requires Graphviz (`brew install graphviz` / `apt-get install graphviz`):
 
-Outputs docs/figures/coffee_world.png. Re-run after changing the world; commit the PNG. The visual
-grammar matches the Mermaid/DOT renderers: controllable=blue lever, outcome=green KPI, observable=grey,
-disturbance=amber, hidden confounder=dashed red.
+    uv run python docs/figures/render_world_dag.py
+
+Outputs docs/figures/coffee_world.png. Re-run after changing the world; commit the PNG.
 """
 
 from __future__ import annotations
 
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.patches as mpatches
-import matplotlib.pyplot as plt
-import networkx as nx
-
-from causal_worlds import worlds
+from causal_worlds import to_dot, worlds
 
 WORLD = "coffee"
 OUT = Path(__file__).resolve().parent / f"{WORLD}_world.png"
 
-ROLE_COLOR = {
-    "controllable": ("#dbeafe", "#1d4ed8"),
-    "outcome": ("#dcfce7", "#15803d"),
-    "observable": ("#f1f5f9", "#64748b"),
-    "disturbance": ("#fef3c7", "#b45309"),
-    "hidden": ("#fee2e2", "#b91c1c"),
-}
-
-
-def _layout(spec, g) -> dict[str, tuple[float, float]]:
-    """Manual layered DAG layout: x = topological depth, nodes evenly spread on y within a layer."""
-    layers = list(nx.topological_generations(g))
-    pos: dict[str, tuple[float, float]] = {}
-    for x, names in enumerate(layers):
-        ordered = sorted(names)  # stable
-        n = len(ordered)
-        for i, name in enumerate(ordered):
-            y = 0.0 if n == 1 else (i - (n - 1) / 2) * (2.4 / max(n - 1, 1))
-            pos[name] = (float(x) * 2.7, y)
-    return pos
+# Title + colored role legend as one HTML-like graph label (labelloc=t ⇒ sits above the graph body,
+# so it can't interfere with node layout). Swatch colors match the node fills in to_dot / to_mermaid.
+_LEGEND = (
+    '<<table border="0" cellborder="0" cellspacing="1" cellpadding="3">'
+    f'<tr><td colspan="5"><b>causal-worlds — the declared SCM for "{WORLD}"</b></td></tr>'
+    '<tr><td colspan="5"><font point-size="10" color="#6b7280">'
+    "the hidden confounder (dashed + red) is never in the data — that is what makes recovery hard"
+    "</font></td></tr>"
+    '<tr>'
+    '<td bgcolor="#dbeafe"> controllable (lever) </td>'
+    '<td bgcolor="#dcfce7"> outcome (KPI) </td>'
+    '<td bgcolor="#f1f5f9"> observable </td>'
+    '<td bgcolor="#fef3c7"> disturbance </td>'
+    '<td bgcolor="#fee2e2"> hidden confounder </td>'
+    "</tr></table>>"
+)
+_HEADER = (
+    f'  labelloc="t"; labeljust="c"; fontname="Helvetica"; label={_LEGEND};\n'
+    "  nodesep=0.45; ranksep=1.05;\n"
+)
 
 
 def main() -> None:
-    spec = worlds.get(WORLD)
-    var = {v.name: v for v in spec.variables}
-    g = nx.DiGraph()
-    g.add_nodes_from(v.name for v in spec.variables)
-    edges = [
-        (t.parent, m.target, t.lag, var[t.parent].hidden)
-        for m in spec.mechanisms
-        for t in (*m.terms, *(m.regime_terms or ()))
-    ]
-    g.add_edges_from((p, t) for p, t, *_ in edges)
-    pos = _layout(spec, g)
-    xs = [p[0] for p in pos.values()]
-    ys = [p[1] for p in pos.values()]
-    bw, bh = 0.92, 0.34  # node box width, height in data coords (wide enough for ~10-char names)
-
-    fig, ax = plt.subplots(figsize=(10.5, 5.2))
-    for parent, target, lag, hidden in edges:
-        ax.annotate(
-            "", xy=pos[target], xytext=pos[parent],
-            arrowprops={"arrowstyle": "-|>", "color": "#b91c1c" if hidden else "#475569",
-                        "lw": 1.5, "linestyle": (0, (4, 3)) if hidden else "-",
-                        "shrinkA": 34, "shrinkB": 34, "connectionstyle": "arc3,rad=0.12"},
-            zorder=1,
-        )
-        if lag:
-            mx, my = (pos[parent][0] + pos[target][0]) / 2, (pos[parent][1] + pos[target][1]) / 2
-            ax.text(mx, my + 0.12, f"lag {lag}", fontsize=8, color="#475569", ha="center", zorder=5)
-    for v in spec.variables:
-        kind = "hidden" if v.hidden else v.role.value
-        fill, stroke = ROLE_COLOR[kind]
-        x, y = pos[v.name]
-        ax.add_patch(
-            mpatches.FancyBboxPatch(
-                (x - bw / 2, y - bh / 2), bw, bh, boxstyle="round,pad=0.03",
-                linewidth=2, edgecolor=stroke, facecolor=fill,
-                linestyle="--" if v.hidden else "-", zorder=3,
-            )
-        )
-        ax.text(x, y, v.name, ha="center", va="center", fontsize=9, color=stroke,
-                fontweight="bold", zorder=4)
-
-    legend = [mpatches.Patch(facecolor=f, edgecolor=s, label=k) for k, (f, s) in ROLE_COLOR.items()]
-    ax.legend(handles=legend, loc="upper center", bbox_to_anchor=(0.5, 1.02),
-              ncol=5, frameon=False, fontsize=9)
-    ax.set_title(f'causal-worlds — the declared SCM for "{WORLD}"  '
-                 "(hidden confounder, dashed, is never in the data)",
-                 fontsize=11.5, color="#1b1f24", pad=26)
-    ax.set_xlim(min(xs) - bw, max(xs) + bw)
-    ax.set_ylim(min(ys) - 0.9, max(ys) + 0.9)
-    ax.axis("off")
-    fig.savefig(OUT, dpi=150, bbox_inches="tight", facecolor="white")
+    dot = shutil.which("dot")
+    if dot is None:
+        sys.exit("graphviz 'dot' not found — install it (e.g. `brew install graphviz`).")
+    src = to_dot(worlds.get(WORLD)).replace("{\n", "{\n" + _HEADER, 1)
+    subprocess.run(  # noqa: S603 - args fixed here, src is our own generated DOT
+        [dot, "-Tpng", "-Gdpi=160", "-o", str(OUT)],
+        input=src,
+        text=True,
+        check=True,
+    )
     print(f"wrote {OUT}")
 
 
