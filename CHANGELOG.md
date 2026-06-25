@@ -3,6 +3,27 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.30.0] — 2026-06-25
+
+**Legible variable names in the built-in worlds — the rendered hero graph now reads on its own.**
+
+### Changed
+- **`coffee` world renamed for self-explanation:** `R → weekend` (the regime that lifts demand and
+  *inverts* price sensitivity), `L → local_buzz` (the hidden confounder — unobserved local activity
+  driving footfall, overtime, and sales together), `foot → footfall`. Cryptic single letters (`R`,
+  `L` — causal-textbook shorthand) defeated the whole point of a showcase graph: if the author has to
+  ask what `R` and `L` are, so will everyone. The structure, mechanisms, regime sign-flip, and
+  answer-key (confounded pair `overtime ~ sales`) are **unchanged** — only the names.
+- **`supply` (temporal) world:** `L → logistics` (same rationale).
+- README hero PNG re-rendered with the new names (wider boxes for the longer labels); the
+  `02_visualize_a_world` example + `examples/README.md` Mermaid blocks updated to match.
+
+### Notes
+- Built-in test fixtures that construct their *own* coffee-like specs (not `worlds.get("coffee")`)
+  keep their terse names — they test mechanics, not the user-facing showcase. 144 tests, 95% coverage.
+
+[0.30.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.30.0
+
 ## [0.29.0] — 2026-06-25
 
 **See the world it builds — zero-dependency SCM graph renderers, a richer examples set, and a

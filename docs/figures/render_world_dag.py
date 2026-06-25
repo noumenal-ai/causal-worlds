@@ -44,7 +44,7 @@ def _layout(spec, g) -> dict[str, tuple[float, float]]:
         n = len(ordered)
         for i, name in enumerate(ordered):
             y = 0.0 if n == 1 else (i - (n - 1) / 2) * (2.4 / max(n - 1, 1))
-            pos[name] = (float(x) * 2.2, y)
+            pos[name] = (float(x) * 2.7, y)
     return pos
 
 
@@ -62,15 +62,15 @@ def main() -> None:
     pos = _layout(spec, g)
     xs = [p[0] for p in pos.values()]
     ys = [p[1] for p in pos.values()]
-    bw, bh = 0.62, 0.34  # node box half-extents are bw/2, bh/2 in data coords
+    bw, bh = 0.92, 0.34  # node box width, height in data coords (wide enough for ~10-char names)
 
-    fig, ax = plt.subplots(figsize=(9.5, 5.0))
+    fig, ax = plt.subplots(figsize=(10.5, 5.2))
     for parent, target, lag, hidden in edges:
         ax.annotate(
             "", xy=pos[target], xytext=pos[parent],
             arrowprops={"arrowstyle": "-|>", "color": "#b91c1c" if hidden else "#475569",
                         "lw": 1.5, "linestyle": (0, (4, 3)) if hidden else "-",
-                        "shrinkA": 26, "shrinkB": 26, "connectionstyle": "arc3,rad=0.12"},
+                        "shrinkA": 34, "shrinkB": 34, "connectionstyle": "arc3,rad=0.12"},
             zorder=1,
         )
         if lag:
@@ -87,7 +87,7 @@ def main() -> None:
                 linestyle="--" if v.hidden else "-", zorder=3,
             )
         )
-        ax.text(x, y, v.name, ha="center", va="center", fontsize=10, color=stroke,
+        ax.text(x, y, v.name, ha="center", va="center", fontsize=9, color=stroke,
                 fontweight="bold", zorder=4)
 
     legend = [mpatches.Patch(facecolor=f, edgecolor=s, label=k) for k, (f, s) in ROLE_COLOR.items()]

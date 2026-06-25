@@ -36,7 +36,7 @@ def test_bundle_round_trips(tmp_path):
     loaded = load_bundle(directory)
 
     assert loaded.spec == world.spec
-    assert "L" not in loaded.columns  # hidden confounder is never emitted as data
+    assert "local_buzz" not in loaded.columns  # hidden confounder is never emitted as data
     assert loaded.data.shape == (200, len(loaded.columns))
     assert loaded.manifest["prompt"] == "a coffee chain"
     assert loaded.manifest["author_model"] == "fake"

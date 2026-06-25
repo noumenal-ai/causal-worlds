@@ -10,22 +10,22 @@ Expected output:
 
     # Mermaid (paste into a ```mermaid block on GitHub):
     graph LR
-        R{{"R"}}:::disturbance
+        weekend{{"weekend"}}:::disturbance
         price(["price"]):::controllable
-        L(("L")):::hidden
-        foot["foot"]:::observable
+        local_buzz(("local_buzz")):::hidden
+        footfall["footfall"]:::observable
         overtime["overtime"]:::observable
         demand["demand"]:::observable
         sales[["sales"]]:::outcome
-        L -.-> foot
-        L -.-> overtime
-        foot --> overtime
+        local_buzz -.-> footfall
+        local_buzz -.-> overtime
+        footfall --> overtime
         price --> demand
-        foot --> demand
-        R --> demand
+        footfall --> demand
+        weekend --> demand
         demand --> sales
-        foot --> sales
-        L -.-> sales
+        footfall --> sales
+        local_buzz -.-> sales
         classDef controllable fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a;
         ...
     answer key: 6 causal edges, 1 hidden-confounded pair(s)

@@ -77,9 +77,9 @@ def test_builtin_supply_world_is_temporal_and_admits_a_confounded_pair():
     substrate = build_substrate(spec)
     sample = substrate.sample(1000, seed=1)
     assert np.all(np.isfinite(sample.data))
-    assert "L" not in substrate.variables  # hidden confounder not emitted
+    assert "logistics" not in substrate.variables  # hidden confounder not emitted
 
-    # leadtime and cost share the hidden L with no direct edge -> a confounded pair
+    # leadtime and cost share the hidden logistics with no direct edge -> a confounded pair
     assert frozenset({"leadtime", "cost"}) in answer_key(spec).confounded
     # the lagged truth carries autoregressive self-loops
     assert ("leadtime", "leadtime", 1) in temporal_answer_key(spec)

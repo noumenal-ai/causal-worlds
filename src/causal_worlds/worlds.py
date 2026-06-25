@@ -1,8 +1,10 @@
 """Built-in example worlds — ready-to-run specs, each with a derived ground-truth answer-key.
 
-``coffee`` is the hero: a hidden confounder (L -> overtime, sales) plus a regime sign-flip (price ->
-demand by R) — the trap that defeats standard observational discovery. ``ecommerce`` is an easy
-textbook control. Both pass :func:`causal_worlds.schema.validate`.
+``coffee`` is the hero: a hidden confounder (``local_buzz`` -> footfall, overtime, sales) plus a
+regime sign-flip (``price`` -> demand, inverted on ``weekend``) — the trap that defeats standard
+observational discovery. ``ecommerce`` is an easy textbook control. Variable names are deliberately
+self-explanatory so the rendered graph reads on its own. Both pass
+:func:`causal_worlds.schema.validate`.
 """
 
 from causal_worlds.errors import CausalWorldsError
@@ -14,26 +16,32 @@ class UnknownWorldError(CausalWorldsError):
 
 
 def _coffee() -> WorldSpec:
-    """Hidden L confounds overtime~sales; price->demand flips sign by regime R."""
+    """Hidden ``local_buzz`` confounds ``overtime ~ sales``; ``price`` flips sign on ``weekend``.
+
+    Names are deliberately self-explanatory (this is the showcase world): ``local_buzz`` is the
+    unobserved local activity that lifts footfall, staff overtime, AND sales together — the latent
+    confounder a discovery method never sees; ``weekend`` is the regime that raises demand and
+    *inverts* price sensitivity (on weekends a higher price no longer deters).
+    """
     variables = (
-        Variable("R", Role.DISTURBANCE),
+        Variable("weekend", Role.DISTURBANCE),
         Variable("price", Role.CONTROLLABLE),
-        Variable("L", Role.DISTURBANCE, hidden=True),
-        Variable("foot", Role.OBSERVABLE),
+        Variable("local_buzz", Role.DISTURBANCE, hidden=True),
+        Variable("footfall", Role.OBSERVABLE),
         Variable("overtime", Role.OBSERVABLE),
         Variable("demand", Role.OBSERVABLE),
         Variable("sales", Role.OUTCOME),
     )
     mechanisms = (
-        Mechanism("foot", (Term("L", 0.8),)),
-        Mechanism("overtime", (Term("L", 0.8), Term("foot", 0.3))),
+        Mechanism("footfall", (Term("local_buzz", 0.8),)),
+        Mechanism("overtime", (Term("local_buzz", 0.8), Term("footfall", 0.3))),
         Mechanism(
             "demand",
-            terms=(Term("price", -1.0), Term("foot", 0.5), Term("R", 2.0)),
-            regime="R",
-            regime_terms=(Term("price", 1.0), Term("foot", 0.5), Term("R", 2.0)),
+            terms=(Term("price", -1.0), Term("footfall", 0.5), Term("weekend", 2.0)),
+            regime="weekend",
+            regime_terms=(Term("price", 1.0), Term("footfall", 0.5), Term("weekend", 2.0)),
         ),
-        Mechanism("sales", (Term("demand", 1.0), Term("foot", 0.4), Term("L", 0.6))),
+        Mechanism("sales", (Term("demand", 1.0), Term("footfall", 0.4), Term("local_buzz", 0.6))),
     )
     return WorldSpec(variables=variables, mechanisms=mechanisms)
 
@@ -43,22 +51,22 @@ def _supply() -> WorldSpec:
 
     Lags make it genuinely temporal: ``leadtime`` and ``inventory`` carry their own past (AR < 1,
     so stationary), orders arrive next step, and a long lead time depletes next-step inventory. A
-    hidden ``L`` (logistics) drives both ``leadtime`` and ``cost`` with no direct edge between them
+    hidden ``logistics`` drives both ``leadtime`` and ``cost`` with no direct edge between them
     (the confounded pair). Grading this needs a time-series method (later); here it exercises the
     temporal substrate and the lagged answer-key.
     """
     variables = (
         Variable("order", Role.CONTROLLABLE),
         Variable("demand", Role.DISTURBANCE),
-        Variable("L", Role.DISTURBANCE, hidden=True),
+        Variable("logistics", Role.DISTURBANCE, hidden=True),
         Variable("leadtime", Role.OBSERVABLE),
         Variable("inventory", Role.OBSERVABLE),
         Variable("cost", Role.OBSERVABLE),
         Variable("stockout", Role.OUTCOME),
     )
     mechanisms = (
-        Mechanism("leadtime", (Term("L", 0.8), Term("leadtime", 0.4, lag=1))),
-        Mechanism("cost", (Term("L", 0.6), Term("order", 0.3))),
+        Mechanism("leadtime", (Term("logistics", 0.8), Term("leadtime", 0.4, lag=1))),
+        Mechanism("cost", (Term("logistics", 0.6), Term("order", 0.3))),
         Mechanism(
             "inventory",
             (
