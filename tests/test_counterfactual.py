@@ -3,7 +3,14 @@
 import numpy as np
 import pytest
 
-from causal_worlds import abduct, counterfactual, counterfactual_temporal, predict, worlds
+from causal_worlds import (
+    abduct,
+    build_substrate,
+    counterfactual,
+    counterfactual_temporal,
+    predict,
+    worlds,
+)
 from causal_worlds.counterfactual import TemporalCounterfactualError, _draw_noise, _evaluate
 from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
 
@@ -60,6 +67,39 @@ def test_hidden_confounder_and_non_descendants_held_fixed():
     assert result.counterfactual["weekend"] == result.factual["weekend"]  # not a descendant
     assert result.counterfactual["price"] == result.factual["price"]  # not a descendant
     assert result.counterfactual["sales"] != result.factual["sales"]  # a descendant -> moves
+
+
+def _confounded_chain() -> WorldSpec:
+    """Hidden L -> x (0.9), L -> y (0.7), x -> y (0.5): a confounded pair the data inflates."""
+    return WorldSpec(
+        variables=(
+            Variable("L", Role.DISTURBANCE, hidden=True),
+            Variable("x", Role.CONTROLLABLE),
+            Variable("y", Role.OUTCOME),
+        ),
+        mechanisms=(
+            Mechanism("x", (Term("L", 0.9),)),
+            Mechanism("y", (Term("x", 0.5), Term("L", 0.7))),
+        ),
+    )
+
+
+def test_counterfactuals_marginalize_to_interventions():
+    # Pearl's law: averaging counterfactuals over units recovers the interventional mean. This
+    # cross-validates the (scalar, raw) counterfactual engine against the (vectorized) sampler — two
+    # independent implementations — on a CONFOUNDED world, and confirms the confounder is stripped.
+    spec = _confounded_chain()
+    cf_mean = float(
+        np.mean([counterfactual(spec, {"x": 2.0}, seed=k).counterfactual["y"] for k in range(1500)])
+    )
+    sampler_mean = float(
+        build_substrate(spec, standardize=False)
+        .sample(40000, seed=7, do={"x": 2.0})
+        .data[:, -1]
+        .mean()
+    )
+    assert cf_mean == pytest.approx(1.0, abs=0.1)  # 0.5 * 2, confounder marginalized out
+    assert cf_mean == pytest.approx(sampler_mean, abs=0.1)  # CF engine agrees with the sampler
 
 
 def test_temporal_world_is_rejected_by_the_cross_sectional_fn():
