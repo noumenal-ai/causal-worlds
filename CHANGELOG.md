@@ -21,6 +21,13 @@ this project follows [Semantic Versioning](https://semver.org/).
   interventional-CI reference recovers it (F1 1.0) — the edge was in the answer-key the whole time.
   Keeps the classic trap too (a hidden `weather` confounds `road_grip` ⟂ `visibility`).
 - **`examples/06_nonlinear_world.py`** — the contrast above, runnable, with its expected output.
+- **Stationarity gate** — `validate` (the T1 gate) now rejects an *explosive lagged self-loop*
+  before any sampling: an unbounded nonlinear transform (square/cube/relu/abs) in a self-loop has no
+  stationarity guarantee, and linear autoregression with total load `Σ|coeff| ≥ 1` is explosive —
+  both raise `NonStationaryError`. A **bounded** transform (`tanh`) in a self-loop is admitted at any
+  coefficient (the loop stays bounded), as is `Σ|coeff| < 1` linear AR. This turns a silent `inf`
+  during sampling into a clear failure at authoring time (`Transform.is_bounded` encodes the rule;
+  the author prompt now states it).
 
 ### Why
 - The substrate was **linear-Gaussian only**, exactly where varsortability-style artifacts and
@@ -45,8 +52,8 @@ this project follows [Semantic Versioning](https://semver.org/).
   unchanged. Validated across all six transforms and diverse world shapes (do()-fingerprints,
   exact counterfactuals incl. Pearl's consistency axiom, regime-switched and multi-transform
   mechanisms, temporal autoregression, a confounded end-to-end world; Pearl-marginalization
-  cross-check of the CF engine vs the sampler; gym + CLI + bundle-persistence integration):
-  208 tests, 96% coverage.
+  cross-check of the CF engine vs the sampler; the stationarity gate; gym + CLI + bundle-persistence
+  integration): 211 tests, 96% coverage.
 
 [0.35.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.35.0
 

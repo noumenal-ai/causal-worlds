@@ -51,6 +51,15 @@ class Transform(StrEnum):
     RELU = "relu"
     ABS = "abs"
 
+    @property
+    def is_bounded(self) -> bool:
+        """Whether the output is bounded for all real inputs, so it can't make a loop diverge.
+
+        Only ``TANH`` today; ``IDENTITY`` and the polynomial/rectifier forms are unbounded. Used by
+        :func:`validate` to admit bounded nonlinear autoregression while rejecting explosive forms.
+        """
+        return self is Transform.TANH
+
     @overload
     def apply(self, x: float) -> float: ...
     @overload
@@ -158,6 +167,10 @@ class DuplicateMechanismError(SpecError):
     """More than one mechanism targets the same variable."""
 
 
+class NonStationaryError(SpecError):
+    """A lagged self-loop is explosive — its autoregression has no stationarity guarantee."""
+
+
 def _parents(mechanism: Mechanism) -> set[str]:
     """Return every variable that directly drives a mechanism's target (incl. the regime switch)."""
     parents = {term.parent for term in mechanism.terms}
@@ -191,6 +204,8 @@ def validate(spec: WorldSpec) -> None:
         DanglingReferenceError: A mechanism references an undeclared variable.
         RoleError: No observed controllable variable, or no observed outcome.
         CyclicGraphError: The declared causal graph is cyclic.
+        NonStationaryError: A lagged self-loop is explosive (unbounded nonlinear feedback, or
+            linear autoregression with total ``sum |coeff| >= 1``).
     """
     names = {variable.name for variable in spec.variables}
 
@@ -219,6 +234,43 @@ def validate(spec: WorldSpec) -> None:
         raise RoleError(msg)
 
     _ensure_acyclic(spec)
+    _ensure_stationary(spec)
+
+
+def _ensure_stationary(spec: WorldSpec) -> None:
+    """Reject explosive autoregression — a lagged self-loop with no stationarity guarantee.
+
+    A lagged self-loop (``parent == target``, ``lag >= 1``) is feedback through time. It is rejected
+    when either branch (base ``terms`` or ``regime_terms``) carries:
+
+    * an **unbounded** nonlinear transform (square/cube/relu/abs) — there is no simple, sound
+      stationarity certificate, and with additive noise the trajectory eventually escapes any basin
+      and diverges (a bounded transform like ``tanh`` keeps the loop bounded, so it is allowed at
+      any coefficient); or
+    * **linear** autoregression with total load ``sum |coeff| >= 1`` — the textbook explosive case
+      (``sum |coeff| < 1`` is a sufficient stability condition).
+
+    This turns a silent ``inf`` during sampling into a clear failure at authoring time.
+    """
+    for mechanism in spec.mechanisms:
+        for terms in (mechanism.terms, mechanism.regime_terms or ()):
+            self_loops = [t for t in terms if t.parent == mechanism.target and t.lag >= 1]
+            for term in self_loops:
+                if not term.transform.is_bounded and term.transform is not Transform.IDENTITY:
+                    msg = (
+                        f"{mechanism.target!r} has a nonlinear lagged self-loop "
+                        f"({term.transform.value}); a self-loop through an unbounded nonlinearity "
+                        f"has no stationarity guarantee — use a bounded transform (tanh) or route "
+                        f"the feedback through a cross-variable lagged edge"
+                    )
+                    raise NonStationaryError(msg)
+            load = sum(abs(t.coeff) for t in self_loops if t.transform is Transform.IDENTITY)
+            if load >= 1.0:
+                msg = (
+                    f"{mechanism.target!r} has explosive linear autoregression "
+                    f"(sum |coeff| = {load:.3g} >= 1); keep the autoregressive load below 1"
+                )
+                raise NonStationaryError(msg)
 
 
 def _ensure_acyclic(spec: WorldSpec) -> None:

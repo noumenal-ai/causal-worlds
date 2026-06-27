@@ -7,8 +7,6 @@ must hold for the feature to be trustworthy: the do() fingerprint each transform
 counterfactuals (Pearl's consistency axiom), determinism, and byte-for-byte backward compatibility.
 """
 
-import warnings
-
 import numpy as np
 import pytest
 
@@ -26,6 +24,7 @@ from causal_worlds.counterfactual import abduct, counterfactual, predict
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.schema import (
     Mechanism,
+    NonStationaryError,
     Role,
     Term,
     Transform,
@@ -172,35 +171,56 @@ def test_regime_switches_the_functional_form() -> None:
     assert np.corrcoef(col["x"][on] ** 2, col["y"][on])[0, 1] == pytest.approx(1.0, abs=0.02)
 
 
-# --- Temporal nonlinearity: benign is finite; explosive AR is a stationarity caveat ---------------
-def test_benign_nonlinear_autoregression_is_finite() -> None:
+# --- Temporal nonlinearity: stationarity is enforced at validate() time ---------------------------
+def test_cross_variable_lagged_nonlinearity_is_finite() -> None:
+    """A *cross-variable* lagged nonlinear edge (no self-feedback) is fine — it can't diverge."""
     spec = WorldSpec(
         variables=(Variable("u", Role.CONTROLLABLE), Variable("z", Role.OUTCOME)),
-        mechanisms=(
-            Mechanism(
-                "z",
-                (Term("z", 0.3, lag=1, transform=Transform.SQUARE), Term("u", 0.1, lag=1)),
-            ),
-        ),
+        mechanisms=(Mechanism("z", (Term("u", 0.5, lag=1, transform=Transform.SQUARE),)),),
     )
     data = build_substrate(spec).sample(100, seed=0).data
     assert np.isfinite(data).all()
 
 
-def test_explosive_nonlinear_autoregression_diverges_without_crashing() -> None:
-    """A non-stationary nonlinear AR overflows to non-finite values (the author's modeling choice,
-    not a substrate bug) — the same way a linear AR with |coeff| > 1 diverges. We pin the behavior
-    so it is a documented, tested outcome rather than a surprise."""
+def test_bounded_nonlinear_self_loop_is_allowed_and_finite() -> None:
+    """A *bounded* transform (tanh) in a self-loop keeps the feedback bounded, so it is admitted
+    at any coefficient and stays finite."""
     spec = WorldSpec(
         variables=(Variable("u", Role.CONTROLLABLE), Variable("z", Role.OUTCOME)),
-        mechanisms=(
-            Mechanism("z", (Term("z", 1.5, lag=1, transform=Transform.SQUARE),), noise_scale=0.5),
-        ),
+        mechanisms=(Mechanism("z", (Term("z", 3.0, lag=1, transform=Transform.TANH),)),),
     )
-    with warnings.catch_warnings(), np.errstate(all="ignore"):
-        warnings.simplefilter("ignore")
-        data = build_substrate(spec).sample(80, seed=0).data
-    assert not np.isfinite(data).all()
+    validate(spec)  # bounded => stationary, no rejection
+    assert np.isfinite(build_substrate(spec).sample(100, seed=0).data).all()
+
+
+def test_unbounded_nonlinear_self_loop_is_rejected_at_validate() -> None:
+    """An explosive nonlinear self-loop is rejected at authoring time, not silently inf later."""
+    spec = WorldSpec(
+        variables=(Variable("u", Role.CONTROLLABLE), Variable("z", Role.OUTCOME)),
+        mechanisms=(Mechanism("z", (Term("z", 1.5, lag=1, transform=Transform.SQUARE),)),),
+    )
+    with pytest.raises(NonStationaryError):
+        validate(spec)
+
+
+def test_explosive_linear_autoregression_is_rejected_at_validate() -> None:
+    """The linear half of the caveat: total AR load >= 1 is rejected too."""
+    spec = WorldSpec(
+        variables=(Variable("u", Role.CONTROLLABLE), Variable("z", Role.OUTCOME)),
+        mechanisms=(Mechanism("z", (Term("z", 1.2, lag=1),)),),
+    )
+    with pytest.raises(NonStationaryError):
+        validate(spec)
+
+
+def test_stationary_linear_autoregression_is_allowed() -> None:
+    """The supply built-in and any sum|coeff| < 1 self-loop must still validate."""
+    spec = WorldSpec(
+        variables=(Variable("u", Role.CONTROLLABLE), Variable("z", Role.OUTCOME)),
+        mechanisms=(Mechanism("z", (Term("z", 0.4, lag=1), Term("z", 0.5, lag=2))),),
+    )
+    validate(spec)  # 0.4 + 0.5 = 0.9 < 1, stationary
+    validate(worlds.get("supply"))
 
 
 # --- Determinism and backward compatibility -------------------------------------------------------
