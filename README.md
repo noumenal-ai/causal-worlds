@@ -135,7 +135,7 @@ The base install (engine, grading, renderers, built-in worlds, CLI) needs only `
 ## 60-second quickstart (no API key)
 
 ```bash
-causal-worlds worlds                     # list built-in worlds: coffee, ecommerce
+causal-worlds worlds                     # list built-in worlds: braking, coffee, ecommerce
 causal-worlds viz coffee                 # print the SCM as Mermaid (--format dot for Graphviz)
 causal-worlds gate coffee                # run the validity gates -> admitted=True
 causal-worlds grade coffee               # grade the reference discoverer -> directed_shd=0 ...
@@ -248,7 +248,8 @@ simulated-DAG leakage, difficulty-as-descriptor, anti-cliché role leakage) are 
 
 ## Concepts
 
-- **Spec / IR** — variables (with roles, incl. hidden), linear-Gaussian mechanisms, regime sign-flips.
+- **Spec / IR** — variables (with roles, incl. hidden), additive mechanisms (linear-Gaussian by
+  default; per-term `Transform`s give additive-nonlinear forms like `square`), regime sign-flips.
 - **Answer key** — directed edges over *observed* variables + the hidden-confounded pairs; *derived*
   from the spec, never stored separately, so they can't disagree.
 - **Gates** — T1 validity · T2 sample-sanity · T3 faithfulness (grader-independent) · T4 anti-cliché
@@ -269,7 +270,9 @@ crossover · a structural-difficulty axis · a 26-world hardened benchmark (`v0.
 (lagged edges + autoregression) and **time-series grading** (PCMCI+, LPCMCI, VARLiNGAM, Granger) ·
 **conversational elicitation** · the **control track** (by-construction optimal policy, regret, and
 regret-under-perturbation) + a **Gymnasium env** · **graph renderers** (Mermaid / DOT).
-Next: **nonlinearity** ([#10](https://github.com/noumenal-ai/causal-worlds/issues/10)) and a temporal
+**additive-nonlinear mechanisms** (`square`/`tanh`/… transforms — the built-in `braking` world's stopping
+distance grows with **speed²**, which linear discovery can't see; [#10](https://github.com/noumenal-ai/causal-worlds/issues/10)).
+Next: nonlinear **interactions** (products of parents) + a post-nonlinear form, and a temporal
 benchmark *set* (n>1). Tracked as [issues](https://github.com/noumenal-ai/causal-worlds/issues).
 
 ## Why this is the unoccupied intersection

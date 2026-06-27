@@ -7,10 +7,18 @@ never stored separately, so the spec and the key can never disagree.
 :func:`validate` is the static T1 gate: it rejects ill-formed specs before any sampling happens.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import overload
+
+import numpy as np
+from numpy.typing import NDArray
 
 from causal_worlds.errors import CausalWorldsError
+
+type _FloatArray = NDArray[np.float64]
+type _TransformFn = Callable[[float | _FloatArray], float | _FloatArray]
 
 
 class Role(StrEnum):
@@ -20,6 +28,60 @@ class Role(StrEnum):
     OBSERVABLE = "observable"
     DISTURBANCE = "disturbance"
     OUTCOME = "outcome"
+
+
+class Transform(StrEnum):
+    """A nonlinearity applied to a parent *before* its coefficient: ``coeff·f(parent)``.
+
+    A mechanism is then a **generalized additive model**, ``X = Σ coeffᵢ·fᵢ(parentᵢ) + noise`` — the
+    *additive nonlinear* form (issue #10). The noise stays additive, which is what keeps abduction
+    closed-form (``noise = factual - f(parents)``), so counterfactuals remain exact; and the
+    *answer-key edge set is unchanged* (a transform alters how a parent acts, not whether it does),
+    so grading stays correct-by-construction.
+
+    Every member is **total over the reals** (safe on standardized, possibly-negative data — no
+    domain errors, no NaNs) and serializes to a string, so a world stays a pure declarative spec.
+    ``IDENTITY`` recovers the linear-Gaussian mechanism, so existing worlds are unchanged.
+    """
+
+    IDENTITY = "identity"
+    SQUARE = "square"
+    CUBE = "cube"
+    TANH = "tanh"
+    RELU = "relu"
+    ABS = "abs"
+
+    @property
+    def is_bounded(self) -> bool:
+        """Whether the output is bounded for all real inputs, so it can't make a loop diverge.
+
+        Drawn from :data:`_BOUNDED` (kept beside :data:`_TRANSFORMS` so adding a transform forces a
+        conscious bounded/unbounded choice). Used by :func:`validate` to admit bounded nonlinear
+        autoregression while rejecting explosive forms.
+        """
+        return self in _BOUNDED
+
+    @overload
+    def apply(self, x: float) -> float: ...
+    @overload
+    def apply(self, x: _FloatArray) -> _FloatArray: ...
+    def apply(self, x: float | _FloatArray) -> float | _FloatArray:
+        """Apply the nonlinearity elementwise (works on a scalar or a NumPy column)."""
+        return _TRANSFORMS[self](x)
+
+
+_TRANSFORMS: dict[Transform, _TransformFn] = {
+    Transform.IDENTITY: lambda x: x,
+    Transform.SQUARE: np.square,
+    Transform.CUBE: lambda x: np.power(x, 3.0),
+    Transform.TANH: np.tanh,
+    Transform.RELU: lambda x: np.maximum(x, 0.0),
+    Transform.ABS: np.abs,
+}
+
+# Transforms whose output is bounded for all real inputs — safe in a feedback loop at any
+# coefficient. Keep in sync with the members above: a new bounded form (sigmoid, …) belongs here.
+_BOUNDED: frozenset[Transform] = frozenset({Transform.TANH})
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,7 +95,11 @@ class Variable:
 
 @dataclass(frozen=True, slots=True)
 class Term:
-    """A single linear term ``coeff * parent`` in a mechanism.
+    """A single term ``coeff · transform(parent)`` in a mechanism.
+
+    With the default ``transform`` (``IDENTITY``) this is the linear term ``coeff·parent``; a
+    non-identity :class:`Transform` (e.g. ``SQUARE``) makes the term *additive nonlinear*, so a
+    mechanism becomes a generalized additive model ``Σ coeffᵢ·fᵢ(parentᵢ) + noise``.
 
     ``lag`` is how many timesteps back the parent is read: ``0`` is contemporaneous (the default;
     purely cross-sectional worlds use only this), ``>= 1`` is a temporal/lagged edge. A lagged
@@ -44,15 +110,18 @@ class Term:
     parent: str
     coeff: float
     lag: int = 0
+    transform: Transform = Transform.IDENTITY
 
 
 @dataclass(frozen=True, slots=True)
 class Mechanism:
-    """How one variable is generated: a linear function of parents plus Gaussian noise.
+    """How one variable is generated: an additive function of its parents plus Gaussian noise.
 
-    A variable with no terms and no regime is an exogenous root (pure noise). When ``regime``
-    names a binary variable, ``regime_terms`` apply on rows where it is truthy and ``terms`` on
-    the rest — how a regime flips or rescales an effect (the anti-cliché lever).
+    Each term contributes ``coeff·transform(parent)``; with all-``IDENTITY`` transforms this is the
+    linear-Gaussian mechanism, and a non-identity transform makes it *additive nonlinear*. A
+    variable with no terms and no regime is an exogenous root (pure noise). When ``regime`` names a
+    binary variable, ``regime_terms`` apply on rows where it is truthy and ``terms`` on the rest —
+    how a regime flips or rescales an effect (the anti-cliché lever).
     """
 
     target: str
@@ -103,6 +172,10 @@ class DuplicateMechanismError(SpecError):
     """More than one mechanism targets the same variable."""
 
 
+class NonStationaryError(SpecError):
+    """A temporal feedback cycle is explosive — its dynamics have no stationarity guarantee."""
+
+
 def _parents(mechanism: Mechanism) -> set[str]:
     """Return every variable that directly drives a mechanism's target (incl. the regime switch)."""
     parents = {term.parent for term in mechanism.terms}
@@ -136,6 +209,8 @@ def validate(spec: WorldSpec) -> None:
         DanglingReferenceError: A mechanism references an undeclared variable.
         RoleError: No observed controllable variable, or no observed outcome.
         CyclicGraphError: The declared causal graph is cyclic.
+        NonStationaryError: A lagged self-loop is explosive (unbounded nonlinear feedback, or
+            linear autoregression with total ``sum |coeff| >= 1``).
     """
     names = {variable.name for variable in spec.variables}
 
@@ -164,6 +239,84 @@ def validate(spec: WorldSpec) -> None:
         raise RoleError(msg)
 
     _ensure_acyclic(spec)
+    _ensure_stationary(spec)
+
+
+def _ensure_stationary(spec: WorldSpec) -> None:
+    """Reject explosive temporal feedback so it fails at authoring, not as a silent ``inf`` later.
+
+    A directed cycle in the lag-collapsed graph is feedback *through time* (the contemporaneous
+    graph is already acyclic, so any cycle routes through a lagged edge — a recurrence that can
+    diverge). Two forms are rejected: an **unbounded** nonlinear transform anywhere on a cycle, and
+    an explosive linear self-loop (see the two ``_reject_*`` helpers below).
+    """
+    successors = _temporal_successors(spec)
+    for mechanism in spec.mechanisms:
+        _reject_unbounded_feedback(mechanism, successors)
+        _reject_explosive_ar(mechanism)
+
+
+def _temporal_successors(spec: WorldSpec) -> dict[str, set[str]]:
+    """The lag-collapsed successor graph: ``parent -> {targets}`` over terms of every lag."""
+    successors: dict[str, set[str]] = {v.name: set() for v in spec.variables}
+    for mechanism in spec.mechanisms:
+        for term in (*mechanism.terms, *(mechanism.regime_terms or ())):
+            successors[term.parent].add(mechanism.target)
+    return successors
+
+
+def _reaches(successors: dict[str, set[str]], src: str, dst: str) -> bool:
+    """Whether ``dst`` is reachable from ``src`` (so an edge ``dst -> src`` would close a cycle)."""
+    stack, seen = [src], set()
+    while stack:
+        node = stack.pop()
+        if node == dst:
+            return True
+        if node not in seen:
+            seen.add(node)
+            stack.extend(successors[node])
+    return False
+
+
+def _reject_unbounded_feedback(mechanism: Mechanism, successors: dict[str, set[str]]) -> None:
+    """Reject an unbounded nonlinear transform on an edge that lies on a temporal cycle.
+
+    Covers a lagged self-loop and a multi-variable cycle (``a_t -> b_{t+1} -> a_{t+2}``) alike —
+    such a loop has no sound stationarity certificate and diverges under noise. A bounded transform
+    (``tanh``) is allowed at any coefficient; an unbounded transform *off* every cycle (e.g. driven
+    by a root) is fine and never flagged.
+    """
+    for term in (*mechanism.terms, *(mechanism.regime_terms or ())):
+        if term.transform is Transform.IDENTITY or term.transform.is_bounded:
+            continue
+        if _reaches(successors, mechanism.target, term.parent):  # target reaches parent ⇒ cycle
+            msg = (
+                f"{mechanism.target!r} is on a temporal feedback cycle with an unbounded nonlinear "
+                f"edge from {term.parent!r} ({term.transform.value}); no stationarity guarantee — "
+                f"use a bounded transform (tanh) or break the cycle"
+            )
+            raise NonStationaryError(msg)
+
+
+def _reject_explosive_ar(mechanism: Mechanism) -> None:
+    """Reject a linear lagged self-loop whose total load ``sum |coeff| >= 1`` (explosive AR).
+
+    Checked per branch (base ``terms`` vs ``regime_terms``); ``sum |coeff| < 1`` is a sufficient
+    stability condition. Linear *multi-variable* cycles are not checked here (their stationarity is
+    the companion matrix's spectral radius) — the author keeps those stable, per the author prompt.
+    """
+    for branch in (mechanism.terms, mechanism.regime_terms or ()):
+        load = sum(
+            abs(t.coeff)
+            for t in branch
+            if t.parent == mechanism.target and t.lag >= 1 and t.transform is Transform.IDENTITY
+        )
+        if load >= 1.0:
+            msg = (
+                f"{mechanism.target!r} has explosive linear autoregression "
+                f"(sum |coeff| = {load:.3g} >= 1); keep the autoregressive load below 1"
+            )
+            raise NonStationaryError(msg)
 
 
 def _ensure_acyclic(spec: WorldSpec) -> None:
@@ -249,4 +402,17 @@ def temporal_answer_key(spec: WorldSpec) -> frozenset[tuple[str, str, int]]:
         for mechanism in spec.mechanisms
         for term in (*mechanism.terms, *(mechanism.regime_terms or ()))
         if term.parent in observed and mechanism.target in observed
+    )
+
+
+def has_nonlinear_terms(spec: WorldSpec) -> bool:
+    """Whether any mechanism uses a non-identity :class:`Transform` (an additive-nonlinear world).
+
+    The linear-only machinery (e.g. the closed-form control optimum, which solves ``(I - B)⁻¹``) is
+    valid only when this is ``False``; sampling, grading, and counterfactuals handle either.
+    """
+    return any(
+        term.transform is not Transform.IDENTITY
+        for mechanism in spec.mechanisms
+        for term in (*mechanism.terms, *(mechanism.regime_terms or ()))
     )

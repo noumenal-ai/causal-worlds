@@ -26,6 +26,7 @@ from causal_worlds.control import (
     expected_reward,
     regime_configs,
     regime_optimal_policy,
+    require_linear_mechanisms,
 )
 
 if TYPE_CHECKING:
@@ -59,7 +60,16 @@ class ControlEnv(gymnasium.Env[FloatArray, FloatArray]):
         *,
         horizon: int = _HORIZON,
     ) -> None:
-        """Compile the (raw) control world and define the action/observation spaces."""
+        """Compile the (raw) control world and define the action/observation spaces.
+
+        Raises:
+            NonlinearControlError: the world has nonlinear mechanisms — the per-step regret signal
+                relies on the closed-form (linear-quadratic) optimum, so a nonlinear world is not a
+                valid control env yet (issue #10). Rejected here rather than crashing mid-episode.
+        """
+        require_linear_mechanisms(
+            spec, reason="ControlEnv's regret signal needs the linear-quadratic optimum"
+        )
         self._spec = spec
         self._objective = objective if objective is not None else default_objective(spec)
         self._substrate = control_substrate(spec)

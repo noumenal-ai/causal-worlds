@@ -2,13 +2,14 @@
 
 ``coffee`` is the hero: a hidden confounder (``local_buzz`` -> footfall, overtime, sales) plus a
 regime sign-flip (``price`` -> demand, inverted on ``weekend``) — the trap that defeats standard
-observational discovery. ``ecommerce`` is an easy textbook control. Variable names are deliberately
-self-explanatory so the rendered graph reads on its own. Both pass
-:func:`causal_worlds.schema.validate`.
+observational discovery. ``ecommerce`` is an easy textbook control. ``braking`` is the nonlinear
+showcase: stopping distance grows with **speed²**, a relationship a linear discoverer literally
+cannot see. Variable names are deliberately self-explanatory so the rendered graph reads on its own.
+All pass :func:`causal_worlds.schema.validate`.
 """
 
 from causal_worlds.errors import CausalWorldsError
-from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
+from causal_worlds.schema import Mechanism, Role, Term, Transform, Variable, WorldSpec
 
 
 class UnknownWorldError(CausalWorldsError):
@@ -95,7 +96,41 @@ def _ecommerce() -> WorldSpec:
     return WorldSpec(variables=variables, mechanisms=mechanisms)
 
 
+def _braking() -> WorldSpec:
+    """Auto-emergency-braking physics: stopping distance grows with **speed²** (nonlinear).
+
+    The showcase for additive-nonlinear mechanisms. ``braking_distance`` follows the kinematic
+    ``v²`` law (``Term("speed", …, transform=SQUARE)``) — so on standardized, symmetric speed data
+    its *linear* correlation with speed is ≈ 0, and a linear/PC discoverer drops the
+    ``speed -> braking_distance`` edge even though the causal dependence is total. A ``do(speed)``
+    intervention still moves braking distance strongly: the nonlinearity is real, only invisible to
+    a method that assumes lines.
+
+    It also keeps the classic trap: a hidden ``weather`` lowers both ``road_grip`` and
+    ``visibility`` with no edge between them — the confounded pair. ``road_grip`` cuts braking.
+    """
+    variables = (
+        Variable("weather", Role.DISTURBANCE, hidden=True),
+        Variable("speed", Role.CONTROLLABLE),
+        Variable("road_grip", Role.OBSERVABLE),
+        Variable("visibility", Role.OBSERVABLE),
+        Variable("braking_distance", Role.OBSERVABLE),
+        Variable("stopping_distance", Role.OUTCOME),
+    )
+    mechanisms = (
+        Mechanism("road_grip", (Term("weather", -0.8),)),
+        Mechanism("visibility", (Term("weather", -0.7),)),
+        Mechanism(
+            "braking_distance",
+            (Term("speed", 0.9, transform=Transform.SQUARE), Term("road_grip", -0.5)),
+        ),
+        Mechanism("stopping_distance", (Term("braking_distance", 1.0), Term("visibility", -0.3))),
+    )
+    return WorldSpec(variables=variables, mechanisms=mechanisms)
+
+
 BUILTINS: dict[str, WorldSpec] = {
+    "braking": _braking(),
     "coffee": _coffee(),
     "ecommerce": _ecommerce(),
 }

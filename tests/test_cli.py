@@ -41,6 +41,16 @@ def test_worlds_lists_builtins():
     assert "ecommerce" in result.stdout
 
 
+def test_nonlinear_braking_builtin_works_through_cli():
+    """The shipped nonlinear built-in must list, gate, grade, and render its transform via CLI."""
+    assert "braking" in runner.invoke(app, ["worlds"]).stdout
+    assert "admitted=True" in runner.invoke(app, ["gate", "braking", "--seed", "7"]).stdout
+    assert "directed_shd=" in runner.invoke(app, ["grade", "braking", "--seed", "7"]).stdout
+    viz = runner.invoke(app, ["viz", "braking"])
+    assert viz.exit_code == 0
+    assert "square" in viz.stdout  # the nonlinearity is visible in the rendered graph
+
+
 def test_gate_command_admits_ecommerce():
     result = runner.invoke(app, ["gate", "ecommerce", "--seed", "7"])
     assert result.exit_code == 0

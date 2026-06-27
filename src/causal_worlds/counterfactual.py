@@ -101,7 +101,12 @@ def _topological_order(spec: WorldSpec) -> list[str]:
 
 
 def _deterministic(mechanism: Mechanism, values: Mapping[str, float]) -> float:
-    """The noise-free mechanism output: its linear combo, switched to ``regime_terms`` if on."""
+    """The noise-free mechanism output: its additive combo, switched to ``regime_terms`` if on.
+
+    Each term contributes ``coeff·transform(parent)``; with identity transforms this is the linear
+    combination. Abduction inverts this exactly (``noise = factual - f(parents)``), so additive
+    nonlinearity keeps counterfactuals exact.
+    """
     terms = mechanism.terms
     if (
         mechanism.regime is not None
@@ -109,7 +114,7 @@ def _deterministic(mechanism: Mechanism, values: Mapping[str, float]) -> float:
         and values[mechanism.regime] > _REGIME_ON
     ):
         terms = mechanism.regime_terms
-    return sum(term.coeff * values[term.parent] for term in terms)
+    return sum(term.coeff * term.transform.apply(values[term.parent]) for term in terms)
 
 
 def _draw_noise(spec: WorldSpec, rng: np.random.Generator) -> Assignment:
@@ -209,7 +214,7 @@ class TemporalCounterfactualResult:
 
 
 def _deterministic_at(mechanism: Mechanism, history: Series, t: int) -> float:
-    """Noise-free mechanism output at step ``t``: ``coeff * parent[t - lag]``, regime-switched."""
+    """Noise-free output at step ``t``: ``coeff · transform(parent[t - lag])``, regime-switched."""
     terms = mechanism.terms
     if (
         mechanism.regime is not None
@@ -218,7 +223,7 @@ def _deterministic_at(mechanism: Mechanism, history: Series, t: int) -> float:
     ):
         terms = mechanism.regime_terms
     return sum(
-        term.coeff * float(history[term.parent][t - term.lag])
+        term.coeff * term.transform.apply(float(history[term.parent][t - term.lag]))
         for term in terms
         if t - term.lag >= 0
     )

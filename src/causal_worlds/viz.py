@@ -25,7 +25,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from causal_worlds.schema import Role, Variable, WorldSpec
+from causal_worlds.schema import Role, Transform, Variable, WorldSpec
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -39,6 +39,7 @@ class _Edge:
     target: str
     lags: frozenset[int]
     coeffs: tuple[float, ...]  # the path coefficient(s); two distinct ⇒ a regime sign-flip
+    transforms: frozenset[Transform]  # non-identity nonlinearities on the edge (coeff·f(parent))
     regime_only: bool
 
 
@@ -46,6 +47,7 @@ def _collect_edges(spec: WorldSpec) -> list[_Edge]:
     """Flatten mechanisms into deduped directed edges, keeping each edge's coefficients + lags."""
     lags: dict[tuple[str, str], set[int]] = {}
     coeffs: dict[tuple[str, str], list[float]] = {}
+    transforms: dict[tuple[str, str], set[Transform]] = {}
     regime_only: dict[tuple[str, str], bool] = {}
     for mechanism in spec.mechanisms:
         contemporaneous = [(t, False) for t in mechanism.terms]
@@ -56,24 +58,36 @@ def _collect_edges(spec: WorldSpec) -> list[_Edge]:
             seen = coeffs.setdefault(edge, [])
             if term.coeff not in seen:  # keep distinct coeffs in order (base then regime)
                 seen.append(term.coeff)
+            if term.transform is not Transform.IDENTITY:
+                transforms.setdefault(edge, set()).add(term.transform)
             # an edge is "regime-only" iff every term that produced it came from regime_terms
             regime_only[edge] = regime_only.get(edge, True) and is_regime
     return [
-        _Edge(p, t, frozenset(edge_lags), tuple(coeffs[(p, t)]), regime_only[(p, t)])
+        _Edge(
+            p,
+            t,
+            frozenset(edge_lags),
+            tuple(coeffs[(p, t)]),
+            frozenset(transforms.get((p, t), set())),
+            regime_only[(p, t)],
+        )
         for (p, t), edge_lags in lags.items()
     ]
 
 
 def _edge_label(edge: _Edge) -> str:
-    """The edge label: the Wright **path coefficient(s)**, plus any lag.
+    """The edge label: the Wright **path coefficient(s)**, any nonlinearity, plus any lag.
 
     A single coefficient (``0.8``) is the usual case; two (``-1/1``) mean the effect *flips* under a
-    regime — the anti-cliché lever. ``lag k`` marks a temporal edge.
+    regime — the anti-cliché lever. A non-identity transform (``square``) marks an additive-
+    nonlinear term — the label then reads ``coeff·f(parent)``, so the coefficient alone is no longer
+    the whole effect. ``lag k`` marks a temporal edge.
     """
     coeff = "/".join(f"{c:g}" for c in edge.coeffs)
+    fn = (" " + ",".join(sorted(t.value for t in edge.transforms))) if edge.transforms else ""
     nonzero = sorted(lag for lag in edge.lags if lag > 0)
     lag = (" lag " + ",".join(str(lag) for lag in nonzero)) if nonzero else ""
-    return coeff + lag
+    return coeff + fn + lag
 
 
 # --------------------------------------------------------------------------- #

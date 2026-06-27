@@ -16,8 +16,10 @@ _PREFIX = "X"
 
 
 def _rename_term(term: Term, mapping: dict[str, str]) -> Term:
-    """A term with its parent relabeled (coefficient and lag unchanged)."""
-    return Term(parent=mapping[term.parent], coeff=term.coeff, lag=term.lag)
+    """A term with its parent relabeled (coefficient, lag, and transform unchanged)."""
+    return Term(
+        parent=mapping[term.parent], coeff=term.coeff, lag=term.lag, transform=term.transform
+    )
 
 
 def _rename_mechanism(mechanism: Mechanism, mapping: dict[str, str]) -> Mechanism:

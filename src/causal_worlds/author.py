@@ -73,7 +73,9 @@ _COMPLEXITY = {
 _TEMPORAL_CLAUSE = (
     "This is a TEMPORAL operation that evolves over time. Use lagged terms (set a term's 'lag' to "
     "1 or 2) for delayed effects, and give at least one variable an autoregressive term (its own "
-    "past, lag 1). Keep every autoregressive coefficient below 1 in magnitude (stationarity)."
+    "past, lag 1). Keep linear autoregression stationary: a variable's own-past coefficients must "
+    "sum to below 1 in magnitude. A self-loop may use a nonlinear transform only if it is bounded "
+    "(tanh); square/cube/relu/abs on a self-loop are explosive and will be rejected."
 )
 _CLOSING = (
     "The world should be plausible for the described operation. These worlds are fictional; do not "

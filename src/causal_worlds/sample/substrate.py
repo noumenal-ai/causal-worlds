@@ -192,21 +192,25 @@ class ScmSubstrate:
         n: int,
         rng: np.random.Generator,
     ) -> FloatArray:
-        """Evaluate a mechanism: (regime-switched) linear combo of parents plus Gaussian noise."""
-        out: FloatArray = self._linear(mechanism.terms, values, n)
+        """Evaluate a mechanism: (regime-switched) additive combo of parents plus Gaussian noise."""
+        out: FloatArray = self._combine(mechanism.terms, values, n)
         if mechanism.regime is not None and mechanism.regime_terms is not None:
-            switched = self._linear(mechanism.regime_terms, values, n)
+            switched = self._combine(mechanism.regime_terms, values, n)
             on = values[mechanism.regime] > _REGIME_ON
             out = np.where(on, switched, out)
         out = out + rng.normal(0.0, mechanism.noise_scale, n)
         return out
 
     @staticmethod
-    def _linear(terms: tuple[Term, ...], values: dict[str, FloatArray], n: int) -> FloatArray:
-        """Sum ``coeff * parent`` over the terms (lag-0 only path)."""
+    def _combine(terms: tuple[Term, ...], values: dict[str, FloatArray], n: int) -> FloatArray:
+        """Sum ``coeff · transform(parent)`` over the terms (lag-0 only path).
+
+        With identity transforms this is the linear combination; a non-identity transform makes the
+        term additive-nonlinear.
+        """
         acc: FloatArray = np.zeros(n, dtype=np.float64)
         for term in terms:
-            acc = acc + term.coeff * values[term.parent]
+            acc = acc + term.coeff * term.transform.apply(values[term.parent])
         return acc
 
     # -- temporal (rows are timesteps) -------------------------------------------------------------
@@ -245,21 +249,21 @@ class ScmSubstrate:
     def _step(
         self, mechanism: Mechanism, history: dict[str, FloatArray], t: int, rng: np.random.Generator
     ) -> float:
-        """One timestep of a mechanism: regime-switched lagged-linear combo plus Gaussian noise."""
-        out = self._linear_at(mechanism.terms, history, t)
+        """One timestep of a mechanism: regime-switched lagged additive combo + Gaussian noise."""
+        out = self._combine_at(mechanism.terms, history, t)
         regime, regime_terms = mechanism.regime, mechanism.regime_terms
         if regime is not None and regime_terms is not None and history[regime][t] > _REGIME_ON:
-            out = self._linear_at(regime_terms, history, t)
+            out = self._combine_at(regime_terms, history, t)
         return out + float(rng.normal(0.0, mechanism.noise_scale))
 
     @staticmethod
-    def _linear_at(terms: tuple[Term, ...], history: dict[str, FloatArray], t: int) -> float:
-        """Sum ``coeff * parent[t - lag]`` over the terms; reads before t=0 are 0."""
+    def _combine_at(terms: tuple[Term, ...], history: dict[str, FloatArray], t: int) -> float:
+        """Sum ``coeff · transform(parent[t - lag])`` over the terms; reads before t=0 are 0."""
         acc = 0.0
         for term in terms:
             past = t - term.lag
             if past >= 0:
-                acc += term.coeff * float(history[term.parent][past])
+                acc += term.coeff * float(term.transform.apply(float(history[term.parent][past])))
         return acc
 
 
