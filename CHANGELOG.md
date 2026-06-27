@@ -3,6 +3,48 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.35.0] — 2026-06-28
+
+**Additive-nonlinear mechanisms — worlds can finally bend, not just slope (#10, first cut).**
+
+### Added
+- **`Transform`** — an elementwise nonlinearity on a `Term`, applied before its coefficient, so a
+  mechanism becomes a **generalized additive model**: `X = Σ coeffᵢ·fᵢ(parentᵢ) + noise`. Members are
+  `identity` (the linear-Gaussian default — existing worlds are byte-for-byte unchanged),
+  `square`, `cube`, `tanh`, `relu`, `abs`. Every member is **total over the reals** (safe on
+  standardized, possibly-negative data — no NaNs) and serializes to a string, so a world stays a pure
+  declarative spec. `Term` gains a `transform` field (default `IDENTITY`); `has_nonlinear_terms(spec)`
+  reports whether any mechanism is nonlinear.
+- **Built-in `braking` world** — auto-emergency-braking physics whose `braking_distance` follows the
+  kinematic **`speed²`** law. On standardized, symmetric speed data its linear correlation with speed
+  is ≈ 0, so a linear/PC discoverer **drops the `speed → braking_distance` edge** (F1 0.6) while the
+  interventional-CI reference recovers it (F1 1.0) — the edge was in the answer-key the whole time.
+  Keeps the classic trap too (a hidden `weather` confounds `road_grip` ⟂ `visibility`).
+- **`examples/06_nonlinear_world.py`** — the contrast above, runnable, with its expected output.
+
+### Why
+- The substrate was **linear-Gaussian only**, exactly where varsortability-style artifacts and
+  trivial baselines bite hardest, and a narrow place to evaluate a sophisticated discoverer (incl.
+  the private noumenal_agent eval). Real mechanisms curve (`v²`, saturation, thresholds); a single
+  coefficient can only scale, never bend. This is the *additive nonlinear* form issue #10 names.
+
+### Design / honesty
+- **Additive noise on purpose:** it keeps abduction closed-form (`noise = factual − f(parents)`), so
+  counterfactuals stay **exact** on nonlinear worlds; and a transform changes *how* a parent acts, not
+  *whether* it does, so the **answer-key edge set is unchanged** and grading stays
+  correct-by-construction. Verified: nonlinear sampling, exact nonlinear counterfactuals, serde
+  round-trip, anonymization, and the temporal path all honor transforms.
+- **Still open (documented, not hidden):** interaction terms (products of two parents, e.g. friction
+  `μ·N`), ratios (`v²/a`), and a post-nonlinear `g(Σ·)+noise` form. The closed-form **control optimum
+  stays linear-only** — a nonlinear world now raises `NonlinearControlError` rather than returning a
+  wrong LQ optimum.
+
+### Notes
+- Backward compatible — `IDENTITY` is the default, so every existing world, bundle, and call site is
+  unchanged. 176 tests, 95% coverage.
+
+[0.35.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.35.0
+
 ## [0.34.0] — 2026-06-25
 
 **Playground mode — author a world from any sentence without the benchmark's anti-cliché rejection (#19).**

@@ -114,7 +114,12 @@ composing** these donors and filling the two genuinely-novel pieces (§7).
 - **Dataset:** the emitted multivariate time-series (+ an event trace for discrete-event worlds).
 - **Answer-key:** an open causal-world schema — variables (with roles: controllable / observable / disturbance /
   outcome), a causal graph (edges with direction + lag), functional forms / mechanisms, and regimes. *(Discovery
-  key — Stage 1.)*
+  key — Stage 1.)* Mechanisms are **additive**: `X = Σ coeffᵢ·fᵢ(parentᵢ) + Gaussian noise`, where each `fᵢ` is a
+  declared :class:`Transform` (identity → the linear-Gaussian default; or `square`/`cube`/`tanh`/`relu`/`abs` → an
+  *additive-nonlinear* world, issue #10). Additive noise keeps abduction closed-form (counterfactuals stay exact)
+  and leaves the edge set — and so the answer-key — unchanged. **Still open:** interaction terms (products of two
+  parents, e.g. `μ·N`), ratios (`v²/a`), and post-nonlinear `g(Σ·)+noise`; and the closed-form control optimum,
+  which remains linear-only (a nonlinear world raises `NonlinearControlError`).
 - **Control key (Stage 2):** a declared **objective** (reward over outcomes), an **action space** (controllable
   variables + admissible ranges), a **perturbation model** (regime/distribution shifts), and the two quantities
   *derived* from the known SCM — the **ground-truth optimal policy** and a **counterfactual engine** — all
