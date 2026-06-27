@@ -41,7 +41,9 @@ this project follows [Semantic Versioning](https://semver.org/).
 
 ### Notes
 - Backward compatible — `IDENTITY` is the default, so every existing world, bundle, and call site is
-  unchanged. 176 tests, 95% coverage.
+  unchanged. Validated across all six transforms and diverse world shapes (do()-fingerprints,
+  exact counterfactuals incl. Pearl's consistency axiom, regime-switched and multi-transform
+  mechanisms, temporal autoregression, a confounded end-to-end world): 204 tests, 95% coverage.
 
 [0.35.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.35.0
 
