@@ -21,14 +21,13 @@ import numpy as np
 
 from causal_worlds.control import (
     ControlObjective,
-    NonlinearControlError,
     control_substrate,
     default_objective,
     expected_reward,
     regime_configs,
     regime_optimal_policy,
+    require_linear_mechanisms,
 )
-from causal_worlds.schema import has_nonlinear_terms
 
 if TYPE_CHECKING:
     from causal_worlds.schema import WorldSpec
@@ -68,12 +67,9 @@ class ControlEnv(gymnasium.Env[FloatArray, FloatArray]):
                 relies on the closed-form (linear-quadratic) optimum, so a nonlinear world is not a
                 valid control env yet (issue #10). Rejected here rather than crashing mid-episode.
         """
-        if has_nonlinear_terms(spec):
-            msg = (
-                "ControlEnv needs the linear-quadratic optimum for its regret signal; this world "
-                "has nonlinear mechanisms (issue #10). Use it for discovery/counterfactuals."
-            )
-            raise NonlinearControlError(msg)
+        require_linear_mechanisms(
+            spec, reason="ControlEnv's regret signal needs the linear-quadratic optimum"
+        )
         self._spec = spec
         self._objective = objective if objective is not None else default_objective(spec)
         self._substrate = control_substrate(spec)

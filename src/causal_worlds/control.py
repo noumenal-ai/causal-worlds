@@ -48,6 +48,24 @@ class NonlinearControlError(CausalWorldsError):
     """
 
 
+def require_linear_mechanisms(spec: WorldSpec, *, reason: str) -> None:
+    """Guard the closed-form (linear-quadratic) control path: raise on a nonlinear world.
+
+    The single authoritative check shared by the optimum solver and the Gymnasium env, so the two
+    boundaries can never disagree on what "controllable" means.
+
+    Args:
+        spec: The world whose mechanisms must be linear.
+        reason: Caller context, woven into the error message.
+
+    Raises:
+        NonlinearControlError: ``spec`` has any non-identity transform.
+    """
+    if has_nonlinear_terms(spec):
+        msg = f"this world has nonlinear mechanisms (issue #10): {reason}"
+        raise NonlinearControlError(msg)
+
+
 @dataclass(frozen=True, slots=True)
 class ControlObjective:
     """A linear-quadratic control problem over a world: maximise ``E[outcome] - cost/2 * ||u||²``.
@@ -115,9 +133,7 @@ def _config_effects(
     spec: WorldSpec, objective: ControlObjective, regime_on: set[str]
 ) -> dict[str, float]:
     """Total effect of each lever on the outcome for one fixed regime configuration (path-sum)."""
-    if has_nonlinear_terms(spec):
-        msg = "control optimum is linear-quadratic; this world has nonlinear mechanisms (issue #10)"
-        raise NonlinearControlError(msg)
+    require_linear_mechanisms(spec, reason="the control optimum is linear-quadratic")
     names = tuple(v.name for v in spec.variables)
     index = {name: i for i, name in enumerate(names)}
     out_i = index[objective.outcome]
