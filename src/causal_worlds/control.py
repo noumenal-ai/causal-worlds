@@ -24,8 +24,9 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from causal_worlds.errors import CausalWorldsError
 from causal_worlds.sample import build_substrate
-from causal_worlds.schema import Role, WorldSpec
+from causal_worlds.schema import Role, WorldSpec, has_nonlinear_terms
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -36,6 +37,15 @@ type FloatArray = np.ndarray
 
 _DEFAULT_COST = 1.0  # quadratic lever-cost weight (keeps the objective bounded)
 _REWARD_N = 4000  # rows drawn to score a proposed policy's expected reward
+
+
+class NonlinearControlError(CausalWorldsError):
+    """The closed-form control optimum is linear-quadratic and cannot grade a nonlinear world.
+
+    The optimal policy is read off ``(I - B)⁻¹``, which assumes linear mechanisms. A world with any
+    non-identity :class:`~causal_worlds.schema.Transform` has no such closed form here; sampling and
+    discovery grading still work, but the control answer-key does not yet (issue #10 follow-up).
+    """
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,6 +115,9 @@ def _config_effects(
     spec: WorldSpec, objective: ControlObjective, regime_on: set[str]
 ) -> dict[str, float]:
     """Total effect of each lever on the outcome for one fixed regime configuration (path-sum)."""
+    if has_nonlinear_terms(spec):
+        msg = "control optimum is linear-quadratic; this world has nonlinear mechanisms (issue #10)"
+        raise NonlinearControlError(msg)
     names = tuple(v.name for v in spec.variables)
     index = {name: i for i, name in enumerate(names)}
     out_i = index[objective.outcome]

@@ -7,10 +7,18 @@ never stored separately, so the spec and the key can never disagree.
 :func:`validate` is the static T1 gate: it rejects ill-formed specs before any sampling happens.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import overload
+
+import numpy as np
+from numpy.typing import NDArray
 
 from causal_worlds.errors import CausalWorldsError
+
+type _FloatArray = NDArray[np.float64]
+type _TransformFn = Callable[[float | _FloatArray], float | _FloatArray]
 
 
 class Role(StrEnum):
@@ -20,6 +28,46 @@ class Role(StrEnum):
     OBSERVABLE = "observable"
     DISTURBANCE = "disturbance"
     OUTCOME = "outcome"
+
+
+class Transform(StrEnum):
+    """A nonlinearity applied to a parent *before* its coefficient: ``coeff·f(parent)``.
+
+    A mechanism is then a **generalized additive model**, ``X = Σ coeffᵢ·fᵢ(parentᵢ) + noise`` — the
+    *additive nonlinear* form (issue #10). The noise stays additive, which is what keeps abduction
+    closed-form (``noise = factual - f(parents)``), so counterfactuals remain exact; and the
+    *answer-key edge set is unchanged* (a transform alters how a parent acts, not whether it does),
+    so grading stays correct-by-construction.
+
+    Every member is **total over the reals** (safe on standardized, possibly-negative data — no
+    domain errors, no NaNs) and serializes to a string, so a world stays a pure declarative spec.
+    ``IDENTITY`` recovers the linear-Gaussian mechanism, so existing worlds are unchanged.
+    """
+
+    IDENTITY = "identity"
+    SQUARE = "square"
+    CUBE = "cube"
+    TANH = "tanh"
+    RELU = "relu"
+    ABS = "abs"
+
+    @overload
+    def apply(self, x: float) -> float: ...
+    @overload
+    def apply(self, x: _FloatArray) -> _FloatArray: ...
+    def apply(self, x: float | _FloatArray) -> float | _FloatArray:
+        """Apply the nonlinearity elementwise (works on a scalar or a NumPy column)."""
+        return _TRANSFORMS[self](x)
+
+
+_TRANSFORMS: dict[Transform, _TransformFn] = {
+    Transform.IDENTITY: lambda x: x,
+    Transform.SQUARE: np.square,
+    Transform.CUBE: lambda x: np.power(x, 3.0),
+    Transform.TANH: np.tanh,
+    Transform.RELU: lambda x: np.maximum(x, 0.0),
+    Transform.ABS: np.abs,
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,7 +81,11 @@ class Variable:
 
 @dataclass(frozen=True, slots=True)
 class Term:
-    """A single linear term ``coeff * parent`` in a mechanism.
+    """A single term ``coeff · transform(parent)`` in a mechanism.
+
+    With the default ``transform`` (``IDENTITY``) this is the linear term ``coeff·parent``; a
+    non-identity :class:`Transform` (e.g. ``SQUARE``) makes the term *additive nonlinear*, so a
+    mechanism becomes a generalized additive model ``Σ coeffᵢ·fᵢ(parentᵢ) + noise``.
 
     ``lag`` is how many timesteps back the parent is read: ``0`` is contemporaneous (the default;
     purely cross-sectional worlds use only this), ``>= 1`` is a temporal/lagged edge. A lagged
@@ -44,15 +96,18 @@ class Term:
     parent: str
     coeff: float
     lag: int = 0
+    transform: Transform = Transform.IDENTITY
 
 
 @dataclass(frozen=True, slots=True)
 class Mechanism:
-    """How one variable is generated: a linear function of parents plus Gaussian noise.
+    """How one variable is generated: an additive function of its parents plus Gaussian noise.
 
-    A variable with no terms and no regime is an exogenous root (pure noise). When ``regime``
-    names a binary variable, ``regime_terms`` apply on rows where it is truthy and ``terms`` on
-    the rest — how a regime flips or rescales an effect (the anti-cliché lever).
+    Each term contributes ``coeff·transform(parent)``; with all-``IDENTITY`` transforms this is the
+    linear-Gaussian mechanism, and a non-identity transform makes it *additive nonlinear*. A
+    variable with no terms and no regime is an exogenous root (pure noise). When ``regime`` names a
+    binary variable, ``regime_terms`` apply on rows where it is truthy and ``terms`` on the rest —
+    how a regime flips or rescales an effect (the anti-cliché lever).
     """
 
     target: str
@@ -249,4 +304,17 @@ def temporal_answer_key(spec: WorldSpec) -> frozenset[tuple[str, str, int]]:
         for mechanism in spec.mechanisms
         for term in (*mechanism.terms, *(mechanism.regime_terms or ()))
         if term.parent in observed and mechanism.target in observed
+    )
+
+
+def has_nonlinear_terms(spec: WorldSpec) -> bool:
+    """Whether any mechanism uses a non-identity :class:`Transform` (an additive-nonlinear world).
+
+    The linear-only machinery (e.g. the closed-form control optimum, which solves ``(I - B)⁻¹``) is
+    valid only when this is ``False``; sampling, grading, and counterfactuals handle either.
+    """
+    return any(
+        term.transform is not Transform.IDENTITY
+        for mechanism in spec.mechanisms
+        for term in (*mechanism.terms, *(mechanism.regime_terms or ()))
     )

@@ -11,24 +11,30 @@ Field descriptions are written for the *author* LLM: they are the contract the m
 
 from pydantic import BaseModel, Field
 
-from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
+from causal_worlds.schema import Mechanism, Role, Term, Transform, Variable, WorldSpec
 
 
 class TermModel(BaseModel):
-    """A single linear term ``coeff * parent`` feeding a mechanism."""
+    """A single term ``coeff * transform(parent)`` feeding a mechanism."""
 
     parent: str = Field(description="Name of the parent variable that drives the target.")
-    coeff: float = Field(description="Linear coefficient; sign encodes the direction of effect.")
+    coeff: float = Field(description="Coefficient; sign encodes the direction of effect.")
     lag: int = Field(
         default=0,
         ge=0,
         description="Timesteps back the parent is read: 0 = contemporaneous, >=1 = a lagged edge "
         "(a lagged self-reference is autoregression). Use 0 unless the world is temporal.",
     )
+    transform: Transform = Field(
+        default=Transform.IDENTITY,
+        description="Elementwise nonlinearity applied to the parent before scaling: identity "
+        "(linear; the default), square, cube, tanh, relu, or abs. Use identity unless the "
+        "mechanism is genuinely nonlinear.",
+    )
 
     def to_term(self) -> Term:
         """Convert to the frozen core :class:`Term`."""
-        return Term(parent=self.parent, coeff=self.coeff, lag=self.lag)
+        return Term(parent=self.parent, coeff=self.coeff, lag=self.lag, transform=self.transform)
 
 
 class VariableModel(BaseModel):
@@ -118,14 +124,16 @@ class WorldSpecModel(BaseModel):
                 MechanismModel(
                     target=mechanism.target,
                     terms=[
-                        TermModel(parent=t.parent, coeff=t.coeff, lag=t.lag)
+                        TermModel(parent=t.parent, coeff=t.coeff, lag=t.lag, transform=t.transform)
                         for t in mechanism.terms
                     ],
                     noise_scale=mechanism.noise_scale,
                     regime=mechanism.regime,
                     regime_terms=(
                         [
-                            TermModel(parent=t.parent, coeff=t.coeff, lag=t.lag)
+                            TermModel(
+                                parent=t.parent, coeff=t.coeff, lag=t.lag, transform=t.transform
+                            )
                             for t in mechanism.regime_terms
                         ]
                         if mechanism.regime_terms is not None
