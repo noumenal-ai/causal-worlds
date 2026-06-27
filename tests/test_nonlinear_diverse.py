@@ -20,8 +20,9 @@ from causal_worlds import (
     spec_to_json,
     to_dot,
     to_mermaid,
+    worlds,
 )
-from causal_worlds.counterfactual import abduct, predict
+from causal_worlds.counterfactual import abduct, counterfactual, predict
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.schema import (
     Mechanism,
@@ -79,6 +80,30 @@ def test_counterfactual_roundtrip_exact_per_transform(transform: Transform) -> N
     assert noise["y"] == pytest.approx(0.0, abs=1e-9)
     predicted = predict(spec, noise, {"x": 1.5})
     assert predicted["y"] == pytest.approx(2.0 * float(transform.apply(1.5)))
+
+
+def test_pearl_marginalization_holds_on_nonlinear_world() -> None:
+    """Cross-validate the two independent code paths on a nonlinear world: the per-unit
+    counterfactual engine (scalar ``_deterministic``) averaged over units must equal the
+    interventional ``do()`` effect from the vectorized sampler (``_combine``). Pearl's
+    marginalization law — if they disagree, one of the cores is wrong."""
+    spec = worlds.get("braking")
+    sub = build_substrate(spec, standardize=False)
+    bd = sub.variables.index("braking_distance")
+    do_effect = float(
+        sub.sample(200_000, seed=10, do={"speed": 1.5}).data[:, bd].mean()
+        - sub.sample(200_000, seed=10, do={"speed": 0.5}).data[:, bd].mean()
+    )
+    cf_effect = float(
+        np.mean(
+            [
+                counterfactual(spec, do={"speed": 1.5}, seed=s).counterfactual["braking_distance"]
+                - counterfactual(spec, do={"speed": 0.5}, seed=s).counterfactual["braking_distance"]
+                for s in range(2000)
+            ]
+        )
+    )
+    assert cf_effect == pytest.approx(do_effect, abs=0.1)
 
 
 @pytest.mark.parametrize("transform", NONLINEAR)

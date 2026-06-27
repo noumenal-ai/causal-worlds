@@ -5,9 +5,9 @@ import pytest
 
 gymnasium = pytest.importorskip("gymnasium")
 
-from causal_worlds.control import regime_optimal_policy  # noqa: E402
+from causal_worlds.control import NonlinearControlError, regime_optimal_policy  # noqa: E402
 from causal_worlds.gym import ControlEnv  # noqa: E402
-from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec  # noqa: E402
+from causal_worlds.schema import Mechanism, Role, Term, Transform, Variable, WorldSpec  # noqa: E402
 
 
 def _sign_flip() -> WorldSpec:
@@ -27,6 +27,17 @@ def _sign_flip() -> WorldSpec:
             ),
         ),
     )
+
+
+def test_control_env_rejects_a_nonlinear_world_at_construction():
+    """The regret signal needs the linear-quadratic optimum, so a nonlinear world must fail fast
+    at construction — not crash mid-episode when step() reaches for the optimum (issue #10)."""
+    nonlinear = WorldSpec(
+        variables=(Variable("price", Role.CONTROLLABLE), Variable("sales", Role.OUTCOME)),
+        mechanisms=(Mechanism("sales", (Term("price", 1.0, transform=Transform.SQUARE),)),),
+    )
+    with pytest.raises(NonlinearControlError):
+        ControlEnv(nonlinear)
 
 
 def test_env_is_a_gymnasium_env_with_the_right_spaces():

@@ -37,13 +37,15 @@ this project follows [Semantic Versioning](https://semver.org/).
 - **Still open (documented, not hidden):** interaction terms (products of two parents, e.g. friction
   `μ·N`), ratios (`v²/a`), and a post-nonlinear `g(Σ·)+noise` form. The closed-form **control optimum
   stays linear-only** — a nonlinear world now raises `NonlinearControlError` rather than returning a
-  wrong LQ optimum.
+  wrong LQ optimum, and **`ControlEnv` rejects a nonlinear world at construction** (its regret signal
+  needs that optimum) instead of crashing mid-episode.
 
 ### Notes
 - Backward compatible — `IDENTITY` is the default, so every existing world, bundle, and call site is
   unchanged. Validated across all six transforms and diverse world shapes (do()-fingerprints,
   exact counterfactuals incl. Pearl's consistency axiom, regime-switched and multi-transform
-  mechanisms, temporal autoregression, a confounded end-to-end world): 204 tests, 95% coverage.
+  mechanisms, temporal autoregression, a confounded end-to-end world; Pearl-marginalization
+  cross-check of the CF engine vs the sampler; gym + CLI integration): 207 tests, 96% coverage.
 
 [0.35.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.35.0
 
