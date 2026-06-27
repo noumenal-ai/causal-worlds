@@ -45,7 +45,8 @@ this project follows [Semantic Versioning](https://semver.org/).
   unchanged. Validated across all six transforms and diverse world shapes (do()-fingerprints,
   exact counterfactuals incl. Pearl's consistency axiom, regime-switched and multi-transform
   mechanisms, temporal autoregression, a confounded end-to-end world; Pearl-marginalization
-  cross-check of the CF engine vs the sampler; gym + CLI integration): 207 tests, 96% coverage.
+  cross-check of the CF engine vs the sampler; gym + CLI + bundle-persistence integration):
+  208 tests, 96% coverage.
 
 [0.35.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.35.0
 

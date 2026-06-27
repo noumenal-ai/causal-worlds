@@ -2,7 +2,7 @@
 
 import json
 
-from causal_worlds import worlds
+from causal_worlds import has_nonlinear_terms, worlds
 from causal_worlds.artifact import Provenance, load_bundle, save_bundle
 from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.fakes import FakeAuthor, FakeJudge
@@ -53,6 +53,24 @@ def test_manifest_records_playground_mode(tmp_path):
     )
     directory = save_bundle(world, tmp_path / "playground", provenance=provenance)
     assert load_bundle(directory).manifest["anti_cliche"] is False
+
+
+def test_bundle_round_trips_a_nonlinear_world(tmp_path):
+    # The transform must survive full persistence, or a saved nonlinear world would silently
+    # reload as linear. Playground mode: the braking world's self-explanatory names fail T4.
+    world = generate(
+        "an auto-braking world",
+        author=FakeAuthor([worlds.get("braking")]),
+        discoverer=_FAST,
+        judge=FakeJudge(),
+        seed=7,
+        anti_cliche=False,
+    )
+    provenance = Provenance(author_model="fake", grader="g", grader_version="1", seed=7, n_rows=200)
+    directory = save_bundle(world, tmp_path / "braking", provenance=provenance)
+    loaded = load_bundle(directory)
+    assert loaded.spec == world.spec
+    assert has_nonlinear_terms(loaded.spec)  # the speed² mechanism reloaded intact
 
 
 def test_answer_key_file_lists_the_confounded_pair(tmp_path):
