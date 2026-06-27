@@ -203,6 +203,39 @@ def test_unbounded_nonlinear_self_loop_is_rejected_at_validate() -> None:
         validate(spec)
 
 
+def test_unbounded_nonlinear_multivariable_cycle_is_rejected() -> None:
+    """The check generalizes past self-loops: a multi-variable temporal cycle (a→b→a) with an
+    unbounded transform on it has no stationarity guarantee and is rejected at validate."""
+    spec = WorldSpec(
+        variables=(Variable("a", Role.CONTROLLABLE), Variable("b", Role.OUTCOME)),
+        mechanisms=(
+            Mechanism(
+                "a", (Term("b", 0.9, lag=1, transform=Transform.SQUARE),)
+            ),  # a_t = .9 b²_{t-1}
+            Mechanism("b", (Term("a", 0.5, lag=1),)),  # b_t = .5 a_{t-1}  → closes the cycle
+        ),
+    )
+    with pytest.raises(NonStationaryError):
+        validate(spec)
+
+
+def test_acyclic_unbounded_nonlinearity_is_allowed() -> None:
+    """An unbounded transform NOT on a cycle (a feed-forward chain) is fine and stays finite."""
+    spec = WorldSpec(
+        variables=(
+            Variable("u", Role.CONTROLLABLE),
+            Variable("v", Role.OBSERVABLE),
+            Variable("w", Role.OUTCOME),
+        ),
+        mechanisms=(
+            Mechanism("v", (Term("u", 0.8, lag=1, transform=Transform.SQUARE),)),
+            Mechanism("w", (Term("v", 0.5, lag=1, transform=Transform.CUBE),)),
+        ),
+    )
+    validate(spec)  # u→v→w is a DAG, no feedback, so unbounded transforms are safe
+    assert np.isfinite(build_substrate(spec).sample(100, seed=0).data).all()
+
+
 def test_explosive_linear_autoregression_is_rejected_at_validate() -> None:
     """The linear half of the caveat: total AR load >= 1 is rejected too."""
     spec = WorldSpec(

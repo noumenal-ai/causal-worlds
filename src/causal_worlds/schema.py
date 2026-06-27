@@ -55,10 +55,11 @@ class Transform(StrEnum):
     def is_bounded(self) -> bool:
         """Whether the output is bounded for all real inputs, so it can't make a loop diverge.
 
-        Only ``TANH`` today; ``IDENTITY`` and the polynomial/rectifier forms are unbounded. Used by
-        :func:`validate` to admit bounded nonlinear autoregression while rejecting explosive forms.
+        Drawn from :data:`_BOUNDED` (kept beside :data:`_TRANSFORMS` so adding a transform forces a
+        conscious bounded/unbounded choice). Used by :func:`validate` to admit bounded nonlinear
+        autoregression while rejecting explosive forms.
         """
-        return self is Transform.TANH
+        return self in _BOUNDED
 
     @overload
     def apply(self, x: float) -> float: ...
@@ -77,6 +78,10 @@ _TRANSFORMS: dict[Transform, _TransformFn] = {
     Transform.RELU: lambda x: np.maximum(x, 0.0),
     Transform.ABS: np.abs,
 }
+
+# Transforms whose output is bounded for all real inputs — safe in a feedback loop at any
+# coefficient. Keep in sync with the members above: a new bounded form (sigmoid, …) belongs here.
+_BOUNDED: frozenset[Transform] = frozenset({Transform.TANH})
 
 
 @dataclass(frozen=True, slots=True)
@@ -168,7 +173,7 @@ class DuplicateMechanismError(SpecError):
 
 
 class NonStationaryError(SpecError):
-    """A lagged self-loop is explosive — its autoregression has no stationarity guarantee."""
+    """A temporal feedback cycle is explosive — its dynamics have no stationarity guarantee."""
 
 
 def _parents(mechanism: Mechanism) -> set[str]:
@@ -238,39 +243,80 @@ def validate(spec: WorldSpec) -> None:
 
 
 def _ensure_stationary(spec: WorldSpec) -> None:
-    """Reject explosive autoregression — a lagged self-loop with no stationarity guarantee.
+    """Reject explosive temporal feedback so it fails at authoring, not as a silent ``inf`` later.
 
-    A lagged self-loop (``parent == target``, ``lag >= 1``) is feedback through time. It is rejected
-    when either branch (base ``terms`` or ``regime_terms``) carries:
-
-    * an **unbounded** nonlinear transform (square/cube/relu/abs) — there is no simple, sound
-      stationarity certificate, and with additive noise the trajectory eventually escapes any basin
-      and diverges (a bounded transform like ``tanh`` keeps the loop bounded, so it is allowed at
-      any coefficient); or
-    * **linear** autoregression with total load ``sum |coeff| >= 1`` — the textbook explosive case
-      (``sum |coeff| < 1`` is a sufficient stability condition).
-
-    This turns a silent ``inf`` during sampling into a clear failure at authoring time.
+    A directed cycle in the lag-collapsed graph is feedback *through time* (the contemporaneous
+    graph is already acyclic, so any cycle routes through a lagged edge — a recurrence that can
+    diverge). Two forms are rejected: an **unbounded** nonlinear transform anywhere on a cycle, and
+    an explosive linear self-loop (see the two ``_reject_*`` helpers below).
     """
+    successors = _temporal_successors(spec)
     for mechanism in spec.mechanisms:
-        for terms in (mechanism.terms, mechanism.regime_terms or ()):
-            self_loops = [t for t in terms if t.parent == mechanism.target and t.lag >= 1]
-            for term in self_loops:
-                if not term.transform.is_bounded and term.transform is not Transform.IDENTITY:
-                    msg = (
-                        f"{mechanism.target!r} has a nonlinear lagged self-loop "
-                        f"({term.transform.value}); a self-loop through an unbounded nonlinearity "
-                        f"has no stationarity guarantee — use a bounded transform (tanh) or route "
-                        f"the feedback through a cross-variable lagged edge"
-                    )
-                    raise NonStationaryError(msg)
-            load = sum(abs(t.coeff) for t in self_loops if t.transform is Transform.IDENTITY)
-            if load >= 1.0:
-                msg = (
-                    f"{mechanism.target!r} has explosive linear autoregression "
-                    f"(sum |coeff| = {load:.3g} >= 1); keep the autoregressive load below 1"
-                )
-                raise NonStationaryError(msg)
+        _reject_unbounded_feedback(mechanism, successors)
+        _reject_explosive_ar(mechanism)
+
+
+def _temporal_successors(spec: WorldSpec) -> dict[str, set[str]]:
+    """The lag-collapsed successor graph: ``parent -> {targets}`` over terms of every lag."""
+    successors: dict[str, set[str]] = {v.name: set() for v in spec.variables}
+    for mechanism in spec.mechanisms:
+        for term in (*mechanism.terms, *(mechanism.regime_terms or ())):
+            successors[term.parent].add(mechanism.target)
+    return successors
+
+
+def _reaches(successors: dict[str, set[str]], src: str, dst: str) -> bool:
+    """Whether ``dst`` is reachable from ``src`` (so an edge ``dst -> src`` would close a cycle)."""
+    stack, seen = [src], set()
+    while stack:
+        node = stack.pop()
+        if node == dst:
+            return True
+        if node not in seen:
+            seen.add(node)
+            stack.extend(successors[node])
+    return False
+
+
+def _reject_unbounded_feedback(mechanism: Mechanism, successors: dict[str, set[str]]) -> None:
+    """Reject an unbounded nonlinear transform on an edge that lies on a temporal cycle.
+
+    Covers a lagged self-loop and a multi-variable cycle (``a_t -> b_{t+1} -> a_{t+2}``) alike —
+    such a loop has no sound stationarity certificate and diverges under noise. A bounded transform
+    (``tanh``) is allowed at any coefficient; an unbounded transform *off* every cycle (e.g. driven
+    by a root) is fine and never flagged.
+    """
+    for term in (*mechanism.terms, *(mechanism.regime_terms or ())):
+        if term.transform is Transform.IDENTITY or term.transform.is_bounded:
+            continue
+        if _reaches(successors, mechanism.target, term.parent):  # target reaches parent ⇒ cycle
+            msg = (
+                f"{mechanism.target!r} is on a temporal feedback cycle with an unbounded nonlinear "
+                f"edge from {term.parent!r} ({term.transform.value}); no stationarity guarantee — "
+                f"use a bounded transform (tanh) or break the cycle"
+            )
+            raise NonStationaryError(msg)
+
+
+def _reject_explosive_ar(mechanism: Mechanism) -> None:
+    """Reject a linear lagged self-loop whose total load ``sum |coeff| >= 1`` (explosive AR).
+
+    Checked per branch (base ``terms`` vs ``regime_terms``); ``sum |coeff| < 1`` is a sufficient
+    stability condition. Linear *multi-variable* cycles are not checked here (their stationarity is
+    the companion matrix's spectral radius) — the author keeps those stable, per the author prompt.
+    """
+    for branch in (mechanism.terms, mechanism.regime_terms or ()):
+        load = sum(
+            abs(t.coeff)
+            for t in branch
+            if t.parent == mechanism.target and t.lag >= 1 and t.transform is Transform.IDENTITY
+        )
+        if load >= 1.0:
+            msg = (
+                f"{mechanism.target!r} has explosive linear autoregression "
+                f"(sum |coeff| = {load:.3g} >= 1); keep the autoregressive load below 1"
+            )
+            raise NonStationaryError(msg)
 
 
 def _ensure_acyclic(spec: WorldSpec) -> None:
