@@ -1,0 +1,1125 @@
+{
+  "eval": "nonlinear-crossover",
+  "grader": "interventional-ci@1",
+  "n": 4000,
+  "seeds": [
+    7,
+    11,
+    23
+  ],
+  "nonlinear_edge": [
+    "X",
+    "M"
+  ],
+  "templates": 3,
+  "transforms": [
+    "identity",
+    "square",
+    "cube",
+    "tanh",
+    "relu",
+    "abs"
+  ],
+  "per_world": {
+    "identity/T0": {
+      "transform": "identity",
+      "template": 0,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.8,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.35690235690235694,
+          "shd": 3.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.6666666666666666
+        },
+        "gies": {
+          "f1": 0.7070707070707071,
+          "shd": 3.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.6666666666666666,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.5,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "identity/T1": {
+      "transform": "identity",
+      "template": 1,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.6666666666666666,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.6666666666666666,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0606060606060606,
+          "shd": 3.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.3333333333333333
+        },
+        "directlingam": {
+          "f1": 0.4848484848484848,
+          "shd": 3,
+          "confounded_kept": 0.6666666666666666,
+          "nl_edge_recall": 0.6666666666666666
+        },
+        "gies": {
+          "f1": 0.8333333333333333,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.8333333333333333,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.8000000000000002,
+          "shd": 1,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "identity/T2": {
+      "transform": "identity",
+      "template": 2,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8363636363636364,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.8363636363636364,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 6,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.43636363636363634,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.6666666666666666
+        },
+        "gies": {
+          "f1": 0.6984126984126984,
+          "shd": 4.333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.5714285714285714,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.6,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "square/T0": {
+      "transform": "square",
+      "template": 0,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.6481481481481481,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.7070707070707071,
+          "shd": 3.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.7070707070707071,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.580952380952381,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.6666666666666666
+        }
+      }
+    },
+    "square/T1": {
+      "transform": "square",
+      "template": 1,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8000000000000002,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci": {
+          "f1": 0.8000000000000002,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4,
+          "confounded_kept": 0,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.4000000000000001,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.9090909090909091,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.7552447552447552,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.7628205128205128,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 0.6666666666666666,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "square/T2": {
+      "transform": "square",
+      "template": 2,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.7272727272727272,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci": {
+          "f1": 0.7272727272727272,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 5,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.6484848484848486,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.7722832722832723,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.8585858585858586,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.8585858585858586,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "cube/T0": {
+      "transform": "cube",
+      "template": 0,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.40740740740740744,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.6868686868686869,
+          "shd": 3.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.5454545454545454,
+          "shd": 3.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.5858585858585857,
+          "shd": 3.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "cube/T1": {
+      "transform": "cube",
+      "template": 1,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.6666666666666666,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.7272727272727272,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 3.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.3543123543123543,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 0.3333333333333333,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.8333333333333333,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.811965811965812,
+          "shd": 1.3333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.7897435897435898,
+          "shd": 1.3333333333333333,
+          "confounded_kept": 0.3333333333333333,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "cube/T2": {
+      "transform": "cube",
+      "template": 2,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.7878787878787878,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.7878787878787878,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.40559440559440557,
+          "shd": 3.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.7167277167277167,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.8333333333333333,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.8333333333333333,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "tanh/T0": {
+      "transform": "tanh",
+      "template": 0,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.8,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.06666666666666667,
+          "shd": 4.666666666666667,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.5212121212121212,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.6666666666666666,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.7272727272727273,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.5714285714285715,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "tanh/T1": {
+      "transform": "tanh",
+      "template": 1,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8333333333333333,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.8333333333333333,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.5818181818181818,
+          "shd": 1.6666666666666667,
+          "confounded_kept": 0.6666666666666666,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.8333333333333333,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.8333333333333333,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.8000000000000002,
+          "shd": 1,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "tanh/T2": {
+      "transform": "tanh",
+      "template": 2,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8727272727272728,
+          "shd": 1.3333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.8727272727272728,
+          "shd": 1.3333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 6,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.5641025641025641,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.6984126984126984,
+          "shd": 4.333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.5714285714285714,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.6,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "relu/T0": {
+      "transform": "relu",
+      "template": 0,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.7333333333333334,
+          "shd": 1.3333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.7333333333333334,
+          "shd": 1.3333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.13333333333333333,
+          "shd": 4.333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.6868686868686869,
+          "shd": 3.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.5299145299145299,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.5476190476190477,
+          "shd": 2.3333333333333335,
+          "confounded_kept": 0.3333333333333333,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "relu/T1": {
+      "transform": "relu",
+      "template": 1,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.6666666666666666,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.7272727272727272,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4.333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.4424242424242424,
+          "shd": 2,
+          "confounded_kept": 0.3333333333333333,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.8333333333333333,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.8333333333333333,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.8000000000000002,
+          "shd": 1,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "relu/T2": {
+      "transform": "relu",
+      "template": 2,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.9090909090909091,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci": {
+          "f1": 0.9090909090909091,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.5811965811965811,
+          "shd": 2.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.7008547008547008,
+          "shd": 4.333333333333333,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.5714285714285714,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.6,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "abs/T0": {
+      "transform": "abs",
+      "template": 0,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci": {
+          "f1": 0.6,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "dagma": {
+          "f1": 0.25,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.75,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.7515151515151516,
+          "shd": 2.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.6666666666666666,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.611111111111111,
+          "shd": 3,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    },
+    "abs/T1": {
+      "transform": "abs",
+      "template": 1,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.8000000000000002,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci": {
+          "f1": 0.8000000000000002,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 4,
+          "confounded_kept": 0,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.4000000000000001,
+          "shd": 4,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.9090909090909091,
+          "shd": 1,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.8000000000000002,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci+do": {
+          "f1": 0.7499999999999999,
+          "shd": 2,
+          "confounded_kept": 0,
+          "nl_edge_recall": 0.0
+        }
+      }
+    },
+    "abs/T2": {
+      "transform": "abs",
+      "template": 2,
+      "methods": {
+        "interventional-ci": {
+          "f1": 1.0,
+          "shd": 0,
+          "confounded_kept": 0,
+          "nl_edge_recall": 1.0
+        },
+        "pc": {
+          "f1": 0.7272727272727272,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "fci": {
+          "f1": 0.7272727272727272,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "dagma": {
+          "f1": 0.0,
+          "shd": 5,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "directlingam": {
+          "f1": 0.6909090909090909,
+          "shd": 2.6666666666666665,
+          "confounded_kept": 1,
+          "nl_edge_recall": 0.0
+        },
+        "gies": {
+          "f1": 0.7509157509157509,
+          "shd": 3.3333333333333335,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "pc+do": {
+          "f1": 0.6153846153846154,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        },
+        "fci+do": {
+          "f1": 0.6666666666666665,
+          "shd": 2,
+          "confounded_kept": 1,
+          "nl_edge_recall": 1.0
+        }
+      }
+    }
+  },
+  "by_transform": {
+    "identity": {
+      "interventional-ci": 1.0,
+      "pc": 1.0,
+      "fci": 1.0,
+      "dagma": 0.1111111111111111,
+      "directlingam": 0.6666666666666666,
+      "gies": 1.0,
+      "pc+do": 1.0,
+      "fci+do": 1.0
+    },
+    "square": {
+      "interventional-ci": 1.0,
+      "pc": 0.0,
+      "fci": 0.0,
+      "dagma": 0.0,
+      "directlingam": 0.0,
+      "gies": 1.0,
+      "pc+do": 1.0,
+      "fci+do": 0.8888888888888888
+    },
+    "cube": {
+      "interventional-ci": 1.0,
+      "pc": 1.0,
+      "fci": 1.0,
+      "dagma": 0.0,
+      "directlingam": 0.0,
+      "gies": 1.0,
+      "pc+do": 1.0,
+      "fci+do": 1.0
+    },
+    "tanh": {
+      "interventional-ci": 1.0,
+      "pc": 1.0,
+      "fci": 1.0,
+      "dagma": 0.0,
+      "directlingam": 0.0,
+      "gies": 1.0,
+      "pc+do": 1.0,
+      "fci+do": 1.0
+    },
+    "relu": {
+      "interventional-ci": 1.0,
+      "pc": 1.0,
+      "fci": 1.0,
+      "dagma": 0.0,
+      "directlingam": 0.0,
+      "gies": 1.0,
+      "pc+do": 1.0,
+      "fci+do": 1.0
+    },
+    "abs": {
+      "interventional-ci": 1.0,
+      "pc": 0.0,
+      "fci": 0.0,
+      "dagma": 0.0,
+      "directlingam": 0.0,
+      "gies": 1.0,
+      "pc+do": 0.6666666666666666,
+      "fci+do": 0.6666666666666666
+    }
+  },
+  "aggregate": {
+    "interventional-ci": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 1.0,
+      "mean_shd": 0,
+      "total_confounded_kept": 0,
+      "nl_edge_recall": 1.0
+    },
+    "pc": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.7459595959595959,
+      "mean_shd": 1.7777777777777777,
+      "total_confounded_kept": 18,
+      "nl_edge_recall": 0.6666666666666666
+    },
+    "fci": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.7526936026936026,
+      "mean_shd": 1.6666666666666667,
+      "total_confounded_kept": 18,
+      "nl_edge_recall": 0.6666666666666666
+    },
+    "dagma": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.028367003367003367,
+      "mean_shd": 4.2592592592592595,
+      "total_confounded_kept": 16,
+      "nl_edge_recall": 0.018518518518518517
+    },
+    "directlingam": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.5152069124291346,
+      "mean_shd": 2.814814814814815,
+      "total_confounded_kept": 16.0,
+      "nl_edge_recall": 0.1111111111111111
+    },
+    "gies": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.7608434775101441,
+      "mean_shd": 3.0,
+      "total_confounded_kept": 18,
+      "nl_edge_recall": 1.0
+    },
+    "pc+do": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.7073247739914407,
+      "mean_shd": 2.1481481481481484,
+      "total_confounded_kept": 18,
+      "nl_edge_recall": 0.9444444444444444
+    },
+    "fci+do": {
+      "worlds_scored": 18,
+      "errored": 0,
+      "mean_f1": 0.6810066476733143,
+      "mean_shd": 2.1481481481481484,
+      "total_confounded_kept": 12.333333333333334,
+      "nl_edge_recall": 0.9259259259259259
+    }
+  }
+}
