@@ -1,5 +1,5 @@
 """Nonlinear crossover — does observational linear discovery miss a nonlinear edge the answer key
-still scores, while the latent-aware interventional reference recovers it? (the §4.7 story at scale).
+still scores, while interventional methods recover it?
 
 We hold a small confounded graph fixed and sweep the transform on ONE edge `X -> M` across
 {identity (control), square, cube, tanh, relu, abs}, over a few templates and seeds. Because a
@@ -294,13 +294,13 @@ def _write_readme(report):
         "`pc+do`, `gies`, and the reference recover `square` (and `pc+do`/`fci+do` partially recover "
         "`abs`) — *none of which are latent-aware*. So for **nonlinearity the lever is interventions, "
         "not latent-awareness.**",
-        "2. **Latent confounding is the separate §4.1 axis, unchanged.** Every causal-sufficiency "
+        "2. **Latent confounding is a separate axis.** Every causal-sufficiency "
         "method — including the interventional `pc+do`, `fci+do`, `gies` — keeps the hidden-confounded "
         "`{A,B}` pair as causal (~18/18); only the latent-aware `interventional-ci` reaches 0. For "
         "**confounding the lever is latent-awareness, not interventions.**",
         "",
-        "This *refines* the n=1 `braking` framing (§4.7): `braking`'s `speed²` is an **even** transform, "
-        "so observational PC missed it — but the general recoverer of even-nonlinear edges is "
+        "The built-in `braking` world is the single-world version of this: its `speed²` is an **even** "
+        "transform, so observational PC misses it — but the general recoverer of even-nonlinear edges is "
         "interventional data, and latent-awareness is the separate lever for confounding. "
         "(`dagma`/`directlingam` are weak throughout — including on the linear `identity` control — so "
         "their misses are not nonlinearity-specific.)",
