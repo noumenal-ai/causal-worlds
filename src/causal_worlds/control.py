@@ -19,6 +19,7 @@ are exactly what control needs, so :func:`control_substrate` builds the raw worl
 from __future__ import annotations
 
 import itertools
+from collections import deque
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -312,3 +313,119 @@ class InterventionalController:
             lo = substrate.sample(self._n, seed=seed, do={lever: 0.0}).data[:, out_i].mean()
             policy[lever] = float(hi - lo) / objective.cost
         return policy
+
+
+# --------------------------------------------------------------------------- #
+# Observational identifiability (#27) — does a lever's effect on the outcome admit a
+# valid observational backdoor adjustment set? A *hidden* common cause of a lever and
+# the outcome makes the effect non-identifiable from any observational method; an
+# *observed* confounder is fixable by adjustment; a mediator must not be adjusted for.
+# This lets a harness split worlds into "observationally solvable" vs "interventions-required".
+# Operates on the contemporaneous (lag-0) causal graph the control optimum lives on.
+# --------------------------------------------------------------------------- #
+@dataclass(frozen=True, slots=True)
+class LeverIdentifiability:
+    """Is a lever's outcome-effect recoverable from observational data by backdoor adjustment."""
+
+    lever: str
+    identifiable: bool
+    adjustment_set: (
+        frozenset[str] | None
+    )  # a valid observed backdoor set if identifiable, else None
+
+
+def _lag0_graph(
+    spec: WorldSpec,
+) -> tuple[set[str], set[str], dict[str, set[str]], dict[str, set[str]]]:
+    """The contemporaneous directed graph: (nodes, hidden, parents, children) over lag-0 edges."""
+    nodes = {v.name for v in spec.variables}
+    hidden = {v.name for v in spec.variables if v.hidden}
+    parents: dict[str, set[str]] = {n: set() for n in nodes}
+    children: dict[str, set[str]] = {n: set() for n in nodes}
+    for mechanism in spec.mechanisms:
+        ps = {t.parent for t in mechanism.terms if t.lag == 0}
+        ps |= {t.parent for t in (mechanism.regime_terms or ()) if t.lag == 0}
+        if mechanism.regime is not None:
+            ps.add(mechanism.regime)
+        for parent in ps:
+            parents[mechanism.target].add(parent)
+            children[parent].add(mechanism.target)
+    return nodes, hidden, parents, children
+
+
+def _reach(graph: dict[str, set[str]], start: set[str]) -> set[str]:
+    """All nodes reachable from ``start`` following ``graph`` edges (excludes the start nodes)."""
+    seen: set[str] = set()
+    stack = [n for s in start for n in graph[s]]
+    while stack:
+        node = stack.pop()
+        if node not in seen:
+            seen.add(node)
+            stack.extend(graph[node])
+    return seen
+
+
+def _d_connected(
+    parents: dict[str, set[str]], children: dict[str, set[str]], x: str, y: str, z: set[str]
+) -> bool:
+    """Whether ``x`` is d-connected to ``y`` given ``z`` (Koller-Friedman reachability)."""
+    anc_z = z | _reach(parents, z)
+    queue = deque([(x, "up")])
+    visited: set[tuple[str, str]] = set()
+    reach: set[str] = set()
+    while queue:
+        node, direction = queue.popleft()
+        if (node, direction) in visited:
+            continue
+        visited.add((node, direction))
+        if node != x:
+            reach.add(node)
+        if direction == "up" and node not in z:
+            queue.extend((p, "up") for p in parents[node])
+            queue.extend((c, "down") for c in children[node])
+        elif direction == "down":
+            if node not in z:
+                queue.extend((c, "down") for c in children[node])
+            if node in anc_z:  # collider whose descendant (or itself) is in z → path active
+                queue.extend((p, "up") for p in parents[node])
+    return y in reach
+
+
+def is_control_identifiable(
+    spec: WorldSpec, objective: ControlObjective
+) -> dict[str, LeverIdentifiability]:
+    """Per lever, whether its outcome-effect is observationally identifiable by backdoor adjustment.
+
+    Uses the complete adjustment criterion: identifiable iff the canonical observed adjustment set
+    (observed ancestors of lever and outcome, minus the lever's descendants and the lever/outcome
+    themselves) d-separates lever from outcome in the backdoor graph (lever out-edges removed). A
+    HIDDEN common cause of lever and outcome leaves an unblockable backdoor path, so it is not
+    identifiable; an OBSERVED confounder lands in the set; a MEDIATOR is a lever-descendant and is
+    excluded. Lets a harness split worlds into observationally-solvable vs interventions-required.
+    (Contemporaneous lag-0 structure.)
+    """
+    nodes, hidden, parents, children = _lag0_graph(spec)
+    observed = nodes - hidden
+    out: dict[str, LeverIdentifiability] = {}
+    for lever in objective.levers:
+        descendants = _reach(children, {lever})
+        ancestors = _reach(parents, {lever, objective.outcome})
+        candidate = (
+            ((ancestors | {lever, objective.outcome}) & observed)
+            - descendants
+            - {lever, objective.outcome}
+        )
+        parents_bd = {n: set(ps) for n, ps in parents.items()}
+        children_bd = {n: set(cs) for n, cs in children.items()}
+        for child in children[lever]:
+            parents_bd[child].discard(lever)
+        children_bd[lever] = set()
+        identifiable = not _d_connected(
+            parents_bd, children_bd, lever, objective.outcome, candidate
+        )
+        out[lever] = LeverIdentifiability(
+            lever=lever,
+            identifiable=identifiable,
+            adjustment_set=frozenset(candidate) if identifiable else None,
+        )
+    return out

@@ -3,6 +3,35 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.36.0] — 2026-06-30
+
+**Stage-2 control: reference baseline controllers + an observational-identifiability check (#27).**
+Makes the control track as turn-key as discovery.
+
+### Added
+- **Reference baseline controllers** — the control analogue of the `sortnregress` discovery baselines,
+  two calibration points that bracket what the levers can achieve:
+  - **`CorrelationalController`** — sets levers from the *observational* regression of the outcome on
+    the levers ("control by correlation"). On a world with a hidden lever↔outcome confounder its
+    estimate is biased, so **high regret here is the signal that the world rewards causal
+    understanding**. The lower bracket.
+  - **`InterventionalController`** — sets levers from a `do(+1) − do(0)` contrast per lever (the
+    do-calculus reference / achievable ceiling). On confounded worlds the two diverge sharply.
+- **`is_control_identifiable(spec, objective)`** → per-lever `LeverIdentifiability` (`.identifiable`,
+  `.adjustment_set`): whether a lever's effect on the outcome is recoverable from **observational**
+  data by backdoor adjustment. Uses the complete adjustment criterion (the canonical observed
+  ancestor-based set d-separates the lever from the outcome in the backdoor graph). A **hidden**
+  common cause of lever and outcome ⇒ non-identifiable (no observed set works); an **observed**
+  confounder ⇒ in the adjustment set; a **mediator** ⇒ a descendant of the lever, correctly excluded.
+  Lets a harness split worlds into observationally-solvable vs interventions-required, and grade an
+  observational controller only where that's even possible.
+
+### Notes
+- Both work on the contemporaneous (lag-0) structure the control optimum lives on; no API key.
+  Backward compatible (purely additive). 220 tests, 96% coverage. Closes #27.
+
+[0.36.0]: https://github.com/noumenal-ai/causal-worlds/releases/tag/v0.36.0
+
 ## [0.35.0] — 2026-06-28
 
 **Additive-nonlinear mechanisms — worlds can finally bend, not just slope (#10, first cut).**
