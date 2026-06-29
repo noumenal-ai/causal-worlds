@@ -254,3 +254,61 @@ def grade_controller(
     """Run a pluggable controller on the raw world and grade its policy by regret."""
     policy = controller.control(control_substrate(spec), objective, seed=seed)
     return grade_control(spec, objective, policy, seed=seed)
+
+
+# --------------------------------------------------------------------------- #
+# Reference baseline controllers (#27) — the control analogue of the sortnregress
+# discovery baselines: two calibration points that bracket what the levers can achieve.
+# Both estimate each lever's effect from the (raw) substrate, then play u*_i = effect_i / cost.
+# --------------------------------------------------------------------------- #
+class CorrelationalController:
+    """Baseline: set levers from the **observational** regression of the outcome on the levers.
+
+    "Control by correlation" — the control analogue of ``sortnregress``. It runs *no* interventions,
+    so on a world with a **hidden** lever↔outcome confounder its effect estimate is biased: **high
+    regret here is the signal that the world rewards causal (interventional) understanding** rather
+    than mere association. The lower bracket of the achievable range.
+    """
+
+    def __init__(self, n: int = _REWARD_N) -> None:
+        """``n`` rows of observational data to fit the regression."""
+        self._n = n
+
+    def control(
+        self, substrate: Substrate, objective: ControlObjective, *, seed: int
+    ) -> dict[str, float]:
+        """Fit ``outcome ~ levers`` on observational data; play ``u_i = coeff_i / cost``."""
+        sample = substrate.sample(self._n, seed=seed)
+        index = {name: i for i, name in enumerate(substrate.variables)}
+        outcome = sample.data[:, index[objective.outcome]]
+        levers = list(objective.levers)
+        design = np.column_stack(
+            [sample.data[:, index[lever]] for lever in levers] + [np.ones(len(outcome))]
+        )
+        coeffs, *_ = np.linalg.lstsq(design, outcome, rcond=None)
+        return {lever: float(coeffs[i]) / objective.cost for i, lever in enumerate(levers)}
+
+
+class InterventionalController:
+    """Baseline ceiling: per-lever ``do(+1)`` vs ``do(0)`` contrast (the do-calculus reference).
+
+    Estimates each lever's causal effect by *acting* — ``do()`` cuts the lever's incoming edges, so
+    the contrast is unbiased by confounding. This is the achievable **ceiling** against which the
+    correlational baseline's regret is read; on confounded worlds the two diverge sharply.
+    """
+
+    def __init__(self, n: int = _REWARD_N) -> None:
+        """``n`` rows per ``do()`` environment."""
+        self._n = n
+
+    def control(
+        self, substrate: Substrate, objective: ControlObjective, *, seed: int
+    ) -> dict[str, float]:
+        """Per lever, play ``u_i = (E[outcome|do=1] - E[outcome|do=0]) / cost``."""
+        out_i = substrate.variables.index(objective.outcome)
+        policy: dict[str, float] = {}
+        for lever in objective.levers:
+            hi = substrate.sample(self._n, seed=seed, do={lever: 1.0}).data[:, out_i].mean()
+            lo = substrate.sample(self._n, seed=seed, do={lever: 0.0}).data[:, out_i].mean()
+            policy[lever] = float(hi - lo) / objective.cost
+        return policy
