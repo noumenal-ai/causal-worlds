@@ -63,11 +63,27 @@ def world_from_edges(
         A :class:`WorldSpec` that has passed :func:`~causal_worlds.schema.validate`.
 
     Raises:
+        ValueError: ``noise_scale`` is not > 0, or two edges share the same
+            ``(parent, target, lag, transform)`` — which would silently double that effect while the
+            answer-key still shows one edge, breaking the round-trip guarantee.
         DanglingReferenceError: An edge references a variable not declared in ``variables``.
         SpecError: The compiled spec is otherwise invalid (cyclic, explosive, missing a role).
     """
+    if noise_scale <= 0:
+        msg = f"noise_scale must be > 0, got {noise_scale}"
+        raise ValueError(msg)
     terms_by_target: dict[str, list[Term]] = {}
+    seen: set[tuple[str, str, int, Transform]] = set()
     for edge in edges:
+        key = (edge.parent, edge.target, edge.lag, edge.transform)
+        if key in seen:
+            msg = (
+                f"duplicate edge {edge.parent!r}->{edge.target!r} (lag {edge.lag}, "
+                f"{edge.transform.value}); declare each (parent, target, lag, transform) once — "
+                f"silently summing them would double the effect the answer-key still shows once"
+            )
+            raise ValueError(msg)
+        seen.add(key)
         terms_by_target.setdefault(edge.target, []).append(
             Term(parent=edge.parent, coeff=edge.coeff, lag=edge.lag, transform=edge.transform),
         )

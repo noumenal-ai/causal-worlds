@@ -70,3 +70,23 @@ def test_lag_and_transform_are_preserved_on_the_term() -> None:
 def test_compiler_validates_and_rejects_a_dangling_edge() -> None:
     with pytest.raises(DanglingReferenceError):
         world_from_edges(_VARIABLES, (WeightedEdge("lever", "ghost", 1.0),))
+
+
+def test_compiler_rejects_a_parent_side_dangling_edge() -> None:
+    # a parent absent from the variable list is the common learned-model case + a distinct code path
+    with pytest.raises(DanglingReferenceError):
+        world_from_edges(_VARIABLES, (WeightedEdge("ghost", "kpi", 1.0),))
+
+
+def test_compiler_rejects_duplicate_edges_rather_than_doubling() -> None:
+    # two identical edges would silently sum to a doubled coefficient the answer-key shows once
+    with pytest.raises(ValueError, match="duplicate edge"):
+        world_from_edges(
+            _VARIABLES,
+            (WeightedEdge("lever", "kpi", 0.5), WeightedEdge("lever", "kpi", 0.5)),
+        )
+
+
+def test_compiler_rejects_nonpositive_noise_scale() -> None:
+    with pytest.raises(ValueError, match="noise_scale"):
+        world_from_edges(_VARIABLES, _EDGES, noise_scale=0.0)
