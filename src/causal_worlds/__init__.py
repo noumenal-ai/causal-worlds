@@ -80,6 +80,7 @@ from causal_worlds.evaluation import (
     temporal_score,
 )
 from causal_worlds.fakes import FakeAuthor, FakeElicitor, FakeJudge, FakeTemporalDiscoverer
+from causal_worlds.from_edges import WeightedEdge, world_from_edges
 from causal_worlds.gates import GateReport, run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
 from causal_worlds.obs import LangfuseTracer, NullTracer, Tracer, build_langfuse_tracer
@@ -197,6 +198,7 @@ __all__ = [
     "Transform",
     "VarLingamDiscoverer",
     "Variable",
+    "WeightedEdge",
     "WorldBrief",
     "WorldSpec",
     "WorldSpecModel",
@@ -255,4 +257,5 @@ __all__ = [
     "to_mermaid",
     "validate",
     "varsortability",
+    "world_from_edges",
 ]
