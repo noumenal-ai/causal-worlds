@@ -1,9 +1,13 @@
 """Tests for the world-spec IR, the static validation gate, and the derived answer-key."""
 
+from dataclasses import replace
+
 import pytest
 
 from causal_worlds.schema import (
     AnswerKey,
+    Claim,
+    ClaimError,
     CyclicGraphError,
     DanglingReferenceError,
     DuplicateMechanismError,
@@ -58,6 +62,33 @@ def test_answer_key_derives_observed_edges_and_confounding():
     assert frozenset(("overtime", "sales")) in key.confounded
     # hidden L never appears as a node in the observed answer-key
     assert all("L" not in edge for edge in key.edges)
+
+
+def test_claim_defaults_to_none():
+    assert _coffee().claim is None
+
+
+def test_valid_claim_passes():
+    validate(replace(_coffee(), claim=Claim(cause="price", outcome="sales")))  # should not raise
+
+
+def test_claim_rejects_undeclared_variable():
+    spec = replace(_coffee(), claim=Claim(cause="ghost", outcome="sales"))
+    with pytest.raises(ClaimError):
+        validate(spec)
+
+
+def test_claim_rejects_hidden_variable():
+    # L is hidden, so it can't be the user's (observed) cause
+    spec = replace(_coffee(), claim=Claim(cause="L", outcome="sales"))
+    with pytest.raises(ClaimError):
+        validate(spec)
+
+
+def test_claim_rejects_same_cause_and_outcome():
+    spec = replace(_coffee(), claim=Claim(cause="sales", outcome="sales"))
+    with pytest.raises(ClaimError):
+        validate(spec)
 
 
 def test_dangling_reference_rejected():

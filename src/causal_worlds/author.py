@@ -77,6 +77,15 @@ _TEMPORAL_CLAUSE = (
     "sum to below 1 in magnitude. A self-loop may use a nonlinear transform only if it is bounded "
     "(tanh); square/cube/relu/abs on a self-loop are explosive and will be rejected."
 )
+_CLAIM_CLAUSE = (
+    "Identify the operation's FOCUS PAIR in 'claim': the observed variable that embodies the "
+    "prompt's CAUSE (what the user asks about as the driver) and the observed variable that "
+    "embodies its OUTCOME (the effect they care about — usually the outcome KPI). If the prompt "
+    "poses a specific 'does X affect Y?' question, claim.cause and claim.outcome MUST be the "
+    "observed variables standing in for X and Y (never a hidden variable). Under ROLE MISDIRECTION "
+    "the cause need not have a direct edge to the outcome — the claim records the user's intent, "
+    "not the true wiring. Omit 'claim' only if the prompt implies no specific pair."
+)
 _CLOSING = (
     "The world should be plausible for the described operation. These worlds are fictional; do not "
     "model any real system. Return ONLY the structured world."
@@ -91,6 +100,7 @@ def _system(complexity: str, *, temporal: bool = False) -> str:
     parts = [_SYSTEM_BASE, _COMPLEXITY[complexity]]
     if temporal:
         parts.append(_TEMPORAL_CLAUSE)
+    parts.append(_CLAIM_CLAUSE)
     parts.append(_CLOSING)
     return "\n\n".join(parts)
 
