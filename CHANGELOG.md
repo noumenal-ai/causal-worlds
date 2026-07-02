@@ -3,6 +3,30 @@
 All notable changes to causal-worlds are documented here. Format: [Keep a Changelog](https://keepachangelog.com/);
 this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.37.0] — 2026-06-30
+
+**The prompt's claim mapping (`Claim`, #30) + missing top-level exports fixed (#31).** Driven by the
+first downstream app built on `generate()`: a UI could not know which spec variables embodied the
+user's question, and the documented builder imports failed.
+
+### Added
+- **`Claim(cause, outcome)` on `WorldSpec` (#30)** — the author now declares which *observed*
+  variables embody the prompt's causal question (its cause X and outcome Y), so a downstream UI can
+  quiz the *intended* pair instead of guessing it from the answer key (and guessing wrong — e.g.
+  *"does nature or nurture create psychopaths?"* previously got quizzed on a confounded side pair
+  that dropped the user's outcome entirely).
+  - Declared by the author (new system-prompt clause + `ClaimModel` at the pydantic boundary);
+    optional — `None` for worlds with no focus pair (e.g. `world_from_edges`).
+  - Validated in the T1 gate: cause and outcome must be **two distinct observed (non-hidden)**
+    variables; violations raise the new **`ClaimError`**.
+  - Persists through `spec.json` (full JSON round-trip) and is exposed as **`AdmittedWorld.claim`**.
+
+### Fixed
+- **Top-level exports (#31)** — `build_claude_author` and `build_gemini_judge` were defined but never
+  exported from `causal_worlds`, so the documented `from causal_worlds import build_claude_author, …`
+  failed (`ImportError`). Both are now top-level, along with `ClaudeAuthor`/`GeminiJudge` (parity with
+  `ClaudeElicitor`) and the new `Claim`/`ClaimError`/`ClaimModel`; a regression test locks it in.
+
 ## [0.36.0] — 2026-06-30
 
 **Stage-2 control: reference baseline controllers + an observational-identifiability check (#27).**
