@@ -132,11 +132,31 @@ class Mechanism:
 
 
 @dataclass(frozen=True, slots=True)
+class Claim:
+    """Which observed variables embody the prompt's causal question — the user's cause and outcome.
+
+    Optional author-declared metadata: when a world is authored from a prompt asking whether some
+    X causes some Y (e.g. *"does nature or nurture create psychopaths?"*), the author knows which
+    spec variables those are, but the mapping is otherwise lost. Carrying it lets a downstream UI
+    quiz the *intended* pair rather than guess it from the answer key (and guess wrong). Both names
+    must be distinct observed (non-hidden) variables in the spec; see :func:`validate`.
+    """
+
+    cause: str
+    outcome: str
+
+
+@dataclass(frozen=True, slots=True)
 class WorldSpec:
-    """A fictional world: variables (incl. hidden) plus the generative mechanism per non-root."""
+    """A fictional world: variables (incl. hidden) plus the generative mechanism per non-root.
+
+    ``claim`` optionally records which observed variables embody the authoring prompt's cause and
+    outcome (``None`` for worlds authored without a focus pair, e.g. from a flat edge list).
+    """
 
     variables: tuple[Variable, ...]
     mechanisms: tuple[Mechanism, ...]
+    claim: Claim | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -166,6 +186,10 @@ class CyclicGraphError(SpecError):
 
 class RoleError(SpecError):
     """The spec lacks a required role (an observed controllable lever and an observed outcome)."""
+
+
+class ClaimError(SpecError):
+    """The declared claim references a non-observed variable, or names the same variable twice."""
 
 
 class DuplicateMechanismError(SpecError):
@@ -209,6 +233,7 @@ def validate(spec: WorldSpec) -> None:
         DanglingReferenceError: A mechanism references an undeclared variable.
         RoleError: No observed controllable variable, or no observed outcome.
         CyclicGraphError: The declared causal graph is cyclic.
+        ClaimError: A declared claim names a non-observed variable, or the same variable twice.
         NonStationaryError: A lagged self-loop is explosive (unbounded nonlinear feedback, or
             linear autoregression with total ``sum |coeff| >= 1``).
     """
@@ -238,8 +263,23 @@ def validate(spec: WorldSpec) -> None:
         msg = "a world needs at least one observed outcome variable"
         raise RoleError(msg)
 
+    _validate_claim(spec)
     _ensure_acyclic(spec)
     _ensure_stationary(spec)
+
+
+def _validate_claim(spec: WorldSpec) -> None:
+    """A declared claim must name two distinct observed variables (the cause and outcome)."""
+    if spec.claim is None:
+        return
+    observed = {variable.name for variable in spec.variables if not variable.hidden}
+    for field, name in (("cause", spec.claim.cause), ("outcome", spec.claim.outcome)):
+        if name not in observed:
+            msg = f"claim {field} {name!r} is not an observed variable"
+            raise ClaimError(msg)
+    if spec.claim.cause == spec.claim.outcome:
+        msg = f"claim cause and outcome must differ (both {spec.claim.cause!r})"
+        raise ClaimError(msg)
 
 
 def _ensure_stationary(spec: WorldSpec) -> None:

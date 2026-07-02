@@ -13,7 +13,7 @@ from causal_worlds.errors import CausalWorldsError
 from causal_worlds.gates import GateReport, run_gates
 from causal_worlds.obs import NullTracer, Tracer
 from causal_worlds.protocols import Author, Discoverer, Judge, TemporalDiscoverer
-from causal_worlds.schema import WorldSpec
+from causal_worlds.schema import Claim, WorldSpec
 
 _DEFAULT_MAX_ATTEMPTS = 3
 
@@ -26,6 +26,11 @@ class AdmittedWorld:
     spec: WorldSpec
     report: GateReport
     attempts: int
+
+    @property
+    def claim(self) -> Claim | None:
+        """The prompt's declared focus pair (cause X, outcome Y), if the author set one."""
+        return self.spec.claim
 
 
 @dataclass(frozen=True, slots=True)

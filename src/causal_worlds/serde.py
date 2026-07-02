@@ -11,7 +11,7 @@ Field descriptions are written for the *author* LLM: they are the contract the m
 
 from pydantic import BaseModel, Field
 
-from causal_worlds.schema import Mechanism, Role, Term, Transform, Variable, WorldSpec
+from causal_worlds.schema import Claim, Mechanism, Role, Term, Transform, Variable, WorldSpec
 
 
 class TermModel(BaseModel):
@@ -97,6 +97,23 @@ class MechanismModel(BaseModel):
         )
 
 
+class ClaimModel(BaseModel):
+    """Which observed variables embody the prompt's causal question (the user's cause X and Y)."""
+
+    cause: str = Field(
+        description="The observed variable that embodies the prompt's cause (X) — what the user "
+        "asked about as the driver. Must be an observed (non-hidden) variable name in this spec."
+    )
+    outcome: str = Field(
+        description="The observed variable that embodies the prompt's outcome (Y) — the effect the "
+        "user cares about (usually the OUTCOME-role KPI). Must be a different observed variable."
+    )
+
+    def to_claim(self) -> Claim:
+        """Build the frozen core :class:`Claim`."""
+        return Claim(cause=self.cause, outcome=self.outcome)
+
+
 class WorldSpecModel(BaseModel):
     """The boundary form of a :class:`WorldSpec`: validated LLM output and the persisted shape."""
 
@@ -104,12 +121,18 @@ class WorldSpecModel(BaseModel):
     mechanisms: list[MechanismModel] = Field(
         description="One mechanism per non-root variable (roots may be omitted)."
     )
+    claim: ClaimModel | None = Field(
+        default=None,
+        description="If the operation was described as a causal question (does X affect Y?), name "
+        "the observed variables embodying the prompt's cause and outcome. Omit if no focus pair.",
+    )
 
     def to_spec(self) -> WorldSpec:
         """Build the frozen core :class:`WorldSpec` (does not run semantic validation)."""
         return WorldSpec(
             variables=tuple(variable.to_variable() for variable in self.variables),
             mechanisms=tuple(mechanism.to_mechanism() for mechanism in self.mechanisms),
+            claim=self.claim.to_claim() if self.claim is not None else None,
         )
 
     @classmethod
@@ -142,6 +165,11 @@ class WorldSpecModel(BaseModel):
                 )
                 for mechanism in spec.mechanisms
             ],
+            claim=(
+                ClaimModel(cause=spec.claim.cause, outcome=spec.claim.outcome)
+                if spec.claim is not None
+                else None
+            ),
         )
 
 

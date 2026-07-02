@@ -9,6 +9,7 @@ from causal_worlds.admission import (
 )
 from causal_worlds.anonymize import anonymize_spec
 from causal_worlds.artifact import LoadedBundle, Provenance, load_bundle, save_bundle
+from causal_worlds.author import ClaudeAuthor, build_claude_author
 from causal_worlds.baselines import (
     BASELINES,
     BaselineResult,
@@ -83,6 +84,7 @@ from causal_worlds.fakes import FakeAuthor, FakeElicitor, FakeJudge, FakeTempora
 from causal_worlds.from_edges import WeightedEdge, world_from_edges
 from causal_worlds.gates import GateReport, run_gates
 from causal_worlds.generate import AdmittedWorld, NotAdmittedError, generate
+from causal_worlds.judge import GeminiJudge, build_gemini_judge
 from causal_worlds.obs import LangfuseTracer, NullTracer, Tracer, build_langfuse_tracer
 from causal_worlds.protocols import (
     Author,
@@ -99,6 +101,8 @@ from causal_worlds.protocols import (
 from causal_worlds.sample import Sample, ScmSubstrate, build_substrate
 from causal_worlds.schema import (
     AnswerKey,
+    Claim,
+    ClaimError,
     CyclicGraphError,
     DanglingReferenceError,
     DuplicateMechanismError,
@@ -116,7 +120,7 @@ from causal_worlds.schema import (
     temporal_answer_key,
     validate,
 )
-from causal_worlds.serde import WorldSpecModel, spec_from_json, spec_to_json
+from causal_worlds.serde import ClaimModel, WorldSpecModel, spec_from_json, spec_to_json
 from causal_worlds.temporal_baselines import (
     TEMPORAL_BASELINES,
     GrangerDiscoverer,
@@ -135,6 +139,10 @@ __all__ = [
     "BaselineResult",
     "BudgetExceededError",
     "CausalWorldsError",
+    "Claim",
+    "ClaimError",
+    "ClaimModel",
+    "ClaudeAuthor",
     "ClaudeElicitor",
     "Container",
     "ControlObjective",
@@ -158,6 +166,7 @@ __all__ = [
     "FciDiscoverer",
     "Gate",
     "GateReport",
+    "GeminiJudge",
     "GesDiscoverer",
     "GiesDiscoverer",
     "GrangerDiscoverer",
@@ -206,8 +215,10 @@ __all__ = [
     "abduct",
     "anonymize_spec",
     "answer_key",
+    "build_claude_author",
     "build_claude_elicitor",
     "build_container",
+    "build_gemini_judge",
     "build_langfuse_tracer",
     "build_substrate",
     "check_faithfulness",

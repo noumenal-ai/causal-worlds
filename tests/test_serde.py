@@ -1,7 +1,23 @@
 """Tests for the pydantic boundary model and JSON serialization."""
 
+from dataclasses import replace
+
 from causal_worlds import worlds
+from causal_worlds.schema import Claim
 from causal_worlds.serde import WorldSpecModel, spec_from_json, spec_to_json
+
+
+def test_claim_round_trips_through_json():
+    spec = replace(worlds.get("coffee"), claim=Claim(cause="price", outcome="sales"))
+    restored = spec_from_json(spec_to_json(spec))
+    assert restored == spec
+    assert restored.claim == Claim(cause="price", outcome="sales")
+
+
+def test_absent_claim_round_trips_as_none():
+    spec = worlds.get("coffee")
+    assert spec.claim is None
+    assert spec_from_json(spec_to_json(spec)).claim is None
 
 
 def test_spec_round_trips_through_boundary_model():

@@ -1,5 +1,7 @@
 """Tests for the author->gate->admit loop (driven by fakes, no API key)."""
 
+from dataclasses import replace
+
 import pytest
 
 from causal_worlds import worlds
@@ -7,7 +9,7 @@ from causal_worlds.discover import InterventionalCiDiscoverer
 from causal_worlds.fakes import FakeAuthor, FakeJudge
 from causal_worlds.gates import GateReport
 from causal_worlds.generate import NotAdmittedError, _feedback, generate, generate_many
-from causal_worlds.schema import Mechanism, Role, Term, Variable, WorldSpec
+from causal_worlds.schema import Claim, Mechanism, Role, Term, Variable, WorldSpec
 
 _FAST = InterventionalCiDiscoverer(n=4000)
 
@@ -26,6 +28,17 @@ def test_admits_a_good_world_first_try():
     assert world.report.admitted
     assert world.attempts == 1
     assert author.calls[0] == ("a webshop", None)  # first ask has no feedback
+
+
+def test_admitted_world_exposes_the_claim():
+    base = worlds.get("ecommerce")
+    cause = next(v.name for v in base.variables if v.role is Role.CONTROLLABLE and not v.hidden)
+    outcome = next(v.name for v in base.variables if v.role is Role.OUTCOME and not v.hidden)
+    spec = replace(base, claim=Claim(cause=cause, outcome=outcome))
+    world = generate("a webshop", author=FakeAuthor([spec]), discoverer=_FAST, seed=7)
+    assert world.report.admitted
+    assert world.claim == Claim(cause=cause, outcome=outcome)  # convenience on AdmittedWorld
+    assert world.claim is world.spec.claim  # it mirrors the spec's claim
 
 
 def test_re_authors_with_feedback_after_a_failed_gate():
